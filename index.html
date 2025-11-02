@@ -646,9 +646,7 @@
         }
 
         function generatePDFContent() {
-            const currentDate = new Date().toLocaleDateString('hi-IN');
             let tableRows = '';
-            let totalItems = 0;
 
             items.forEach((item, index) => {
                 tableRows += `
@@ -659,52 +657,42 @@
                         <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">₹ ${item.price.toFixed(2)}</td>
                     </tr>
                 `;
-                totalItems++;
             });
 
             return `
                 <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px;">
-                    <!-- Header -->
-                    <div style="border-bottom: 3px solid #667eea; padding-bottom: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; gap: 15px;">
-                            <div>
-                                <img src="10237logo.png" style="height: 60px; width: auto; object-fit: contain;">
-                            </div>
-                            <div style="flex: 1; text-align: center;">
-                                <div style="font-size: 28px; font-weight: bold; color: #1a1a1a; letter-spacing: 1px;">
-                                    GRANICER
-                                </div>
-                                <div style="font-size: 12px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">
-                                    CERAMICA INDIANA
-                                </div>
-                            </div>
-                            <div style="width: 60px;"></div>
-                        </div>
+                    <!-- Header with Logo -->
+                    <div style="border-bottom: 3px solid #667eea; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
+                        <img src="10237logo.png" style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;">
+                    </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8;">
-                            <div>
-                                <div style="font-weight: 600; margin-bottom: 5px;">Company Details:</div>
-                                <div>COMET GRANITO PVT.LTD.</div>
-                                <div style="color: #666;">C.I. No.: U26914GJ2006PTC049091</div>
-                            </div>
-                            <div>
-                                <div style="font-weight: 600; margin-bottom: 5px;">Registered Office:</div>
-                                <div>Survey No. 118, National Highway No. 8-A</div>
-                                <div>Tall Machadi, Nandra Jambudi</div>
-                                <div>GJ 363642, INDIA</div>
-                            </div>
+                    <!-- Company Details Section -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                            <div>Survey No. 118, National Highway No. 8-A,</div>
+                            <div>Tal. Morbi, Nava Jambudia,</div>
+                            <div>GJ 363642, INDIA.</div>
                         </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                            <div>Revenue Survey No. 168 P1 and P2</div>
+                            <div>Revenue Survey No. 169 P1 and P6</div>
+                            <div>At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                        </div>
+                    </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-top: 15px; line-height: 1.8;">
+                    <!-- Contact Details -->
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 5px; margin-bottom: 20px; font-size: 11px; color: #333;">
+                        <div style="display: flex; justify-content: space-between; gap: 20px;">
                             <div>
-                                <div style="font-weight: 600; margin-bottom: 5px;">Contact:</div>
-                                <div>📧 Email: info@granicer.in</div>
-                                <div>🌐 Web: www.granicer.in</div>
+                                <span style="font-weight: 600;">📧 Email:</span> info@granicer.in
                             </div>
                             <div>
-                                <div style="font-weight: 600; margin-bottom: 5px;">Unit - 2:</div>
-                                <div>Revenue Survey No. 168 P1 and P2</div>
-                                <div>AI Road Kadki Workyard Machdi - 363621</div>
+                                <span style="font-weight: 600;">🌐 Web:</span> www.granicer.in
+                            </div>
+                            <div>
+                                <span style="font-weight: 600;">CI No.:</span> U26914GJ2006PTC049091
                             </div>
                         </div>
                     </div>
@@ -713,9 +701,6 @@
                     <div style="text-align: center; margin-bottom: 20px;">
                         <div style="font-size: 20px; font-weight: bold; color: #1a1a1a; margin-bottom: 5px;">
                             PRICE LIST
-                        </div>
-                        <div style="font-size: 12px; color: #667eea; font-weight: 600;">
-                            Effective Date: ${currentDate}
                         </div>
                     </div>
 
@@ -734,14 +719,6 @@
                         </tbody>
                     </table>
 
-                    <!-- Summary -->
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                            <div><strong>Total Products:</strong></div>
-                            <div>${totalItems}</div>
-                        </div>
-                    </div>
-
                     <!-- Terms & Conditions -->
                     <div style="border-top: 2px solid #667eea; padding-top: 15px;">
                         <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
@@ -755,7 +732,6 @@
                             <li>All prices are subject to GST as applicable</li>
                             <li>Subject to stock availability</li>
                             <li>Bulk orders may attract special discounts</li>
-                            <li>Terms and conditions as per company policy</li>
                         </ul>
                     </div>
 
@@ -763,8 +739,7 @@
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center;">
                         <div style="font-size: 10px; color: #999;">
                             <p style="margin: 5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                            <p style="margin: 5px 0;">Generated on: ${currentDate}</p>
-                            <p style="margin: 5px 0; font-weight: 600;">GRANICER CERAMICA INDIA - Premium Ceramic Tiles Manufacturer</p>
+                            <p style="margin: 5px 0; font-weight: 600;">COMET GRANITO PVT.LTD - Premium Ceramic Tiles Manufacturer</p>
                         </div>
                     </div>
                 </div>

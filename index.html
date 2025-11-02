@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -575,23 +576,35 @@
             });
 
             return `
-                <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; position: relative;">
-                    <!-- Bottom Left Logo (Normal) - Full Opacity -->
-                    <div style="position: absolute; bottom: 30px; left: 20px; z-index: 1;">
-                        <img src="granicer logo (1).png" style="height: 80px; width: auto; object-fit: contain;" />
+                <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; position: relative; min-height: 297mm;">
+                    <!-- Top Left Corner Logo -->\n                    <div style="position: absolute; top: 10px; left: 10px; z-index: 1;">
+                        <img src="granicer logo (1).png" style="height: 60px; width: auto; object-fit: contain; opacity: 1;" />
                     </div>
 
-                    <!-- Top Right Logo (Rotated 180 degrees) - Full Opacity -->
-                    <div style="position: absolute; top: 30px; right: 20px; z-index: 1;">
+                    <!-- Top Right Corner Logo (180° Rotated) -->
+                    <div style="position: absolute; top: 10px; right: 10px; z-index: 1;">
                         <img
                             src="granicer logo (1).png"
-                            style="height: 80px; width: auto; object-fit: contain; transform: rotate(180deg);"
+                            style="height: 60px; width: auto; object-fit: contain; transform: rotate(180deg); opacity: 1;"
+                        />
+                    </div>
+
+                    <!-- Bottom Left Corner Logo -->
+                    <div style="position: absolute; bottom: 10px; left: 10px; z-index: 1;">
+                        <img src="granicer logo (1).png" style="height: 60px; width: auto; object-fit: contain; opacity: 1;" />
+                    </div>
+
+                    <!-- Bottom Right Corner Logo (180° Rotated) -->
+                    <div style="position: absolute; bottom: 10px; right: 10px; z-index: 1;">
+                        <img
+                            src="granicer logo (1).png"
+                            style="height: 60px; width: auto; object-fit: contain; transform: rotate(180deg); opacity: 1;"
                         />
                     </div>
 
                     <!-- Header with Logo -->
                     <div
-                        style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center; position: relative; z-index: 10;"
+                        style="border-bottom: 3px solid #ed3237; padding: 80px 20px 20px 20px; margin-bottom: 20px; text-align: center; position: relative; z-index: 10;"
                     >
                         <img
                             src="10237logo.png"
@@ -601,7 +614,7 @@
 
                     <!-- Company Details Section -->
                     <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px; z-index: 10; position: relative;"
                     >
                         <div>
                             <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
@@ -618,7 +631,7 @@
 
                     <!-- Contact and Unit Details -->
                     <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;"
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8; z-index: 10; position: relative;"
                     >
                         <div>
                             <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
@@ -640,6 +653,8 @@
                             padding: 12px 0;
                             margin-bottom: 15px;
                             text-align: center;
+                            z-index: 10;
+                            position: relative;
                         "
                     >
                         <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">
@@ -648,7 +663,7 @@
                     </div>
 
                     <!-- Table -->
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; z-index: 10; position: relative;">
                         <thead>
                             <tr
                                 style="
@@ -707,13 +722,13 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody style="background: white;">
                             ${tableRows}
                         </tbody>
                     </table>
 
                     <!-- Terms & Conditions -->
-                    <div style="border-top: 3px solid #ed3237; padding-top: 15px;">
+                    <div style="border-top: 3px solid #ed3237; padding-top: 15px; z-index: 10; position: relative;">
                         <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
                             Terms & Conditions:
                         </div>
@@ -729,7 +744,7 @@
                     </div>
 
                     <!-- Footer -->
-                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center;">
+                    <div style="margin-top: 20px; padding: 15px 80px 80px 80px; border-top: 1px solid #ddd; text-align: center; z-index: 10; position: relative;">
                         <div style="font-size: 10px; color: #999;">
                             <p style="margin: 5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
                             <p style="margin: 5px 0;">Generated on: ${currentDate}</p>

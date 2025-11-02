@@ -2,47 +2,29 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Granicer Ceramica - Price List Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            height: 100%;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            margin: 0;
             padding: 10px;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: #fff;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-height: 100vh;
         }
-
         .tabs {
             display: flex;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
-            flex-shrink: 0;
         }
-
         .tab-btn {
             flex: 1;
             padding: 15px 10px;
@@ -52,724 +34,277 @@
             font-size: 1em;
             font-weight: 600;
             color: #666;
-            transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            transition: all 0.3s;
         }
-
-        .tab-btn.active {
+        .tab-btn.active, .tab-btn:hover {
             color: #ed3237;
-            background: white;
             border-bottom-color: #ed3237;
         }
-
-        .tab-btn:hover {
-            color: #ed3237;
-        }
-
         .tab-content {
             display: none;
             padding: 20px;
             overflow-y: auto;
-            flex: 1;
         }
-
         .tab-content.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            flex-shrink: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-
-        input[type='text'],
-        input[type='number'],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        input[type='text']:focus,
-        input[type='number']:focus,
-        select:focus {
-            outline: none;
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
-        }
-
-        .price-input-container {
-            display: flex;
-            align-items: center;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-            overflow: hidden;
-        }
-
-        .price-input-container:focus-within {
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
-        }
-
-        .price-symbol {
-            padding: 12px 12px;
-            background: #f8f9fa;
-            color: #666;
-            font-weight: 600;
-            font-size: 1.1em;
-            border-right: 2px solid #ddd;
-            flex-shrink: 0;
-        }
-
-        .price-input-container input {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-size: 1em;
-            outline: none;
-            background: white;
-        }
-
-        .price-input-container input:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-
-        .add-button,
-        .pdf-button {
-            flex: 1;
-            padding: 12px;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .add-button {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-
-        .add-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
-        }
-
-        .pdf-button {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
-        }
-
-        .pdf-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .suggestions.show {
             display: block;
         }
-
-        .suggestion-item {
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9em;
+        .form-group { margin-bottom: 15px; }
+        label { color: #333; font-weight: 600; margin-bottom: 8px; display: block; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em;
+            transition: border-color 0.3s; font-family: inherit;
         }
-
-        .suggestion-item:hover {
-            background: #f0f0f0;
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none; border-color: #ed3237; box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
-
-        .input-wrapper {
-            position: relative;
+        .price-input-container { display: flex; align-items: center; border: 2px solid #ddd; border-radius: 8px; }
+        .price-symbol { padding: 12px; background: #f8f9fa; color: #666; font-weight: 600; border-right: 2px solid #ddd; }
+        .price-input-container input { border: none; flex: 1; font-size: 1em; padding: 12px; }
+        .button-group { display: flex; gap: 10px; margin-top: 5px; }
+        .add-button, .pdf-button {
+            flex: 1; padding: 12px; color: #fff; border: none; border-radius: 8px;
+            font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.3s;
         }
-
-        .items-table {
-            margin-top: 20px;
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
+        .add-button { background: linear-gradient(135deg, #28a745 0%, #20c997 100%);}
+        .add-button:hover { box-shadow: 0 5px 20px rgba(40,167,69,0.2);}
+        .pdf-button { background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);}
+        .pdf-button:disabled {background: #ccc; cursor: not-allowed;}
+        .items-table { margin-top: 20px; }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        thead tr {height: 28px;}
+        thead th {
+            padding: 4px !important; font-size: 11px !important; text-align: center; font-weight: 600;
+            border: 1px solid #ed3237; background: linear-gradient(135deg,#ed3237 0%, #b82329 100%); color: #fff;
+            height: 28px;
         }
-
-        .items-table h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1em;
-            flex-shrink: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            font-size: 0.9em;
-        }
-
-        thead {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
-            color: white;
-            flex-shrink: 0;
-        }
-
-        th {
-            padding: 5px;
-            text-align: center;
-            font-weight: 600;
-            border: 1px solid #ed3237;
-            height: 30px;
-        }
-
-        td {
-            padding: 8px;
-            border: 1px solid #ddd;
-            text-align: center;
-            height: 20px;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
+        tbody tr {height: 18px;}
+        tbody td {padding: 5px !important; font-size: 10px; text-align: center; border: 1px solid #ddd;}
         .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            white-space: nowrap;
+            background: #ff6b6b; color: #fff; padding: 5px 9px; border: none; border-radius: 5px;
+            cursor: pointer; font-size: 0.9em; font-weight: 600;
         }
-
-        .delete-btn:hover {
-            background: #ff5252;
-            transform: scale(1.05);
+        .empty-state { text-align: center; padding: 20px 10px; color: #999; background: #f8f9fa; border-radius: 8px; }
+        /* PDF embedded corner logo */
+        .pdf-logo-bottom-left, .pdf-logo-top-right {
+            position: absolute; z-index: 15;
+            height: 60px; width: auto; object-fit: contain;
         }
-
-        .empty-state {
-            text-align: center;
-            padding: 20px 10px;
-            color: #999;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            flex: 1;
-        }
+        .pdf-logo-bottom-left { left: 0; bottom: 0; }
+        .pdf-logo-top-right { right: 0; top: 0; transform: rotate(180deg);}
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
-            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
-        </div>
-
-        <!-- Basic Tab -->
-        <div id="basic" class="tab-content active">
-            <div style="flex: 0 0 auto;">
-                <div class="form-group">
-                    <label for="size">Size</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="text"
-                            id="size"
-                            placeholder="Select or type size"
-                            oninput="filterSuggestions('size')"
-                        />
-                        <div class="suggestions" id="sizeSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="surface">Surface</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="text"
-                            id="surface"
-                            placeholder="Select or type surface"
-                            oninput="filterSuggestions('surface')"
-                        />
-                        <div class="suggestions" id="surfaceSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <div class="price-input-container">
-                        <span class="price-symbol">₹</span>
-                        <input
-                            type="number"
-                            id="price"
-                            placeholder="Enter price"
-                            min="0"
-                            step="0.01"
-                        />
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="add-button" onclick="addItem()">Add</button>
-                    <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
-                        Generate PDF
-                    </button>
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
+        <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
+    </div>
+    <div id="basic" class="tab-content active">
+        <div>
+            <div class="form-group">
+                <label for="size">Size</label>
+                <div class="input-wrapper">
+                    <input type="text" id="size" placeholder="Select or type size" oninput="filterSuggestions('size')">
+                    <div class="suggestions" id="sizeSuggestions"></div>
                 </div>
             </div>
-
-            <div class="items-table">
-                <h3>Added Items</h3>
-                <div class="table-wrapper">
-                    <div id="itemsContainer"></div>
+            <div class="form-group">
+                <label for="surface">Surface</label>
+                <div class="input-wrapper">
+                    <input type="text" id="surface" placeholder="Select or type surface" oninput="filterSuggestions('surface')">
+                    <div class="suggestions" id="surfaceSuggestions"></div>
                 </div>
             </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <div class="price-input-container">
+                    <span class="price-symbol">₹</span>
+                    <input type="number" id="price" placeholder="Enter price" min="0" step="0.01">
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="add-button" onclick="addItem()">Add</button>
+                <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>Generate PDF</button>
+            </div>
         </div>
-
-        <!-- Advance Tab -->
-        <div id="advance" class="tab-content">
-            <p style="text-align: center; color: #999; padding: 40px;">
-                Advance features coming soon...
-            </p>
+        <div class="items-table">
+            <h3>Added Items</h3>
+            <div class="table-wrapper"><div id="itemsContainer"></div></div>
         </div>
     </div>
-
-    <script>
-        const sizes = [
-            '1200x1200x9MM',
-            '1200x1790x9MM',
-            '1200x1800x9MM',
-            '1200x2400x9MM',
-            '1200x2800x6MM',
-            '1200x3180x15MM',
-            '1200x3200x15MM',
-            '1600x1600x9MM',
-            '1600x3200x6MM',
-            '1600x3200x12MM',
-            '1620x3240x12MM',
-            '790x2980x15MM',
-            '800x3000x15MM',
-            '800x2400x15MM',
-            '1000x3000x5MM',
-            '1200x2600x6MM',
-            '1200x3000x9MM',
-            '800x3200x15MM',
-        ];
-
-        const surfaces = [
-            'ELEGANCE',
-            'REPOSE',
-            'CARVE TECH',
-            'LUMINOUS',
-            'GRACE',
-            'GRAVEL',
-            'SAHARA',
-            'SHAPE TECH',
-            'CRYSTAL',
-            'GAMMA',
-            'GALAXY',
-        ];
-
-        let items = [];
-        let itemIdCounter = 0;
-
-        function filterSuggestions(type) {
-            const inputId = type === 'size' ? 'size' : 'surface';
-            const suggestionsId = type === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions';
-            const data = type === 'size' ? sizes : surfaces;
-
-            const input = document.getElementById(inputId).value.toUpperCase();
-            const suggestionsDiv = document.getElementById(suggestionsId);
-
-            if (!input) {
-                suggestionsDiv.classList.remove('show');
-                return;
-            }
-
-            const filtered = data.filter((item) => item.toUpperCase().includes(input));
-
-            if (filtered.length === 0) {
-                suggestionsDiv.classList.remove('show');
-                return;
-            }
-
-            suggestionsDiv.innerHTML = filtered
-                .map(
-                    (item) =>
-                        `<div class="suggestion-item" onclick="selectSuggestion('${inputId}', '${item}')">${item}</div>`
-                )
-                .join('');
-
-            suggestionsDiv.classList.add('show');
-        }
-
-        function selectSuggestion(inputId, value) {
-            document.getElementById(inputId).value = value;
-            document
-                .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
-                .classList.remove('show');
-        }
-
-        function addItem() {
-            const size = document.getElementById('size').value.trim();
-            const surface = document.getElementById('surface').value.trim();
-            const price = document.getElementById('price').value.trim();
-
-            if (!size || !surface || !price) {
-                alert('Please fill all fields');
-                return;
-            }
-
-            const item = {
-                id: itemIdCounter++,
-                size: size,
-                surface: surface,
-                price: parseFloat(price),
-            };
-
-            items.push(item);
-            renderItems();
-            clearForm();
-        }
-
-        function deleteItem(id) {
-            items = items.filter((item) => item.id !== id);
-            renderItems();
-        }
-
-        function renderItems() {
-            const container = document.getElementById('itemsContainer');
-            const pdfBtn = document.getElementById('pdfBtn');
-
-            if (items.length === 0) {
-                container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                pdfBtn.disabled = true;
-                return;
-            }
-
-            pdfBtn.disabled = false;
-
-            let tableHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Size</th>
-                            <th>Surface</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
-            items.forEach((item) => {
-                tableHTML += `
-                    <tr>
-                        <td>${item.size}</td>
-                        <td>${item.surface}</td>
-                        <td>₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
-                    </tr>
-                `;
-            });
-
-            tableHTML += '</tbody></table>';
-            container.innerHTML = tableHTML;
-        }
-
-        function generatePDF() {
-            if (items.length === 0) {
-                alert('Please add items first');
-                return;
-            }
-
-            const element = document.createElement('div');
-            element.innerHTML = generatePDFContent();
-
-            const opt = {
-                margin: 10,
-                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-            };
-
-            html2pdf().set(opt).from(element).save();
-        }
-
-        function generatePDFContent() {
-            const currentDate = new Date().toLocaleDateString('en-GB');
-            let tableRows = '';
-
-            items.forEach((item, index) => {
-                tableRows += `
-                    <tr style="height: 20px;">
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${
-                            index + 1
-                        }</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${
-                            item.size
-                        }</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${
-                            item.surface
-                        }</td>
-                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">₹ ${item.price.toFixed(
-                            2
-                        )}</td>
-                    </tr>
-                `;
-            });
-
-            return `
-                <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; position: relative;">
-                    <!-- Bottom Left Logo (Normal) - Full Opacity -->
-                    <div style="position: absolute; bottom: 30px; left: 20px; z-index: 1;">
-                        <img src="granicer logo (1).png" style="height: 80px; width: auto; object-fit: contain;" />
-                    </div>
-
-                    <!-- Top Right Logo (Rotated 180 degrees) - Full Opacity -->
-                    <div style="position: absolute; top: 30px; right: 20px; z-index: 1;">
-                        <img
-                            src="granicer logo (1).png"
-                            style="height: 80px; width: auto; object-fit: contain; transform: rotate(180deg);"
-                        />
-                    </div>
-
-                    <!-- Header with Logo -->
-                    <div
-                        style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center; position: relative; z-index: 10;"
-                    >
-                        <img
-                            src="10237logo.png"
-                            style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                        />
-                    </div>
-
-                    <!-- Company Details Section -->
-                    <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;"
-                    >
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                            <div>COMET GRANITO PVT.LTD.</div>
-                            <div style="color: #666;">C.I. No.: U26914GJ2006PTC049091</div>
-                        </div>
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                            <div>Survey No. 118, National Highway No. 8-A</div>
-                            <div>Tall Machadi, Nendra Jambudi</div>
-                            <div>GJ 363642, INDIA</div>
-                        </div>
-                    </div>
-
-                    <!-- Contact and Unit Details -->
-                    <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;"
-                    >
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                            <div>📧 Email: info@granicer.in</div>
-                            <div>🌐 Web: www.granicer.in</div>
-                        </div>
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                            <div>Revenue Survey No. 168 P1 and P2</div>
-                            <div>Al Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                        </div>
-                    </div>
-
-                    <!-- Title with Divider Line -->
-                    <div
-                        style="
-                            border-top: 2px solid #ed3237;
-                            border-bottom: 2px solid #ed3237;
-                            padding: 12px 0;
-                            margin-bottom: 15px;
-                            text-align: center;
-                        "
-                    >
-                        <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">
-                            PRICE LIST
-                        </div>
-                    </div>
-
-                    <!-- Table -->
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                        <thead>
-                            <tr
-                                style="
-                                    background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
-                                    color: white;
-                                    height: 30px;
-                                "
-                            >
-                                <th
-                                    style="
-                                        padding: 5px;
-                                        border: 1px solid #ed3237;
-                                        text-align: center;
-                                        font-size: 11px;
-                                        font-weight: 600;
-                                        height: 30px;
-                                    "
-                                >
-                                    Sr. No.
-                                </th>
-                                <th
-                                    style="
-                                        padding: 5px;
-                                        border: 1px solid #ed3237;
-                                        text-align: center;
-                                        font-size: 11px;
-                                        font-weight: 600;
-                                        height: 30px;
-                                    "
-                                >
-                                    Size
-                                </th>
-                                <th
-                                    style="
-                                        padding: 5px;
-                                        border: 1px solid #ed3237;
-                                        text-align: center;
-                                        font-size: 11px;
-                                        font-weight: 600;
-                                        height: 30px;
-                                    "
-                                >
-                                    Surface Type
-                                </th>
-                                <th
-                                    style="
-                                        padding: 5px;
-                                        border: 1px solid #ed3237;
-                                        text-align: center;
-                                        font-size: 11px;
-                                        font-weight: 600;
-                                        height: 30px;
-                                    "
-                                >
-                                    Price <span style="font-size: 8px; display: block;">(/sq feet)</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
-
-                    <!-- Terms & Conditions -->
-                    <div style="border-top: 3px solid #ed3237; padding-top: 15px;">
-                        <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
-                            Terms & Conditions:
-                        </div>
-                        <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
-                            <li>Prices are valid until 31st December 2025</li>
-                            <li>Prices are subject to change without prior notice</li>
-                            <li>Payment Terms: Net 30 days (as per agreement)</li>
-                            <li>Delivery: Free FOB Destination</li>
-                            <li>All prices are subject to GST as applicable</li>
-                            <li>Subject to stock availability</li>
-                            <li>Bulk orders may attract special discounts</li>
-                        </ul>
-                    </div>
-
-                    <!-- Footer -->
-                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center;">
-                        <div style="font-size: 10px; color: #999;">
-                            <p style="margin: 5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                            <p style="margin: 5px 0;">Generated on: ${currentDate}</p>
-                            <p style="margin: 5px 0;">
-                                GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('size').focus();
-        }
-
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach((tab) => tab.classList.remove('active'));
-            buttons.forEach((btn) => btn.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Hide suggestions when clicking outside
-        document.addEventListener('click', function (event) {
-            if (event.target.id !== 'size' && event.target.id !== 'surface') {
-                document.getElementById('sizeSuggestions').classList.remove('show');
-                document.getElementById('surfaceSuggestions').classList.remove('show');
-            }
-        });
-
-        // Initialize
-        renderItems();
-    </script>
+    <div id="advance" class="tab-content">
+        <p style="text-align:center;color:#999;padding:40px;">Advance features coming soon...</p>
+    </div>
+</div>
+<script>
+const sizes = [
+    '1200x1200x9MM','1200x1790x9MM','1200x1800x9MM','1200x2400x9MM','1200x2800x6MM',
+    '1200x3180x15MM','1200x3200x15MM','1600x1600x9MM','1600x3200x6MM','1600x3200x12MM',
+    '1620x3240x12MM','790x2980x15MM','800x3000x15MM','800x2400x15MM','1000x3000x5MM',
+    '1200x2600x6MM','1200x3000x9MM','800x3200x15MM'
+];
+const surfaces = [
+    'ELEGANCE','REPOSE','CARVE TECH','LUMINOUS','GRACE',
+    'GRAVEL','SAHARA','SHAPE TECH','CRYSTAL','GAMMA','GALAXY'
+];
+let items = [], itemIdCounter = 0;
+function filterSuggestions(type) {
+    const inputId = type==='size'?'size':'surface';
+    const suggestionsId = type==='size'?'sizeSuggestions':'surfaceSuggestions';
+    const data = type==='size'?sizes:surfaces;
+    const input = document.getElementById(inputId).value.toUpperCase();
+    const suggestionsDiv = document.getElementById(suggestionsId);
+    if(!input) { suggestionsDiv.classList.remove('show'); return; }
+    const filtered = data.filter(item=>item.toUpperCase().includes(input));
+    if(filtered.length===0){suggestionsDiv.classList.remove('show');return;}
+    suggestionsDiv.innerHTML = filtered.map(item=>`<div class="suggestion-item" onclick="selectSuggestion('${inputId}','${item}')">${item}</div>`).join('');
+    suggestionsDiv.classList.add('show');
+}
+function selectSuggestion(inputId, value){document.getElementById(inputId).value=value;document.getElementById(inputId==='size'?'sizeSuggestions':'surfaceSuggestions').classList.remove('show');}
+function addItem() {
+    const size=document.getElementById('size').value.trim();
+    const surface=document.getElementById('surface').value.trim();
+    const price=document.getElementById('price').value.trim();
+    if(!size||!surface||!price){alert('Please fill all fields');return;}
+    items.push({id:itemIdCounter++,size:size,surface:surface,price:parseFloat(price)});
+    renderItems();clearForm();
+}
+function deleteItem(id){items=items.filter(item=>item.id!==id);renderItems();}
+function renderItems(){
+    const container=document.getElementById('itemsContainer');
+    const pdfBtn=document.getElementById('pdfBtn');
+    if(items.length===0){container.innerHTML='<div class="empty-state">No items added yet</div>';pdfBtn.disabled=true;return;}
+    pdfBtn.disabled=false;
+    let tableHTML = `<table>
+    <thead><tr>
+    <th>Size</th>
+    <th>Surface</th>
+    <th>Price</th>
+    <th>Action</th>
+    </tr></thead>
+    <tbody>`;
+    items.forEach(item=>{
+        tableHTML+=`<tr>
+        <td>${item.size}</td>
+        <td>${item.surface}</td>
+        <td>₹ ${item.price.toFixed(2)}</td>
+        <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
+        </tr>`;
+    });
+    tableHTML+='</tbody></table>';container.innerHTML=tableHTML;
+}
+function generatePDF(){
+    if(items.length===0){alert('Please add items first');return;}
+    const element=document.createElement('div');
+    element.innerHTML=generatePDFContent();
+    const opt={
+        margin:10,
+        filename:'Granicer_PriceList_'+(new Date().toISOString().slice(0,10))+'.pdf',
+        image:{type:'jpeg',quality:0.98},
+        html2canvas:{scale:2},
+        jsPDF:{orientation:'portrait',unit:'mm',format:'a4'}
+    };
+    html2pdf().set(opt).from(element).save();
+}
+function generatePDFContent(){
+    const currentDate = new Date().toLocaleDateString('en-GB');
+    let tableRows='';
+    items.forEach((item,index)=>{
+        tableRows+=`
+            <tr style="height:18px;">
+                <td style="padding:5px;font-size:10px;text-align:center;border:1px solid #ddd;height:18px;">${index+1}</td>
+                <td style="padding:5px;font-size:10px;text-align:center;border:1px solid #ddd;height:18px;">${item.size}</td>
+                <td style="padding:5px;font-size:10px;text-align:center;border:1px solid #ddd;height:18px;">${item.surface}</td>
+                <td style="padding:5px;font-size:10px;text-align:center;border:1px solid #ddd;height:18px;">₹ ${item.price.toFixed(2)}</td>
+            </tr>`;
+    });
+    return `
+<div style="font-family:'Arial',sans-serif;max-width:210mm;margin:0 auto;background:#fff;padding:20px;position:relative;min-height:297mm;">
+    <img src="granicer logo (1).png" style="position:absolute;left:0;bottom:0;height:60px;z-index:15;" alt="">
+    <img src="granicer logo (1).png" style="position:absolute;right:0;top:0;height:60px;transform:rotate(180deg);z-index:15;" alt="">
+    <div style="border-bottom:3px solid #ed3237;padding-bottom:20px;margin-bottom:20px;text-align:center;">
+        <img src="10237logo.png" style="height:80px;width:auto;object-fit:contain;margin-bottom:15px;">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px;color:#333;line-height:1.8;margin-bottom:20px;">
+        <div>
+            <div style="font-weight:600;margin-bottom:8px;color:#1a1a1a;">Company Details:</div>
+            <div>COMET GRANITO PVT.LTD.</div>
+            <div style="color:#666;">C.I. No.: U26914GJ2006PTC049091</div>
+        </div>
+        <div>
+            <div style="font-weight:600;margin-bottom:8px;color:#1a1a1a;">Registered Office:</div>
+            <div>Survey No. 118, National Highway No. 8-A</div>
+            <div>Tall Machadi, Nendra Jambudi</div>
+            <div>GJ 363642, INDIA</div>
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px;color:#333;margin-bottom:20px;line-height:1.8;">
+        <div>
+            <div style="font-weight:600;margin-bottom:8px;color:#1a1a1a;">Contact:</div>
+            <div>📧 Email: info@granicer.in</div>
+            <div>🌐 Web: www.granicer.in</div>
+        </div>
+        <div>
+            <div style="font-weight:600;margin-bottom:8px;color:#1a1a1a;">Unit - 2:</div>
+            <div>Revenue Survey No. 168 P1 and P2</div>
+            <div>Al Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+        </div>
+    </div>
+    <div style="border-top:2px solid #ed3237;border-bottom:2px solid #ed3237;padding:12px 0;margin-bottom:15px;text-align:center;">
+        <div style="font-size:20px;font-weight:bold;color:#1a1a1a;">PRICE LIST</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <thead>
+            <tr style="height:28px;">
+                <th style="padding:4px;border:1px solid #ed3237;text-align:center;font-size:11px;font-weight:600;height:28px;">Sr. No.</th>
+                <th style="padding:4px;border:1px solid #ed3237;text-align:center;font-size:11px;font-weight:600;height:28px;">Size</th>
+                <th style="padding:4px;border:1px solid #ed3237;text-align:center;font-size:11px;font-weight:600;height:28px;">Surface Type</th>
+                <th style="padding:4px;border:1px solid #ed3237;text-align:center;font-size:11px;font-weight:600;height:28px;">Price <span style="font-size:8px;display:block;">(/sq feet)</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tableRows}
+        </tbody>
+    </table>
+    <div style="border-top:3px solid #ed3237;padding-top:15px;">
+        <div style="font-size:12px;font-weight:bold;color:#1a1a1a;margin-bottom:10px;">Terms & Conditions:</div>
+        <ul style="font-size:10px;color:#555;margin:0;padding-left:20px;line-height:1.8;">
+            <li>Prices are valid until 31st December 2025</li>
+            <li>Prices are subject to change without prior notice</li>
+            <li>Payment Terms: Net 30 days (as per agreement)</li>
+            <li>Delivery: Free FOB Destination</li>
+            <li>All prices are subject to GST as applicable</li>
+            <li>Subject to stock availability</li>
+            <li>Bulk orders may attract special discounts</li>
+        </ul>
+    </div>
+    <div style="margin-top:20px;padding-top:15px;border-top:1px solid #ddd;text-align:center;">
+        <div style="font-size:10px;color:#999;">
+            <p style="margin:5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+            <p style="margin:5px 0;">Generated on: ${currentDate}</p>
+            <p style="margin:5px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+        </div>
+    </div>
+</div>
+    `;
+}
+function clearForm(){document.getElementById('size').value='';document.getElementById('surface').value='';document.getElementById('price').value='';document.getElementById('size').focus();}
+function switchTab(tabName){
+    const tabs=document.querySelectorAll('.tab-content');const buttons=document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab=>tab.classList.remove('active'));
+    buttons.forEach(btn=>btn.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+document.addEventListener('click',function(event){
+    if(event.target.id!=='size'&&event.target.id!=='surface'){
+        document.getElementById('sizeSuggestions').classList.remove('show');
+        document.getElementById('surfaceSuggestions').classList.remove('show');
+    }
+});
+renderItems();
+</script>
 </body>
 </html>

@@ -11,11 +11,15 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
@@ -25,21 +29,25 @@
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 100vh;
         }
 
         .tabs {
             display: flex;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
+            flex-shrink: 0;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 20px;
+            padding: 15px 10px;
             border: none;
             background: transparent;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
             color: #666;
             transition: all 0.3s ease;
@@ -58,30 +66,34 @@
 
         .tab-content {
             display: none;
-            padding: 40px;
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .tab-content.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #333;
             font-weight: 600;
-            font-size: 1em;
+            font-size: 0.95em;
         }
 
         input[type="text"],
         input[type="number"],
         select {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 1em;
@@ -104,30 +116,31 @@
         .price-input-wrapper::before {
             content: '₹';
             position: absolute;
-            left: 15px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #666;
             font-weight: 600;
         }
 
         .price-input-wrapper input {
-            padding-left: 35px;
+            padding-left: 32px;
         }
 
         .add-button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 5px;
+            flex-shrink: 0;
         }
 
         .add-button:hover {
@@ -148,7 +161,7 @@
             border: 2px solid #ddd;
             border-top: none;
             border-radius: 0 0 8px 8px;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
             z-index: 100;
             display: none;
@@ -160,11 +173,11 @@
         }
 
         .suggestion-item {
-            padding: 12px 15px;
+            padding: 10px 12px;
             cursor: pointer;
             transition: background 0.2s;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
 
         .suggestion-item:hover {
@@ -176,36 +189,42 @@
         }
 
         .items-table {
-            margin-top: 40px;
-            width: 100%;
+            margin-top: 20px;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .items-table h3 {
             color: #333;
-            margin-bottom: 20px;
-            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-size: 1em;
+            flex-shrink: 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
+            font-size: 0.9em;
         }
 
         thead {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            flex-shrink: 0;
         }
 
         th {
-            padding: 15px;
+            padding: 10px;
             text-align: left;
             font-weight: 600;
             border: 1px solid #667eea;
         }
 
         td {
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ddd;
         }
 
@@ -220,13 +239,14 @@
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            padding: 8px 15px;
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9em;
+            font-size: 0.85em;
             transition: all 0.3s ease;
             font-weight: 600;
+            white-space: nowrap;
         }
 
         .delete-btn:hover {
@@ -236,11 +256,117 @@
 
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 20px 10px;
             color: #999;
             background: #f8f9fa;
             border-radius: 8px;
-            margin-top: 20px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn {
+                padding: 12px 8px;
+                font-size: 0.95em;
+            }
+
+            .tab-content {
+                padding: 15px;
+            }
+
+            label {
+                font-size: 0.9em;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            .price-input-wrapper::before {
+                left: 10px;
+                font-size: 1em;
+            }
+
+            .price-input-wrapper input {
+                padding-left: 30px;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.8em;
+            }
+
+            .delete-btn {
+                padding: 5px 8px;
+                font-size: 0.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 10px;
+            }
+
+            .tab-btn {
+                font-size: 0.9em;
+                padding: 10px 5px;
+            }
+
+            .tab-content {
+                padding: 12px;
+            }
+
+            label {
+                font-size: 0.85em;
+                margin-bottom: 6px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            .add-button {
+                padding: 10px;
+                font-size: 0.95em;
+                margin-top: 5px;
+            }
+
+            .items-table h3 {
+                font-size: 0.95em;
+                margin-top: 10px;
+            }
+
+            table {
+                font-size: 0.75em;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+
+            .delete-btn {
+                padding: 4px 6px;
+                font-size: 0.75em;
+            }
         }
     </style>
 </head>
@@ -253,34 +379,38 @@
 
         <!-- Basic Tab -->
         <div id="basic" class="tab-content active">
-            <div class="form-group">
-                <label for="size">Size</label>
-                <div class="input-wrapper">
-                    <input type="text" id="size" placeholder="Select or type size" oninput="filterSuggestions('size')">
-                    <div class="suggestions" id="sizeSuggestions"></div>
+            <div style="flex: 0 0 auto;">
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="size" placeholder="Select or type size" oninput="filterSuggestions('size')">
+                        <div class="suggestions" id="sizeSuggestions"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="surface">Surface</label>
-                <div class="input-wrapper">
-                    <input type="text" id="surface" placeholder="Select or type surface" oninput="filterSuggestions('surface')">
-                    <div class="suggestions" id="surfaceSuggestions"></div>
+                <div class="form-group">
+                    <label for="surface">Surface</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="surface" placeholder="Select or type surface" oninput="filterSuggestions('surface')">
+                        <div class="suggestions" id="surfaceSuggestions"></div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="price">Price</label>
-                <div class="price-input-wrapper">
-                    <input type="number" id="price" placeholder="Enter price" min="0" step="0.01">
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <div class="price-input-wrapper">
+                        <input type="number" id="price" placeholder="Enter price" min="0" step="0.01">
+                    </div>
                 </div>
-            </div>
 
-            <button class="add-button" onclick="addItem()">Add</button>
+                <button class="add-button" onclick="addItem()">Add</button>
+            </div>
 
             <div class="items-table">
                 <h3>Added Items</h3>
-                <div id="itemsContainer"></div>
+                <div class="table-wrapper">
+                    <div id="itemsContainer"></div>
+                </div>
             </div>
         </div>
 

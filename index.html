@@ -92,7 +92,7 @@
 
         input[type="text"],
         input[type="number"],
-        select, textarea {
+        select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -102,15 +102,9 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
         input[type="text"]:focus,
         input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
+        select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -314,29 +308,6 @@
             flex: 1;
         }
 
-        .info-box {
-            background: #e8f4f8;
-            border-left: 4px solid #667eea;
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .logo-preview {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .logo-preview img {
-            max-width: 100px;
-            max-height: 100px;
-        }
-
         @media (max-width: 768px) {
             .tab-btn {
                 padding: 12px 8px;
@@ -353,8 +324,7 @@
 
             input[type="text"],
             input[type="number"],
-            select,
-            textarea {
+            select {
                 padding: 10px;
                 font-size: 16px;
             }
@@ -413,8 +383,7 @@
 
             input[type="text"],
             input[type="number"],
-            select,
-            textarea {
+            select {
                 padding: 10px;
                 font-size: 16px;
             }
@@ -467,74 +436,12 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('settings')">Settings</button>
-            <button class="tab-btn" onclick="switchTab('basic')">Add Items</button>
+            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
+            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
         </div>
 
-        <!-- Settings Tab -->
-        <div id="settings" class="tab-content active">
-            <div class="info-box">
-                📌 Company details setup kar lo. Logo code mein embedded hai!
-            </div>
-
-            <div class="logo-preview" id="logoPreview">
-                <img id="logoImg" src="" alt="Company Logo">
-            </div>
-
-            <div class="form-group">
-                <label for="companyName">Company Name</label>
-                <input type="text" id="companyName" placeholder="e.g., GRANICER" value="GRANICER">
-            </div>
-
-            <div class="form-group">
-                <label for="companySubtitle">Company Subtitle</label>
-                <input type="text" id="companySubtitle" placeholder="e.g., CERAMICA INDIANA" value="CERAMICA INDIANA">
-            </div>
-
-            <div class="form-group">
-                <label for="companyLegalName">Company Legal Name</label>
-                <input type="text" id="companyLegalName" placeholder="e.g., COMET GRANITO PVT.LTD." value="COMET GRANITO PVT.LTD.">
-            </div>
-
-            <div class="form-group">
-                <label for="companyCIN">CIN Number</label>
-                <input type="text" id="companyCIN" placeholder="e.g., U26914GJ2006PTC049091" value="U26914GJ2006PTC049091">
-            </div>
-
-            <div class="form-group">
-                <label for="companyEmail">Email</label>
-                <input type="text" id="companyEmail" placeholder="e.g., info@granicer.in" value="info@granicer.in">
-            </div>
-
-            <div class="form-group">
-                <label for="companyWeb">Website</label>
-                <input type="text" id="companyWeb" placeholder="e.g., www.granicer.in" value="www.granicer.in">
-            </div>
-
-            <div class="form-group">
-                <label for="companyAddress">Address</label>
-                <textarea id="companyAddress" placeholder="Enter company address">Survey No. 118, National Highway No. 8-A, Tall Machadi, Nandra Jambudi</textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="companyCity">City & PIN</label>
-                <input type="text" id="companyCity" placeholder="e.g., GJ 363642, INDIA" value="GJ 363642, INDIA">
-            </div>
-
-            <div class="form-group">
-                <label for="pdfTerms">Terms & Conditions (PDF mein dikhega)</label>
-                <textarea id="pdfTerms">Prices are valid until 31st December 2025
-Prices are subject to change without prior notice
-Payment Terms: Net 30 days (as per agreement)
-Delivery: Free FOB Destination
-All prices are subject to GST as applicable
-Subject to stock availability
-Bulk orders may attract special discounts</textarea>
-            </div>
-        </div>
-
-        <!-- Add Items Tab -->
-        <div id="basic" class="tab-content">
+        <!-- Basic Tab -->
+        <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
                 <div class="form-group">
                     <label for="size">Size</label>
@@ -573,12 +480,14 @@ Bulk orders may attract special discounts</textarea>
                 </div>
             </div>
         </div>
+
+        <!-- Advance Tab -->
+        <div id="advance" class="tab-content">
+            <p style="text-align: center; color: #999; padding: 40px;">Advance features coming soon...</p>
+        </div>
     </div>
 
     <script>
-        // EMBEDDED LOGO (Base64 - aapka logo)
-        const EMBEDDED_LOGO = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCACIAIgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWm5ybnJ2eoqOkpaanqKmqsrO0tba2uLm6wsPExcbHyMnK0tPU1dbW2Nna4uPk5ebn6Onq8vP09fb2+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlbaWmJ2eoqOkpaanqKmqsrO0tba2uLm6wsPExcbHyMnK0tPU1dbW2Nna4uPk5ebn6Onq8vP09fb2+Pn6/9oADAMBAAIRAxEAPwD5/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/9k=";
-
         const sizes = [
             '1200x1200x9mm',
             '1200x1790x9mm',
@@ -616,12 +525,6 @@ Bulk orders may attract special discounts</textarea>
 
         let items = [];
         let itemIdCounter = 0;
-
-        // Initialize logo
-        window.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('logoImg').src = EMBEDDED_LOGO;
-            renderItems();
-        });
 
         function filterSuggestions(type) {
             const inputId = type === 'size' ? 'size' : 'surface';
@@ -744,16 +647,6 @@ Bulk orders may attract special discounts</textarea>
 
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('hi-IN');
-            const companyName = document.getElementById('companyName').value;
-            const companySubtitle = document.getElementById('companySubtitle').value;
-            const companyLegalName = document.getElementById('companyLegalName').value;
-            const companyCIN = document.getElementById('companyCIN').value;
-            const companyEmail = document.getElementById('companyEmail').value;
-            const companyWeb = document.getElementById('companyWeb').value;
-            const companyAddress = document.getElementById('companyAddress').value;
-            const companyCity = document.getElementById('companyCity').value;
-            const pdfTerms = document.getElementById('pdfTerms').value;
-
             let tableRows = '';
             let totalItems = 0;
 
@@ -769,46 +662,49 @@ Bulk orders may attract special discounts</textarea>
                 totalItems++;
             });
 
-            const termsHTML = pdfTerms.split('\n').map(line => `<li>${line.trim()}</li>`).join('');
-
             return `
                 <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px;">
-                    <!-- Header with Logo -->
+                    <!-- Header -->
                     <div style="border-bottom: 3px solid #667eea; padding-bottom: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; align-items: flex-start; margin-bottom: 15px;">
-                            <img src="${EMBEDDED_LOGO}" style="max-width: 80px; max-height: 80px; margin-right: 20px;">
-                            <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; gap: 15px;">
+                            <div>
+                                <img src="10237logo.png" style="height: 60px; width: auto; object-fit: contain;">
+                            </div>
+                            <div style="flex: 1; text-align: center;">
                                 <div style="font-size: 28px; font-weight: bold; color: #1a1a1a; letter-spacing: 1px;">
-                                    ${companyName}
+                                    GRANICER
                                 </div>
                                 <div style="font-size: 12px; color: #667eea; font-weight: 600; letter-spacing: 0.5px;">
-                                    ${companySubtitle}
+                                    CERAMICA INDIANA
                                 </div>
                             </div>
+                            <div style="width: 60px;"></div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 5px;">Company Details:</div>
-                                <div>${companyLegalName}</div>
-                                <div style="color: #666;">C.I. No.: ${companyCIN}</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666;">C.I. No.: U26914GJ2006PTC049091</div>
                             </div>
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 5px;">Registered Office:</div>
-                                <div>${companyAddress}</div>
-                                <div>${companyCity}</div>
+                                <div>Survey No. 118, National Highway No. 8-A</div>
+                                <div>Tall Machadi, Nandra Jambudi</div>
+                                <div>GJ 363642, INDIA</div>
                             </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-top: 15px; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 5px;">Contact:</div>
-                                <div>📧 Email: ${companyEmail}</div>
-                                <div>🌐 Web: ${companyWeb}</div>
+                                <div>📧 Email: info@granicer.in</div>
+                                <div>🌐 Web: www.granicer.in</div>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 10px; color: #999;">Price List</div>
-                                <div style="font-size: 10px; color: #999;">Generated: ${currentDate}</div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 5px;">Unit - 2:</div>
+                                <div>Revenue Survey No. 168 P1 and P2</div>
+                                <div>AI Road Kadki Workyard Machdi - 363621</div>
                             </div>
                         </div>
                     </div>
@@ -852,15 +748,23 @@ Bulk orders may attract special discounts</textarea>
                             Terms & Conditions:
                         </div>
                         <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 20px; line-height: 1.8;">
-                            ${termsHTML}
+                            <li>Prices are valid until 31st December 2025</li>
+                            <li>Prices are subject to change without prior notice</li>
+                            <li>Payment Terms: Net 30 days (as per agreement)</li>
+                            <li>Delivery: Free FOB Destination</li>
+                            <li>All prices are subject to GST as applicable</li>
+                            <li>Subject to stock availability</li>
+                            <li>Bulk orders may attract special discounts</li>
+                            <li>Terms and conditions as per company policy</li>
                         </ul>
                     </div>
 
                     <!-- Footer -->
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center;">
                         <div style="font-size: 10px; color: #999;">
-                            <p style="margin: 5px 0;">This is an electronically generated price list.</p>
-                            <p style="margin: 5px 0; font-weight: 600;">${companyName} - Premium Ceramic Tiles</p>
+                            <p style="margin: 5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                            <p style="margin: 5px 0;">Generated on: ${currentDate}</p>
+                            <p style="margin: 5px 0; font-weight: 600;">GRANICER CERAMICA INDIA - Premium Ceramic Tiles Manufacturer</p>
                         </div>
                     </div>
                 </div>
@@ -892,6 +796,9 @@ Bulk orders may attract special discounts</textarea>
                 document.getElementById('surfaceSuggestions').classList.remove('show');
             }
         });
+
+        // Initialize
+        renderItems();
     </script>
 </body>
 </html>

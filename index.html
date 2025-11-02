@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -56,13 +57,13 @@
         }
 
         .tab-btn.active {
-            color: #667eea;
+            color: #ed3237;
             background: white;
-            border-bottom-color: #667eea;
+            border-bottom-color: #ed3237;
         }
 
         .tab-btn:hover {
-            color: #667eea;
+            color: #ed3237;
         }
 
         .tab-content {
@@ -106,8 +107,8 @@
         input[type="number"]:focus,
         select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #ed3237;
+            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
 
         .price-input-container {
@@ -120,8 +121,8 @@
         }
 
         .price-input-container:focus-within {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #ed3237;
+            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
 
         .price-symbol {
@@ -177,12 +178,12 @@
         }
 
         .pdf-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
         }
 
         .pdf-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
         }
 
         .pdf-button:disabled {
@@ -250,7 +251,7 @@
         }
 
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
             color: white;
             flex-shrink: 0;
         }
@@ -259,7 +260,7 @@
             padding: 10px;
             text-align: left;
             font-weight: 600;
-            border: 1px solid #667eea;
+            border: 1px solid #ed3237;
         }
 
         td {
@@ -489,24 +490,24 @@
 
     <script>
         const sizes = [
-            '1200x1200x9mm',
-            '1200x1790x9mm',
-            '1200x1800x9mm',
-            '1200x2400x9mm',
-            '1200x2800x6mm',
-            '1200x3180x15mm',
-            '1200x3200x15mm',
-            '1600x1600x9mm',
-            '1600x3200x6mm',
-            '1600x3200x12mm',
-            '1620x3240x12mm',
-            '790x2980x15mm',
-            '800x3000x15mm',
-            '800x2400x15mm',
-            '1000x3000x5mm',
-            '1200x2600x6mm',
-            '1200x3000x9mm',
-            '800x3200x15mm'
+            '1200x1200x9MM',
+            '1200x1790x9MM',
+            '1200x1800x9MM',
+            '1200x2400x9MM',
+            '1200x2800x6MM',
+            '1200x3180x15MM',
+            '1200x3200x15MM',
+            '1600x1600x9MM',
+            '1600x3200x6MM',
+            '1600x3200x12MM',
+            '1620x3240x12MM',
+            '790x2980x15MM',
+            '800x3000x15MM',
+            '800x2400x15MM',
+            '1000x3000x5MM',
+            '1200x2600x6MM',
+            '1200x3000x9MM',
+            '800x3200x15MM'
         ];
 
         const surfaces = [
@@ -662,7 +663,7 @@
             return `
                 <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px;">
                     <!-- Header with Logo -->
-                    <div style="border-bottom: 3px solid #CC3333; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
+                    <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
                         <img src="10237logo.png" style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;">
                     </div>
 
@@ -695,9 +696,9 @@
                         </div>
                     </div>
 
-                    <!-- Title -->
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="font-size: 20px; font-weight: bold; color: #1a1a1a; margin-bottom: 5px;">
+                    <!-- Title with Divider Line -->
+                    <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 15px 0; margin-bottom: 20px; text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">
                             PRICE LIST
                         </div>
                     </div>
@@ -705,11 +706,11 @@
                     <!-- Table -->
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <thead>
-                            <tr style="background: linear-gradient(135deg, #CC3333 0%, #994444 100%); color: white;">
-                                <th style="padding: 12px; border: 1px solid #CC3333; text-align: center; font-size: 12px; font-weight: 600;">Sr. No.</th>
-                                <th style="padding: 12px; border: 1px solid #CC3333; text-align: left; font-size: 12px; font-weight: 600;">Size</th>
-                                <th style="padding: 12px; border: 1px solid #CC3333; text-align: left; font-size: 12px; font-weight: 600;">Surface Type</th>
-                                <th style="padding: 12px; border: 1px solid #CC3333; text-align: right; font-size: 12px; font-weight: 600;">Price (₹)</th>
+                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white;">
+                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600;">Sr. No.</th>
+                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: left; font-size: 12px; font-weight: 600;">Size</th>
+                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: left; font-size: 12px; font-weight: 600;">Surface Type</th>
+                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: right; font-size: 12px; font-weight: 600;">Price <span style="font-size: 9px; display: block;">(/sq feet)</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -718,7 +719,7 @@
                     </table>
 
                     <!-- Terms & Conditions -->
-                    <div style="border-top: 3px solid #CC3333; padding-top: 15px;">
+                    <div style="border-top: 3px solid #ed3237; padding-top: 15px;">
                         <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 10px;">
                             Terms & Conditions:
                         </div>
@@ -736,7 +737,8 @@
                     <!-- Footer -->
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd; text-align: center;">
                         <div style="font-size: 10px; color: #999;">
-                            <p style="margin: 5px 0; font-weight: 600;">COMET GRANITO PVT.LTD - Premium Ceramic Tiles Manufacturer</p>
+                            <p style="margin: 5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                            <p style="margin: 5px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                         </div>
                     </div>
                 </div>

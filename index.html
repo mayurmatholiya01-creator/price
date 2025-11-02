@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -653,24 +654,24 @@
             items.forEach((item, index) => {
                 tableRows += `
                     <tr>
-                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${index + 1}</td>
-                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${item.size}</td>
-                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${item.surface}</td>
-                        <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">₹ ${item.price.toFixed(2)}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${index + 1}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${item.size}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">${item.surface}</td>
+                        <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px;">₹ ${item.price.toFixed(2)}</td>
                     </tr>
                 `;
             });
 
             return `
                 <div style="font-family: 'Arial', sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; position: relative;">
-                    <!-- Bottom Left Logo (Normal) -->
-                    <div style="position: absolute; bottom: 20px; left: 20px; opacity: 0.3;">
-                        <img src="granicer logo (1).png" style="height: 100px; width: auto; object-fit: contain;">
+                    <!-- Bottom Left Logo (Normal) - Full Opacity -->
+                    <div style="position: absolute; bottom: 30px; left: 20px; z-index: 1;">
+                        <img src="granicer logo (1).png" style="height: 80px; width: auto; object-fit: contain;">
                     </div>
 
-                    <!-- Top Right Logo (Rotated 180 degrees) -->
-                    <div style="position: absolute; top: 20px; right: 20px; opacity: 0.3;">
-                        <img src="granicer logo (1).png" style="height: 100px; width: auto; object-fit: contain; transform: rotate(180deg);">
+                    <!-- Top Right Logo (Rotated 180 degrees) - Full Opacity -->
+                    <div style="position: absolute; top: 30px; right: 20px; z-index: 1;">
+                        <img src="granicer logo (1).png" style="height: 80px; width: auto; object-fit: contain; transform: rotate(180deg);">
                     </div>
 
                     <!-- Header with Logo -->
@@ -708,7 +709,7 @@
                     </div>
 
                     <!-- Title with Divider Line -->
-                    <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 15px 0; margin-bottom: 20px; text-align: center;">
+                    <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 12px 0; margin-bottom: 15px; text-align: center;">
                         <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">
                             PRICE LIST
                         </div>
@@ -717,11 +718,11 @@
                     <!-- Table -->
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         <thead>
-                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white;">
-                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600;">Sr. No.</th>
-                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600;">Size</th>
-                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600;">Surface Type</th>
-                                <th style="padding: 12px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600;">Price <span style="font-size: 9px; display: block;">(/sq feet)</span></th>
+                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600;">Sr. No.</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600;">Size</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600;">Surface Type</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
                             </tr>
                         </thead>
                         <tbody>

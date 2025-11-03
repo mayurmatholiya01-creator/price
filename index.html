@@ -266,10 +266,10 @@
         }
 
         td {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ddd;
             text-align: center;
-            height: 24px;
+            height: 20px;
         }
 
         tbody tr:hover {
@@ -556,7 +556,7 @@
             
             // Calculate items per page - 11 entries per page for better spacing
             const itemsPerPage = 11;
-            const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+            const totalPages = Math.ceil(items.length / itemsPerPage);
             let pagesHTML = '';
 
             for (let pageNum = 0; pageNum < totalPages; pageNum++) {
@@ -568,32 +568,20 @@
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;">${actualIndex}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;">${item.size}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;">${item.surface}</td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;">₹ ${item.price.toFixed(2)}</td>
+                        <tr style="height: 20px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${actualIndex}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.size}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.surface}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
-
-                // Add blank rows to always show exactly 10 rows
-                for (let i = pageItems.length; i < 10; i++) {
-                    tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;"></td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;"></td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;"></td>
-                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center; height: 24px; font-size: 12px;"></td>
-                        </tr>
-                    `;
-                }
 
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; page-break-after: always;">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden;${pageNum < totalPages - 1 ? ' page-break-after: always;' : ''}">
                         
                         <!-- Background: Logos positioned absolutely with clip-path to prevent overflow -->
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
@@ -623,7 +611,7 @@
                                 </div>
 
                                 <!-- Company Details Section -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;">
                                     <div>
                                         <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
                                         <div>COMET GRANITO PVT.LTD.</div>
@@ -638,7 +626,7 @@
                                 </div>
 
                                 <!-- Contact and Unit Details -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 12px; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;">
                                     <div>
                                         <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
                                         <div style="font-size: 10px;">📧 Email: info@granicer.in</div>
@@ -666,10 +654,10 @@
                             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                                 <thead>
                                     <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 12px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
+                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
+                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
+                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
+                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
                                     </tr>
                                 </thead>
                                 <tbody style="background: white;">

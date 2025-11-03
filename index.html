@@ -544,7 +544,7 @@
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+                html2canvas: { scale: 2 },
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
             };
 
@@ -553,151 +553,133 @@
 
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
-            
-            // Calculate items per page - 11 entries per page for better spacing
-            const itemsPerPage = 11;
-            const totalPages = Math.ceil(items.length / itemsPerPage);
-            let pagesHTML = '';
+            let tableRows = '';
 
-            for (let pageNum = 0; pageNum < totalPages; pageNum++) {
-                const startIdx = pageNum * itemsPerPage;
-                const endIdx = Math.min(startIdx + itemsPerPage, items.length);
-                const pageItems = items.slice(startIdx, endIdx);
-
-                let tableRows = '';
-                pageItems.forEach((item, idx) => {
-                    const actualIndex = startIdx + idx + 1;
-                    tableRows += `
-                        <tr style="height: 20px;">
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${actualIndex}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.size}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.surface}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">₹ ${item.price.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-
-                const showHeader = pageNum === 0;
-                const showFooter = pageNum === totalPages - 1;
-
-                pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; page-break-after: always;">
-                        
-                        <!-- Background: Logos positioned absolutely with clip-path to prevent overflow -->
-                        <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img
-                                src="A LOGO.png"
-                                style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;"
-                            />
-                        </div>
-
-                        <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img 
-                                src="A LOGO.png" 
-                                style="width: 100%; height: 100%; object-fit: contain; display: block;" 
-                            />
-                        </div>
-
-                        <!-- Main Content Area -->
-                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
-                            
-                            ${showHeader ? `
-                                <!-- Header with Logo -->
-                                <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
-                                    <img
-                                        src="GRANICER LOGO.png"
-                                        style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                                    />
-                                </div>
-
-                                <!-- Company Details Section -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                                        <div>COMET GRANITO PVT.LTD.</div>
-                                        <div style="color: #666; font-size: 10px;">C.I. No.: U26914GJ2006PTC049091</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                        <div style="font-size: 10px;">Survey No. 118, National Highway No. 8-A</div>
-                                        <div style="font-size: 10px;">Tall Machadi, Nendra Jambudi</div>
-                                        <div style="font-size: 10px;">GJ 363642, INDIA</div>
-                                    </div>
-                                </div>
-
-                                <!-- Contact and Unit Details -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                        <div style="font-size: 10px;">📧 Email: info@granicer.in</div>
-                                        <div style="font-size: 10px;">🌐 Web: www.granicer.in</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                        <div style="font-size: 10px;">Revenue Survey No. 168 P1 and P2</div>
-                                        <div style="font-size: 10px;">Al Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                                    </div>
-                                </div>
-
-                                <!-- Title with Divider Line -->
-                                <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 12px 0; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                                </div>
-                            ` : `
-                                <!-- Page continuation title -->
-                                <div style="border-bottom: 2px solid #ed3237; padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 18px; font-weight: bold; color: #1a1a1a;">PRICE LIST (Continued)</div>
-                                </div>
-                            `}
-
-                            <!-- Table -->
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                                <thead>
-                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody style="background: white;">
-                                    ${tableRows}
-                                </tbody>
-                            </table>
-
-                            ${showFooter ? `
-                                <!-- Terms & Conditions -->
-                                <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 10px;">
-                                    <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
-                                        Terms & Conditions:
-                                    </div>
-                                    <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
-                                        <li>Prices are valid until 31st December 2025</li>
-                                        <li>Prices are subject to change without prior notice</li>
-                                        <li>Payment Terms: Net 30 days (as per agreement)</li>
-                                        <li>Delivery: Free FOB Destination</li>
-                                        <li>All prices are subject to GST as applicable</li>
-                                        <li>Subject to stock availability</li>
-                                        <li>Bulk orders may attract special discounts</li>
-                                    </ul>
-                                </div>
-
-                                <!-- Footer -->
-                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">
-                                    <div style="font-size: 9px; color: #999; line-height: 1.4;">
-                                        <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                        <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                        <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                        </div>
-                    </div>
+            items.forEach((item, index) => {
+                tableRows += `
+                    <tr style="height: 18px;">
+                        <td style="padding: 4px; border: 1px solid #ddd; text-align: center; height: 18px; font-size: 9px;">${
+                            index + 1
+                        }</td>
+                        <td style="padding: 4px; border: 1px solid #ddd; text-align: center; height: 18px; font-size: 9px;">${
+                            item.size
+                        }</td>
+                        <td style="padding: 4px; border: 1px solid #ddd; text-align: center; height: 18px; font-size: 9px;">${
+                            item.surface
+                        }</td>
+                        <td style="padding: 4px; border: 1px solid #ddd; text-align: center; height: 18px; font-size: 9px;">₹ ${item.price.toFixed(
+                            2
+                        )}</td>
+                    </tr>
                 `;
-            }
+            });
 
-            return pagesHTML;
+            return `
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; padding: 0; position: relative; overflow: hidden;">
+                    
+                    <!-- Top Right Corner Logo (180° Rotated) - 69x86 size -->
+                    <div style="position: absolute; top: 0; right: 0; width: 69px; height: 86px; overflow: hidden; z-index: 5;">
+                        <img
+                            src="A LOGO.png"
+                            style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg);"
+                        />
+                    </div>
+
+                    <!-- Bottom Left Corner Logo - 69x86 size -->
+                    <div style="position: absolute; bottom: 0; left: 0; width: 69px; height: 86px; overflow: hidden; z-index: 5;">
+                        <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain;" />
+                    </div>
+
+                    <!-- Main Content Area with tight padding -->
+                    <div style="padding: 15px 15px 15px 15px; position: relative; z-index: 10;">
+                        
+                        <!-- Header with Logo -->
+                        <div style="border-bottom: 2px solid #ed3237; padding-bottom: 12px; margin-bottom: 12px; text-align: center;">
+                            <img
+                                src="GRANICER LOGO.png"
+                                style="height: 60px; width: auto; object-fit: contain; margin-bottom: 10px;"
+                            />
+                        </div>
+
+                        <!-- Company Details Section - Condensed -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 9px; color: #333; line-height: 1.4; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8px;">C.I. No.: U26914GJ2006PTC049091</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8px;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8px;">Tall Machadi, Nendra Jambudi</div>
+                                <div style="font-size: 8px;">GJ 363642, INDIA</div>
+                            </div>
+                        </div>
+
+                        <!-- Contact and Unit Details - Condensed -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 9px; color: #333; margin-bottom: 10px; line-height: 1.4;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8px;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8px;">🌐 Web: www.granicer.in</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 4px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8px;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8px;">Al Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                            </div>
+                        </div>
+
+                        <!-- Title with Divider Line -->
+                        <div style="border-top: 1.5px solid #ed3237; border-bottom: 1.5px solid #ed3237; padding: 8px 0; margin-bottom: 10px; text-align: center;">
+                            <div style="font-size: 16px; font-weight: bold; color: #1a1a1a;">
+                                PRICE LIST
+                            </div>
+                        </div>
+
+                        <!-- Table - Optimized for more rows -->
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 24px;">
+                                    <th style="padding: 3px; border: 1px solid #ed3237; text-align: center; font-size: 10px; font-weight: 600; height: 24px;">Sr. No.</th>
+                                    <th style="padding: 3px; border: 1px solid #ed3237; text-align: center; font-size: 10px; font-weight: 600; height: 24px;">Size</th>
+                                    <th style="padding: 3px; border: 1px solid #ed3237; text-align: center; font-size: 10px; font-weight: 600; height: 24px;">Surface Type</th>
+                                    <th style="padding: 3px; border: 1px solid #ed3237; text-align: center; font-size: 10px; font-weight: 600; height: 24px;">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+
+                        <!-- Terms & Conditions - Condensed -->
+                        <div style="border-top: 1.5px solid #ed3237; padding-top: 8px;">
+                            <div style="font-size: 10px; font-weight: bold; color: #1a1a1a; margin-bottom: 6px;">
+                                Terms & Conditions:
+                            </div>
+                            <ul style="font-size: 8px; color: #555; margin: 0; padding-left: 18px; line-height: 1.3;">
+                                <li>Prices are valid until 31st December 2025</li>
+                                <li>Prices are subject to change without prior notice</li>
+                                <li>Payment Terms: Net 30 days (as per agreement)</li>
+                                <li>Delivery: Free FOB Destination</li>
+                                <li>All prices are subject to GST as applicable</li>
+                                <li>Subject to stock availability</li>
+                                <li>Bulk orders may attract special discounts</li>
+                            </ul>
+                        </div>
+
+                        <!-- Footer - Condensed -->
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #ddd; text-align: center;">
+                            <div style="font-size: 8px; color: #999; line-height: 1.2;">
+                                <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
         }
 
         function clearForm() {

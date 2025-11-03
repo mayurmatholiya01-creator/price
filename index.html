@@ -555,7 +555,7 @@
             const currentDate = new Date().toLocaleDateString('en-GB');
             
             // Calculate items per page - 11 entries per page for better spacing
-            const itemsPerPage = 10;
+            const itemsPerPage = 11;
             const totalPages = Math.ceil(items.length / itemsPerPage);
             let pagesHTML = '';
 
@@ -565,6 +565,8 @@
                 const pageItems = items.slice(startIdx, endIdx);
 
                 let tableRows = '';
+
+                // Add rows for actual items
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
@@ -576,6 +578,19 @@
                         </tr>
                     `;
                 });
+
+                // Add blank rows to always show 10 rows total
+                const itemsPerPageDisplay = 10;
+                for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
+                    tableRows += `
+                        <tr style="height: 20px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                        </tr>
+                    `;
+                }
 
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;

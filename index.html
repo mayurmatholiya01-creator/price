@@ -548,10 +548,10 @@
         }
 
         /**
-         * 🌟 [GEMINI FINAL FIX v2]: 'pt' + '!important'
-         * 💡 [NEW PIN-POINT LINE FIX]:
+         * 🌟 [GEMINI FINAL FIX v3]: 'pt' + '!important'
+         * 💡 [NEW PIN-POINT LINE FIX v3]:
          * 'border' को 'linear-gradient' से बदला गया
-         * ताकि किनारों पर पतली "पिन पॉइंट" लाइन बन सके।
+         * 10% fade, 80% solid, 10% fade + 1px shadow for 3D look
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -575,7 +575,11 @@
 
             // --- पेज HTML ---
             // (rgba(237, 50, 55, 0) = ट्रांसपेरेंट लाल, rgba(237, 50, 55, 1) = सॉलिड लाल)
-            const pinPointLine = '<div style="height: 2px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 50%, rgba(237, 50, 55, 0) 100%);"></div>';
+            // 10% fade, 80% solid, 10% fade + 1px shadow for 3D look
+            const pinPointLine = `
+                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
+                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
+            `;
 
 
             pagesHTML = `

@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Tile Price Manager - PDF Generator</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
@@ -21,6 +22,8 @@
             align-items: center;
             padding: 15px;
             padding-top: 20px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .container {
@@ -51,6 +54,8 @@
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
             text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .tab-button.active {
@@ -62,6 +67,7 @@
             padding: 20px;
             max-height: 85vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab-content {
@@ -93,7 +99,7 @@
             padding: 12px 14px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: inherit;
             -webkit-appearance: none;
             appearance: none;
@@ -156,6 +162,7 @@
             z-index: 100;
             display: none;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            -webkit-overflow-scrolling: touch;
         }
 
         .suggestions.show {
@@ -169,6 +176,7 @@
             font-size: 13px;
             color: #333;
             user-select: none;
+            -webkit-user-select: none;
         }
 
         .suggestion-item.highlighted {
@@ -194,6 +202,8 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .btn-add {
@@ -259,6 +269,8 @@
             cursor: pointer;
             font-size: 11px;
             font-weight: 600;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .empty-state {
@@ -342,7 +354,7 @@
                     <label for="price">Price</label>
                     <div class="price-wrapper">
                         <span class="price-symbol">₹</span>
-                        <input type="number" id="price" class="price-input" placeholder="Enter price" min="0" step="0.01">
+                        <input type="number" id="price" class="price-input" placeholder="Enter price" min="0" step="0.01" inputmode="decimal">
                     </div>
                 </div>
 
@@ -586,85 +598,83 @@
                 const blankRows = itemsPerPage - pageItems.length;
 
                 pdfHTML += `
-                    <div style="width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; page-break-after: always; font-family: Arial, sans-serif; overflow: hidden; background: white; box-sizing: border-box; border: 3px solid #000; display: flex; flex-direction: column;">
+                    <div style="width: 210mm; height: 297mm; position: relative; page-break-after: always; font-family: Arial, sans-serif; background: white; border: 3px solid #000; margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column;">
                         
                         <!-- LEFT BOTTOM LOGO - ORIGINAL -->
-                        <img src="${A_LOGO}" style="position: absolute; bottom: 13mm; left: 13mm; width: 28mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1;">
+                        <img src="${A_LOGO}" style="position: absolute; bottom: 12mm; left: 12mm; width: 26mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; max-width: none;">
                         
                         <!-- RIGHT TOP LOGO - ROTATED 180 + FLIPPED -->
-                        <img src="${A_LOGO}" style="position: absolute; top: 13mm; right: 13mm; width: 28mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; transform: rotate(180deg) scaleY(-1);">
+                        <img src="${A_LOGO}" style="position: absolute; top: 12mm; right: 12mm; width: 26mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; transform: rotate(180deg) scaleY(-1); max-width: none;">
 
                         <!-- MAIN CONTENT WRAPPER -->
-                        <div style="position: relative; z-index: 2; padding: 13mm; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+                        <div style="position: relative; z-index: 2; padding: 12mm; flex: 1; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; overflow: hidden;">
                             
                             <!-- HEADER WITH LOGO -->
-                            <div style="text-align: center; margin-bottom: 6px; border-bottom: 3px solid #d32f2f; padding-bottom: 6px; flex-shrink: 0;">
-                                <img src="${GRANICER_LOGO}" style="max-width: 100%; max-height: 38px; object-fit: contain;">
+                            <div style="text-align: center; margin-bottom: 5px; border-bottom: 3px solid #d32f2f; padding-bottom: 5px; flex-shrink: 0; width: 100%;">
+                                <img src="${GRANICER_LOGO}" style="max-width: 100%; max-height: 36px; object-fit: contain; height: 36px;">
                             </div>
 
                             <!-- COMPANY INFO -->
-                            <table style="width: 100%; margin-bottom: 6px; font-size: 8.2pt; line-height: 1.3; border-spacing: 0; flex-shrink: 0;">
-                                <tr>
-                                    <td style="width: 50%; vertical-align: top; padding-right: 6px;">
-                                        <strong>Company Details:</strong><br>
-                                        ${companyInfo.name}<br>
-                                        ${companyInfo.cin}<br><br>
-                                        <strong>Contact:</strong><br>
-                                        Email: ${companyInfo.email}<br>
-                                        Web: ${companyInfo.web}
-                                    </td>
-                                    <td style="width: 50%; vertical-align: top; padding-left: 6px;">
-                                        <strong>${companyInfo.registeredOffice.title}</strong><br>
-                                        ${companyInfo.registeredOffice.address.join('<br>')}<br><br>
-                                        <strong>${companyInfo.unit2.title}</strong><br>
-                                        ${companyInfo.unit2.address.join('<br>')}
-                                    </td>
-                                </tr>
-                            </table>
+                            <div style="width: 100%; margin-bottom: 5px; font-size: 7.8pt; line-height: 1.25; flex-shrink: 0; display: flex; gap: 8px;">
+                                <div style="width: 50%; padding-right: 4px;">
+                                    <strong>Company Details:</strong><br>
+                                    ${companyInfo.name}<br>
+                                    ${companyInfo.cin}<br><br>
+                                    <strong>Contact:</strong><br>
+                                    Email: ${companyInfo.email}<br>
+                                    Web: ${companyInfo.web}
+                                </div>
+                                <div style="width: 50%; padding-left: 4px;">
+                                    <strong>${companyInfo.registeredOffice.title}</strong><br>
+                                    ${companyInfo.registeredOffice.address.join('<br>')}<br><br>
+                                    <strong>${companyInfo.unit2.title}</strong><br>
+                                    ${companyInfo.unit2.address.join('<br>')}
+                                </div>
+                            </div>
 
                             <!-- PRICE LIST TITLE -->
-                            <h2 style="text-align: center; color: #d32f2f; font-size: 11.5pt; margin: 4px 0; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;">Price List</h2>
+                            <h2 style="text-align: center; color: #d32f2f; font-size: 11pt; margin: 3px 0; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;">Price List</h2>
 
                             <!-- TABLE -->
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px; flex-grow: 1; font-size: 7.8pt;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px; flex-grow: 1; font-size: 7.5pt; table-layout: fixed;">
                                 <thead>
-                                    <tr style="background: #d32f2f; color: white; height: 22px;">
-                                        <th style="border: 1px solid #999; padding: 4px; text-align: center; width: 8%; font-weight: bold; font-size: 7.8pt;">Sr. No.</th>
-                                        <th style="border: 1px solid #999; padding: 4px; text-align: left; width: 32%; font-weight: bold; font-size: 7.8pt;">Size</th>
-                                        <th style="border: 1px solid #999; padding: 4px; text-align: left; width: 32%; font-weight: bold; font-size: 7.8pt;">Surface Type</th>
-                                        <th style="border: 1px solid #999; padding: 4px; text-align: right; width: 28%; font-weight: bold; font-size: 7.8pt;">Price Per Unit</th>
+                                    <tr style="background: #d32f2f; color: white; height: 20px;">
+                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: center; width: 8%; font-weight: bold;">Sr.</th>
+                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: left; width: 32%; font-weight: bold;">Size</th>
+                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: left; width: 32%; font-weight: bold;">Surface Type</th>
+                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: right; width: 28%; font-weight: bold;">Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${pageItems.map((item, idx) => `
-                                        <tr style="background: ${(startIdx + idx) % 2 === 0 ? '#f9f9f9' : 'white'}; height: 17px;">
-                                            <td style="border: 1px solid #ddd; padding: 3px; text-align: center; font-size: 7.8pt;">${startIdx + idx + 1}</td>
-                                            <td style="border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 7.8pt;">${item.size}</td>
-                                            <td style="border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 7.8pt;">${item.surface}</td>
-                                            <td style="border: 1px solid #ddd; padding: 3px; text-align: right; font-size: 7.8pt;">₹ ${item.price.toFixed(2)}</td>
+                                        <tr style="background: ${(startIdx + idx) % 2 === 0 ? '#fafafa' : 'white'}; height: 16px;">
+                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${startIdx + idx + 1}</td>
+                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: left; word-break: break-word;">${item.size}</td>
+                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: left; word-break: break-word;">${item.surface}</td>
+                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: right;">₹ ${item.price.toFixed(2)}</td>
                                         </tr>
                                     `).join('')}
                                     ${Array(blankRows).fill(0).map(() => `
-                                        <tr style="background: white; height: 17px;">
-                                            <td style="border: 1px solid #ddd; padding: 3px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 3px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 3px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 3px;"></td>
+                                        <tr style="background: white; height: 16px;">
+                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
                             </table>
 
                             <!-- FOOTER -->
-                            <div style="border-top: 2px solid #d32f2f; padding-top: 4px; font-size: 6.2pt; line-height: 1.2; flex-shrink: 0; overflow: hidden;">
+                            <div style="border-top: 2px solid #d32f2f; padding-top: 3px; font-size: 5.8pt; line-height: 1.15; flex-shrink: 0; width: 100%; box-sizing: border-box; overflow: hidden;">
                                 <strong style="color: #d32f2f;">Terms & Conditions:</strong>
-                                <ul style="margin-left: 10px; margin-top: 2px; padding-left: 0;">
-                                    ${terms.map(term => `<li style="margin: 0.8px 0; text-align: justify;">${term}</li>`).join('')}
+                                <ul style="margin-left: 8px; margin-top: 1px; padding-left: 0; margin-bottom: 2px;">
+                                    ${terms.map(term => `<li style="margin: 0.5px 0; text-align: justify;">${term}</li>`).join('')}
                                 </ul>
-                                <div style="text-align: center; margin-top: 3px; color: #666; border-top: 1px solid #ddd; padding-top: 2px;">
-                                    <p style="margin: 0.5px 0; font-size: 5.8pt;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                    <p style="margin: 0.5px 0; font-size: 5.8pt;">Generated on: ${new Date().toLocaleDateString()}</p>
-                                    <p style="margin: 0.5px 0; font-size: 5.8pt;"><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
+                                <div style="text-align: center; margin-top: 2px; color: #666; border-top: 1px solid #ddd; padding-top: 1px;">
+                                    <p style="margin: 0.3px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                    <p style="margin: 0.3px 0;">Generated on: ${new Date().toLocaleDateString()}</p>
+                                    <p style="margin: 0.3px 0;"><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
                                 </div>
                             </div>
                         </div>
@@ -679,8 +689,8 @@
                 margin: 0,
                 filename: `Granicer_PriceList_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true }
             };
 
             html2pdf().set(opt).from(element).save().then(() => {

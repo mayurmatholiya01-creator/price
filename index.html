@@ -548,6 +548,13 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
+            // Remove blank second page if it exists
+            const pages = element.querySelectorAll('div[style*="width: 210mm"]');
+            if (pages.length >= 2) {
+                // Delete the second page (index 1)
+                pages[1].remove();
+            }
+
             const opt = {
                 margin: [0, 0, 0, 0],
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -578,24 +585,25 @@
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                        <tr style="height: 24px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${actualIndex}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.size}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.surface}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
 
-                // Add blank rows to always show 10 rows total
-                const itemsPerPageDisplay = 15;
+                // Add blank rows ONLY if not the last page (to avoid overflow)
+                const showFooter = pageNum === totalPages - 1;
+                const itemsPerPageDisplay = showFooter ? pageItems.length : 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
+                        <tr style="height: 24px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
                         </tr>
                     `;
                 }
@@ -622,7 +630,7 @@
                         </div>
 
                         <!-- Main Content Area -->
-                        <div style="padding: 15px 20px; position: relative; z-index: 10;">
+                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                             
                             ${showHeader ? `
                                 <!-- Header with Logo -->

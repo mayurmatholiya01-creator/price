@@ -284,6 +284,17 @@
             display: block;
         }
 
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #d32f2f;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .buttons {
                 grid-template-columns: 1fr;
@@ -294,7 +305,6 @@
             }
         }
 
-        /* HIDDEN PDF CONTAINER */
         #pdfContainer {
             display: none;
         }
@@ -341,6 +351,8 @@
                     <button class="btn btn-pdf" id="pdfBtn">Generate PDF</button>
                 </div>
 
+                <div class="loading" id="loading">Generating PDF...</div>
+
                 <div class="items-section">
                     <div class="items-title">Added Items</div>
                     <div id="itemsContainer"></div>
@@ -356,7 +368,6 @@
         </div>
     </div>
 
-    <!-- HIDDEN PDF CONTAINER -->
     <div id="pdfContainer"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -390,6 +401,10 @@
 
         let items = [];
         let currentSuggestionIndex = -1;
+
+        const GITHUB_BASE = 'https://raw.githubusercontent.com/mayurmatholiya01-creator/price/main/';
+        const GRANICER_LOGO = GITHUB_BASE + 'GRANICER%20LOGO.png';
+        const A_LOGO = GITHUB_BASE + 'A%20LOGO.png';
 
         // TAB SWITCHING
         document.querySelectorAll('.tab-button').forEach(button => {
@@ -545,7 +560,7 @@
             renderItems();
         };
 
-        // PDF GENERATION - DIRECT DOWNLOAD
+        // PDF GENERATION
         document.getElementById('pdfBtn').addEventListener('click', generatePDF);
 
         function generatePDF() {
@@ -553,6 +568,10 @@
                 alert('Please add at least one item');
                 return;
             }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+            document.getElementById('pdfBtn').disabled = true;
 
             const itemsPerPage = 10;
             const totalPages = Math.ceil(items.length / itemsPerPage);
@@ -568,29 +587,29 @@
                     <div style="width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; page-break-after: always; font-family: Arial, sans-serif; overflow: hidden;">
                         
                         <!-- CORNER LOGOS -->
-                        <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/A%20LOGO.png" style="position: absolute; top: 0; right: 0; width: 60mm; height: 85mm; object-fit: contain; opacity: 0.8; z-index: 1;">
-                        <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/A%20LOGO.png" style="position: absolute; bottom: 0; left: 0; width: 60mm; height: 85mm; object-fit: contain; opacity: 0.8; z-index: 1; transform: scaleY(-1);">
+                        <img src="${A_LOGO}" style="position: absolute; top: 0; right: 0; width: 60mm; height: auto; object-fit: contain; opacity: 0.8; z-index: 1;">
+                        <img src="${A_LOGO}" style="position: absolute; bottom: 0; left: 0; width: 60mm; height: auto; object-fit: contain; opacity: 0.8; z-index: 1; transform: scaleY(-1);">
 
                         <!-- MAIN CONTENT -->
                         <div style="position: relative; z-index: 2; padding: 15mm; height: 297mm; display: flex; flex-direction: column;">
                             
                             <!-- HEADER -->
                             <div style="text-align: center; margin-bottom: 10px; border-bottom: 3px solid #d32f2f; padding-bottom: 10px;">
-                                <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/GRANICER%20LOGO.png" style="max-width: 100%; max-height: 50px; object-fit: contain;">
+                                <img src="${GRANICER_LOGO}" style="max-width: 100%; max-height: 50px; object-fit: contain;">
                             </div>
 
                             <!-- COMPANY INFO -->
                             <table style="width: 100%; margin-bottom: 10px; font-size: 9pt; line-height: 1.4;">
                                 <tr>
-                                    <td style="width: 50%; vertical-align: top;">
+                                    <td style="width: 50%; vertical-align: top; padding-right: 10px;">
                                         <strong>Company Details:</strong><br>
                                         ${companyInfo.name}<br>
                                         ${companyInfo.cin}<br><br>
                                         <strong>Contact:</strong><br>
-                                        Email: ${companyInfo.email}<br>
-                                        Web: ${companyInfo.web}
+                                        📧 ${companyInfo.email}<br>
+                                        🌐 ${companyInfo.web}
                                     </td>
-                                    <td style="width: 50%; vertical-align: top;">
+                                    <td style="width: 50%; vertical-align: top; padding-left: 10px;">
                                         <strong>${companyInfo.registeredOffice.title}</strong><br>
                                         ${companyInfo.registeredOffice.address.join('<br>')}<br><br>
                                         <strong>${companyInfo.unit2.title}</strong><br>
@@ -635,13 +654,13 @@
                             <!-- FOOTER -->
                             <div style="border-top: 2px solid #d32f2f; padding-top: 8px; font-size: 7pt; line-height: 1.3; margin-top: auto;">
                                 <strong style="color: #d32f2f;">Terms & Conditions:</strong>
-                                <ul style="margin-left: 15px;">
-                                    ${terms.map(term => `<li>${term}</li>`).join('')}
+                                <ul style="margin-left: 15px; margin-top: 3px;">
+                                    ${terms.map(term => `<li style="margin: 2px 0;">${term}</li>`).join('')}
                                 </ul>
                                 <div style="text-align: center; margin-top: 5px; color: #666;">
-                                    <p>This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                    <p>Generated on: ${new Date().toLocaleDateString()}</p>
-                                    <p><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
+                                    <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                    <p style="margin: 2px 0;">Generated on: ${new Date().toLocaleDateString()}</p>
+                                    <p style="margin: 2px 0;"><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
                                 </div>
                             </div>
                         </div>
@@ -652,17 +671,23 @@
             // GENERATE PDF
             const element = document.createElement('div');
             element.innerHTML = pdfHTML;
-            element.style.display = 'none';
 
             const opt = {
                 margin: 0,
-                filename: `Granicer_PriceList_${new Date().toLocaleDateString()}.pdf`,
+                filename: `Granicer_PriceList_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).save().then(() => {
+                loading.classList.remove('show');
+                document.getElementById('pdfBtn').disabled = false;
+            }).catch(() => {
+                loading.classList.remove('show');
+                document.getElementById('pdfBtn').disabled = false;
+                alert('Error generating PDF');
+            });
         }
 
         renderItems();

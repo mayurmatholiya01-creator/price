@@ -602,13 +602,13 @@
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
-                // *** FIX FOR BLANK PAGE (ATTEMPT 2) ***
-                // The 'page-break-after' logic has been completely removed.
-                // We now rely *only* on the 'height: 297mm' to tell the library
-                // to create a new page for each div.
+                // *** FIX FOR BLANK PAGE (METHOD 1) ***
+                // Height is slightly reduced to 296.5mm to prevent 
+                // the library from calculating a tiny overflow 
+                // and adding a blank page.
                 
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden;">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden;">
                         
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                             <img

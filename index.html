@@ -572,25 +572,71 @@
             html2pdf().set(opt).from(element).save();
         }
 
+        /**
+         * 🌟 [MODIFIED FUNCTION V2] 🌟
+         * This function now uses estimated counts based on the new layout:
+         * 1. Page 1 (Header)
+         * 2. Page 2+ (No Header, just a spacer for the logo)
+         * 3. Last Page (Footer)
+         */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
-            
-            const itemsPerPage = 15;
-            const totalPages = Math.ceil(items.length / itemsPerPage);
             let pagesHTML = '';
+            
+            // --- New Dynamic Paging Logic (Adjust these numbers as needed) ---
+            // ये नंबर अनुमानित हैं, आप इन्हें अपनी ज़रूरत के हिसाब से एडजस्ट कर सकते हैं
+            
+            // अगर सिर्फ एक पेज है (बड़ा हेडर + फुटर)
+            const itemsOnFirstPageOnly = 15; 
+            // पहला पेज (बड़ा हेडर, कोई फुटर नहीं)
+            const itemsOnFirstPage = 28;   
+            // बीच का पेज (सिर्फ लोगो, कोई हेडर/फुटर नहीं)
+            const itemsOnMiddlePage = 40;  
+            // आखिरी पेज, जो पहला नहीं है (सिर्फ लोगो + फुटर)
+            const itemsOnLastPage = 30;    
 
-            for (let pageNum = 0; pageNum < totalPages; pageNum++) {
-                const startIdx = pageNum * itemsPerPage;
-                const endIdx = Math.min(startIdx + itemsPerPage, items.length);
-                const pageItems = items.slice(startIdx, endIdx);
+            let remainingItems = [...items]; // Process करने के लिए आइटम की कॉपी
+            let pageNum = 0;
+            let currentItemIndex = 1; // Sr. No. के लिए
+
+            while (remainingItems.length > 0) {
+                let showHeader = (pageNum === 0);
+                let isLastPage = false;
+                let itemsForThisPage;
+
+                if (showHeader) {
+                    // हम पेज 1 पर हैं
+                    if (remainingItems.length <= itemsOnFirstPageOnly) {
+                        // यह *एकमात्र* पेज है
+                        itemsForThisPage = remainingItems.length;
+                        isLastPage = true;
+                    } else {
+                        // और पेज भी होंगे
+                        itemsForThisPage = itemsOnFirstPage;
+                        isLastPage = false;
+                    }
+                } else {
+                    // हम पेज 2 या उससे ज़्यादा पर हैं
+                    if (remainingItems.length <= itemsOnLastPage) {
+                        // यह *आखिरी* पेज है
+                        itemsForThisPage = remainingItems.length;
+                        isLastPage = true;
+                    } else {
+                        // यह *बीच* का पेज है
+                        itemsForThisPage = itemsOnMiddlePage;
+                        isLastPage = false;
+                    }
+                }
+
+                // इस पेज के लिए आइटम लें और उन्हें लिस्ट से हटा दें
+                const pageItems = remainingItems.splice(0, itemsForThisPage);
+                let showFooter = isLastPage; // फुटर सिर्फ आखिरी पेज पर दिखाएं
 
                 let tableRows = '';
-
-                pageItems.forEach((item, idx) => {
-                    const actualIndex = startIdx + idx + 1;
+                pageItems.forEach((item) => {
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${currentItemIndex++}</td>
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
@@ -598,22 +644,7 @@
                     `;
                 });
 
-                const itemsPerPageDisplay = 15;
-                for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
-                    tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                        </tr>
-                    `;
-                }
-
-                const showHeader = pageNum === 0;
-                const showFooter = pageNum === totalPages - 1;
-
-                // FIX for blank page (Height hack)
+                // --- पेज HTML ---
                 pagesHTML += `
                     <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden;">
                         
@@ -673,9 +704,8 @@
                                     <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
                                 </div>
                             ` : `
-                                <div style="border-bottom: 2px solid #ed3237; padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 18px; font-weight: bold; color: #1a1a1a;">PRICE LIST (Continued)</div>
-                                </div>
+                                <div style="height: 90px; margin-bottom: 15px; border-bottom: 2px solid #ed3237;">
+                                    </div>
                             `}
 
                             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
@@ -699,13 +729,13 @@
                                     </div>
                                     <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
                                         <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-<li>Prices are subject to change without prior notice depending on market conditions.</li>
-<li>Delivery period will be confirmed after order placement.</li>
-<li>The company is not responsible for delays due to transport or unforeseen events.</li>
-<li>The company is not liable once goods leave the factory.</li>
-<li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-<li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-<li>Placing an order implies acceptance of the above terms & conditions.</li>
+                                        <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                        <li>Delivery period will be confirmed after order placement.</li>
+                                        <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                        <li>The company is not liable once goods leave the factory.</li>
+                                        <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                        <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                        <li>Placing an order implies acceptance of the above terms & conditions.</li>
                                     </ul>
                                 </div>
 
@@ -721,6 +751,8 @@
                         </div>
                     </div>
                 `;
+
+                pageNum++; // अगले पेज पर जाएं
             }
 
             return pagesHTML;
@@ -744,7 +776,7 @@
             event.target.classList.add('active');
         }
 
-        // Hide suggestions when clicking outside
+        // बाहर क्लिक करने पर सजेशन छिपाएं
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');
@@ -756,7 +788,7 @@
         // Initialize
         renderItems();
 
-        // Function for keyboard navigation
+        // कीबोर्ड नेविगेशन के लिए फ़ंक्शन
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
             const suggestionsDiv = document.getElementById(suggestionsId);
@@ -772,20 +804,19 @@
                 return;
             }
 
-            // Remove active class from all items
             items.forEach(item => item.classList.remove('suggestion-active'));
 
             if (e.key === 'ArrowDown') {
                 e.preventDefault(); 
                 activeSuggestionIndex++;
                 if (activeSuggestionIndex >= items.length) {
-                    activeSuggestionIndex = 0; // Wrap to top
+                    activeSuggestionIndex = 0; 
                 }
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault(); 
                 activeSuggestionIndex--;
                 if (activeSuggestionIndex < 0) {
-                    activeSuggestionIndex = items.length - 1; // Wrap to bottom
+                    activeSuggestionIndex = items.length - 1; 
                 }
             } else if (e.key === 'Enter') {
                 e.preventDefault(); 
@@ -798,7 +829,6 @@
                 activeSuggestionIndex = -1;
             }
 
-            // Add active class to the new index and scroll it into view
             if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
                 items[activeSuggestionIndex].classList.add('suggestion-active');
                 items[activeSuggestionIndex].scrollIntoView({
@@ -808,7 +838,6 @@
             }
         }
 
-        // Attach keydown listeners to inputs
         document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
         document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
     </script>

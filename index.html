@@ -407,7 +407,7 @@
     </div>
 
     <script>
-        // --- (V12 - DEBUGGING TEST) ---
+        // --- (V13 - DEBUGGING) ---
 
         const sizes = [
             '1200x1200x9MM',
@@ -548,6 +548,7 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
+                        
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
                     </tr>
                 `;
@@ -557,37 +558,205 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V12 - DEBUGGING TEST] 🌟🌟🌟
-        // यह एक बहुत ही आसान फ़ंक्शन है यह टेस्ट करने के लिए कि PDF लाइब्रेरी काम कर रही है या नहीं।
+        // 🌟🌟🌟 [MODIFIED FUNCTION V13 - PLACEHOLDER FIX] 🌟🌟🌟
         function generatePDF() {
             
-            // 1. आइटम चेक करें
-            if (items.length === 0) {
-                alert('Please add items first');
-                return;
-            }
-
             try {
-                // 2. लाइब्रेरी को एक्सेस करें
+                if (items.length === 0) {
+                    alert('Please add items first');
+                    return;
+                }
+                
                 const { jsPDF } = window.jspdf;
+
                 if (!jsPDF) {
-                    alert('TEST FAILED: jsPDF library object not found!');
+                    alert('Error: PDF library (jspdf) not found!');
+                    return;
+                }
+                if (!window.jspdf.plugin.autotable) {
+                    alert('Error: PDF library (autotable) not found!');
                     return;
                 }
 
-                // 3. एक नया PDF डॉक्यूमेंट बनाएं
-                const doc = new jsPDF();
-                
-                // 4. टेक्स्ट जोड़ें
-                doc.setFontSize(20);
-                doc.text("Hello, this is a test.", 10, 10);
-                
-                // 5. सेव करने की कोशिश करें
-                doc.save("test.pdf");
+                // --- 🏁 स्टेप 1: Base64 प्लेसहोल्डर ---
+                // 
+                // ❗❗❗ [FIX] मैंने यहाँ प्लेसहोल्डर डाल दिए हैं ताकि कोड चल सके ❗❗❗
+                // 
+                // बाद में इन्हें अपने असली Base64 टेक्स्ट से बदल दें
+                const base64LogoA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='; // यह एक लाल बिंदु है
+                const base64LogoGranicer = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkqP5fDwAD/AG48P2I5wAAAABJRU5ErkJggg=='; // यह एक नीला बिंदु है
+                // 
+                // ❗❗❗ --------------------------------------------------- ❗❗❗
 
+                
+                // 🌟 [V13 FIX]: Base64 'PASTE_' वाले सेफ्टी-चेक को हटा दिया गया है
+                
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const currentDate = new Date().toLocaleDateString('en-GB');
+
+                const head = [['Sr. No.', 'Size', 'Surface Type', 'Price (/sq feet)']];
+                const body = items.map((item, index) => [
+                    index + 1,
+                    item.size,
+                    item.surface,
+                    `₹ ${item.price.toFixed(2)}`
+                ]);
+
+                doc.autoTable({
+                    head: head,
+                    body: body,
+                    startY: 98, 
+                    margin: { left: 20, right: 20, top: 30, bottom: 30 }, 
+                    
+                    styles: {
+                        font: 'helvetica', 
+                        fontSize: 9,
+                        cellPadding: 1.8,
+                        overflow: 'linebreak'
+                    },
+                    headStyles: {
+                        fillColor: [237, 50, 55], 
+                        textColor: [255, 255, 255], 
+                        fontSize: 10,
+                        fontStyle: 'bold',
+                        halign: 'center'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [248, 249, 250] 
+                    },
+                    columnStyles: {
+                        0: { halign: 'center', cellWidth: 15 }, 
+                        1: { cellWidth: 'auto' }, 
+                        2: { cellWidth: 'auto' }, 
+                        3: { halign: 'right', cellWidth: 30 } 
+                    },
+
+                    didDrawPage: function (data) {
+                        
+                        try {
+                            doc.addImage(base64LogoA, 'PNG', 192, 0, 18, 21.5, '', 'NONE', 180);
+                            doc.addImage(base64LogoA, 'PNG', 0, 275.2, 18, 21.5);
+                        } catch (e) {
+                            console.error("Corner logo error:", e.message);
+                        }
+
+                        if (data.pageNumber === 1) {
+                            try {
+                                doc.addImage(base64LogoGranicer, 'PNG', 70, 15, 70, 23.5);
+                            } catch (e) {
+                                console.error("Granicer logo error:", e.message);
+                            }
+                            
+                            doc.setFontSize(9);
+                            doc.setFont('helvetica', 'bold');
+                            doc.text('Company Details:', 20, 48);
+                            doc.text('Registered Office:', 105, 48);
+                            doc.setFont('helvetica', 'normal');
+                            doc.text('COMET GRANITO PVT.LTD.', 20, 53);
+                            doc.text('C.I. No.: U26914GJ2006PTC049091', 20, 58, { textColor: [100, 100, 100] });
+                            doc.text('Survey No. 118, National Highway No. 8-A', 105, 53);
+                            doc.text('Tal. Morbi, Nava Jambudiya,', 105, 58);
+                            doc.text('GJ 363642, INDIA', 105, 63);
+
+                            doc.setFont('helvetica', 'bold');
+                            doc.text('Contact:', 20, 71);
+                            doc.text('Unit - 2:', 105, 71);
+                            doc.setFont('helvetica', 'normal');
+                            doc.text('📧 Email: info@granicer.in', 20, 76);
+                            doc.text('🌐 Web: www.granicer.in', 20, 81);
+                            doc.text('Revenue Survey No. 168 P1 and P2', 105, 76);
+                            doc.text('Revenue Survey No. 169 P1 and P6', 105, 81);
+                            doc.text('At Ratavirda, Wankaner, Morbi-Guj. -363621', 105, 86);
+                            
+                            doc.setDrawColor(237, 50, 55); 
+                            doc.setLineWidth(0.5);
+                            doc.line(20, 90, 190, 90); 
+                            doc.line(20, 96, 190, 96); 
+                            doc.setFontSize(16);
+                            doc.setFont('helvetica', 'bold');
+                            doc.text('PRICE LIST', 105, 94.5, { align: 'center' });
+
+                        } else {
+                            doc.setDrawColor(237, 50, 55); 
+                            doc.setLineWidth(0.5);
+                            doc.line(20, 25, 190, 25); 
+                            doc.setFontSize(14);
+                            doc.setFont('helvetica', 'bold');
+                            doc.text('PRICE LIST (Continued)', 105, 22, { align: 'center' });
+                            data.settings.startY = 30; 
+                        }
+                    }
+                });
+
+                const pageCount = doc.internal.getNumberOfPages();
+                doc.setPage(pageCount); 
+                
+                let finalY = doc.autoTable.previous.finalY; 
+                if (finalY > 230) {
+                     doc.addPage();
+                     doc.setDrawColor(237, 50, 55); 
+                     doc.setLineWidth(0.5);
+                     doc.line(20, 25, 190, 25); 
+                     doc.setFontSize(14);
+                     doc.setFont('helvetica', 'bold');
+                     doc.text('PRICE LIST (Continued)', 105, 22, { align: 'center' });
+                     try {
+                         doc.addImage(base64LogoA, 'PNG', 192, 0, 18, 21.5, '', 'NONE', 180);
+                         doc.addImage(base64LogoA, 'PNG', 0, 275.2, 18, 21.5);
+                     } catch (e) { console.error("Logo error on new page:", e.message); }
+                     
+                     finalY = 30; 
+                }
+
+                drawFooter(finalY + 10); 
+                
+                function drawFooter(startY) {
+                    doc.setDrawColor(237, 50, 55); 
+                    doc.setLineWidth(1);
+                    doc.line(20, startY, 190, startY); 
+                    
+                    startY += 5;
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Terms & Conditions:', 20, startY);
+                    
+                    startY += 4;
+                    doc.setFontSize(8);
+                    doc.setFont('helvetica', 'normal');
+                    const terms = [
+                        'All prices are ex-factory and exclusive of GST unless stated otherwise.',
+                        'Prices are subject to change without prior notice depending on market conditions.',
+                        'Delivery period will be confirmed after order placement.',
+                        'The company is not responsible for delays due to transport or unforeseen events.',
+                        'The company is not liable once goods leave the factory.',
+                        'GST and any other government levies will be charged extra as applicable at the time of billing.',
+                        'No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.',
+                        'Placing an order implies acceptance of the above terms & conditions.'
+                    ];
+                    doc.text(terms, 23, startY, { lineHeightFactor: 1.5, maxWidth: 167 });
+                    
+                    startY += (terms.length * 8 * 0.5) + 8; 
+                    
+                    doc.setDrawColor(200, 200, 200); 
+                    doc.setLineWidth(0.25);
+                    doc.line(20, startY, 190, startY); 
+                    
+                    startY += 4;
+                    doc.setFontSize(7);
+                    doc.setTextColor(150, 150, 150); 
+                    doc.text('This is an electronically generated price list. For further information, please contact our sales team.', 105, startY, { align: 'center' });
+                    startY += 3;
+                    doc.text(`Generated on: ${currentDate}`, 105, startY, { align: 'center' });
+                    startY += 3;
+                    doc.text("GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer", 105, startY, { align: 'center' });
+                }
+
+                // --- PDF को सेव करें ---
+                doc.save('Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf');
+            
             } catch (e) {
-                // 6. अगर कोई भी एरर आती है, तो उसे दिखाएं
-                alert("An error occurred: " + e.message);
+                // 🌟 अगर V12 टेस्ट के बाद भी कोई एरर आती है, तो यह अलर्ट दिखेगा
+                alert("PDF बनाने में एरर आई: " + e.message);
             }
         }
 

@@ -554,31 +554,28 @@
                 return;
             }
 
+            // 1. Create element, but DO NOT style it here.
             const element = document.createElement('div');
-
-            // *** FIX 1 (from last time) ***
-            // Set element width to 210mm
-            element.style.width = '210mm';
-
-            // *** FIX 2 (NEW) ***
-            // Set margin to '0 auto' to center the element horizontally
-            // before html2pdf captures it.
-            element.style.margin = '0 auto';
-
+            
+            // 2. Get the new, fixed HTML content
             element.innerHTML = generatePDFContent();
 
             const opt = {
-                margin: 0,
+                margin: 0, // PDF margin is 0, because we handle it in our HTML
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
             };
 
+            // 3. Generate from the element. The library will now respect
+            //    the 210mm width set *inside* the HTML.
             html2pdf().set(opt).from(element).save();
         }
         // *** END OF UPDATE ***
 
+
+        // *** THIS FUNCTION IS RE-WRITTEN ***
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             
@@ -596,23 +593,24 @@
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                        <tr style="height: 6mm;">
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;">${actualIndex}</td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;">${item.size}</td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;">${item.surface}</td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
 
+                // Add blank rows
                 const itemsPerPageDisplay = 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
+                        <tr style="height: 6mm;">
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;"></td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;"></td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;"></td>
+                            <td style="border: 0.5pt solid #ddd; text-align: center; height: 6mm; font-size: 8pt; vertical-align: middle; padding: 1mm;"></td>
                         </tr>
                     `;
                 }
@@ -620,78 +618,69 @@
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
-                // FIX for blank page (Height hack)
+                // Main page wrapper: A4 size (210mm x 296.5mm)
+                // This ensures correct alignment on ALL browsers.
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden;">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden; box-sizing: border-box;">
                         
-                        <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img
-                                src="A LOGO.png"
-                                style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;"
-                            />
+                        <div style="position: absolute; top: 0; right: 0; width: 20mm; height: 25mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                            <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                        </div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 20mm; height: 25mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                            <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                         </div>
 
-                        <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img 
-                                src="A LOGO.png" 
-                                style="width: 100%; height: 100%; object-fit: contain; display: block;" 
-                            />
-                        </div>
-
-                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                        <div style="padding: 10mm; position: relative; z-index: 10; width: 100%; box-sizing: border-box; height: 100%;">
                             
                             ${showHeader ? `
-                                <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
-                                    <img
-                                        src="GRANICER LOGO.png"
-                                        style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                                    />
+                                <div style="border-bottom: 1pt solid #ed3237; padding-bottom: 5mm; margin-bottom: 5mm; text-align: center;">
+                                    <img src="GRANICER LOGO.png" style="height: 20mm; width: auto; object-fit: contain; margin-bottom: 4mm;" />
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div style="display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; font-size: 8pt; color: #333; line-height: 1.6; margin-bottom: 5mm;">
+                                    <div style="width: 48%;">
+                                        <div style="font-weight: 600; margin-bottom: 2mm; color: #1a1a1a; font-size: 8.5pt;">Company Details:</div>
                                         <div>COMET GRANITO PVT.LTD.</div>
-                                        <div style="color: #666; font-size: 10px;">C.I. No.: U26914GJ2006PTC049091</div>
+                                        <div style="color: #666; font-size: 7.5pt;">C.I. No.: U26914GJ2006PTC049091</div>
                                     </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                        <div style="font-size: 10px;">Survey No. 118, National Highway No. 8-A</div>
-                                        <div style="font-size: 10px;">Tal. Morbi, Nava Jambudiya,</div>
-                                        <div style="font-size: 10px;">GJ 363642, INDIA</div>
-                                    </div>
-                                </div>
-
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                        <div style="font-size: 10px;">📧 Email: info@granicer.in</div>
-                                        <div style="font-size: 10px;">🌐 Web: www.granicer.in</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                        <div style="font-size: 10px;">Revenue Survey No. 168 P1 and P2</div>
-                                        <div style="font-size: 10px;">Revenue Survey No. 169 P1 and P6</div>
-                                        <div style="font-size: 10px;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                                    <div style="width: 48%;">
+                                        <div style="font-weight: 600; margin-bottom: 2mm; color: #1a1a1a; font-size: 8.5pt;">Registered Office:</div>
+                                        <div style="font-size: 7.5pt;">Survey No. 118, National Highway No. 8-A</div>
+                                        <div style="font-size: 7.5pt;">Tal. Morbi, Nava Jambudiya,</div>
+                                        <div style="font-size: 7.5pt;">GJ 363642, INDIA</div>
                                     </div>
                                 </div>
 
-                                <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 12px 0; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                                <div style="display: -webkit-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; font-size: 8pt; color: #333; margin-bottom: 5mm; line-height: 1.6;">
+                                    <div style="width: 48%;">
+                                        <div style="font-weight: 600; margin-bottom: 2mm; color: #1a1a1a; font-size: 8.5pt;">Contact:</div>
+                                        <div style="font-size: 7.5pt;">📧 Email: info@granicer.in</div>
+                                        <div style="font-size: 7.5pt;">🌐 Web: www.granicer.in</div>
+                                    </div>
+                                    <div style="width: 48%;">
+                                        <div style="font-weight: 600; margin-bottom: 2mm; color: #1a1a1a; font-size: 8.5pt;">Unit - 2:</div>
+                                        <div style="font-size: 7.5pt;">Revenue Survey No. 168 P1 and P2</div>
+                                        <div style="font-size: 7.5pt;">Revenue Survey No. 169 P1 and P6</div>
+                                        <div style="font-size: 7.5pt;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                                    </div>
+                                </div>
+
+                                <div style="border-top: 1pt solid #ed3237; border-bottom: 1pt solid #ed3237; padding: 3mm 0; margin-bottom: 4mm; text-align: center;">
+                                    <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
                                 </div>
                             ` : `
-                                <div style="border-bottom: 2px solid #ed3237; padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 18px; font-weight: bold; color: #1a1a1a;">PRICE LIST (Continued)</div>
+                                <div style="border-bottom: 1pt solid #ed3237; padding-bottom: 3mm; margin-bottom: 4mm; text-align: center;">
+                                    <div style="font-size: 12pt; font-weight: bold; color: #1a1a1a;">PRICE LIST (Continued)</div>
                                 </div>
                             `}
 
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; table-layout: fixed;">
                                 <thead>
-                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
+                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 8mm;">
+                                        <th style="padding: 1.5mm; border: 0.5pt solid #ed3237; text-align: center; font-size: 8.5pt; font-weight: 600; height: 8mm; width: 10%;">Sr. No.</th>
+                                        <th style="padding: 1.5mm; border: 0.5pt solid #ed3237; text-align: center; font-size: 8.5pt; font-weight: 600; height: 8mm; width: 35%;">Size</th>
+                                        <th style="padding: 1.5mm; border: 0.5pt solid #ed3237; text-align: center; font-size: 8.5pt; font-weight: 600; height: 8mm; width: 35%;">Surface Type</th>
+                                        <th style="padding: 1.5mm; border: 0.5pt solid #ed3237; text-align: center; font-size: 8.5pt; font-weight: 600; height: 8mm; width: 20%;">Price <span style="font-size: 6pt; display: block;">(/sq feet)</span></th>
                                     </tr>
                                 </thead>
                                 <tbody style="background: white;">
@@ -700,27 +689,27 @@
                             </table>
 
                             ${showFooter ? `
-                                <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 25px;">
-                                    <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
+                                <div style="border-top: 1pt solid #ed3237; padding-top: 3mm; margin-top: 5mm;">
+                                    <div style="font-size: 9pt; font-weight: bold; color: #1a1a1a; margin-bottom: 2mm;">
                                         Terms & Conditions:
                                     </div>
-                                    <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                                    <ul style="font-size: 7.5pt; color: #555; margin: 0; padding-left: 4mm; line-height: 1.6;">
                                         <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-<li>Prices are subject to change without prior notice depending on market conditions.</li>
-<li>Delivery period will be confirmed after order placement.</li>
-<li>The company is not responsible for delays due to transport or unforeseen events.</li>
-<li>The company is not liable once goods leave the factory.</li>
-<li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-<li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-<li>Placing an order implies acceptance of the above terms & conditions.</li>
+                                        <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                        <li>Delivery period will be confirmed after order placement.</li>
+                                        <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                        <li>The company is not liable once goods leave the factory.</li>
+                                        <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                        <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                        <li>Placing an order implies acceptance of the above terms & conditions.</li>
                                     </ul>
                                 </div>
 
-                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">
-                                    <div style="font-size: 9px; color: #999; line-height: 1.4;">
-                                        <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                        <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                        <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                                <div style="margin-top: 3mm; padding-top: 3mm; border-top: 0.5pt solid #ddd; text-align: center;">
+                                    <div style="font-size: 7pt; color: #999; line-height: 1.4;">
+                                        <p style="margin: 0.5mm 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                        <p style="margin: 0.5mm 0;">Generated on: ${currentDate}</p>
+                                        <p style="margin: 0.5mm 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                                     </div>
                                 </div>
                             ` : ''}
@@ -732,6 +721,7 @@
 
             return pagesHTML;
         }
+        // *** END OF RE-WRITE ***
 
         function clearForm() {
             document.getElementById('size').value = '';

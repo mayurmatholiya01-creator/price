@@ -548,12 +548,12 @@
         }
 
         /**
-         * 🌟 [GEMINI FINAL FIX v5 - PREMIUM]:
-         * 1. [NEW] Faint background watermark added (z-index: 1).
-         * 2. [NEW] "Terms & Conditions" heading color changed to red.
-         * 3. [NEW] Footer line changed to 3D pin-point line.
-         * 4. [OLD] Zebra Striping & Spacing retained.
-         * 5. [OLD] Corner logos z-index increased to 2 (to be above watermark).
+         * 🌟 [GEMINI FINAL FIX v6 - PREMIUM (No Watermark)]:
+         * 1. [REMOVED] Background watermark nikal diya.
+         * 2. [KEPT] "Terms & Conditions" heading color laal rakha hai.
+         * 3. [KEPT] Footer line 3D pin-point line rakhi hai.
+         * 4. [KEPT] Zebra Striping & Spacing rakha hai.
+         * 5. [KEPT] Corner logos z-index 1 (default) kar diya hai.
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -589,24 +589,10 @@
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
-                    <img 
-                        src="A LOGO.png" 
-                        style="
-                            position: absolute; 
-                            top: 50%; 
-                            left: 50%; 
-                            transform: translate(-50%, -50%); 
-                            width: 150mm; 
-                            height: auto; 
-                            opacity: 0.08; 
-                            z-index: 1;
-                        " 
-                    />
-
-                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 2;">
+                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 2;">
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
                     <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
@@ -683,7 +669,6 @@
                                 <li>The company is not responsible for delays due to transport or unforeseen events.</li>
                                 <li>The company is not liable once goods leave the factory.</li>
                                 <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-                                Gst and any other government levies will be charged extra as applicable at the time of billing.
                                 <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
                                 <li>Placing an order implies acceptance of the above terms & conditions.</li>
                             </ul>

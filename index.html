@@ -1,414 +1,6 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Granicer Ceramica - Price List Generator</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 10px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100dvh; /* Mobile/iOS compatibility */
-            max-height: 100dvh; 
-        }
-
-        .tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #ddd;
-            flex-shrink: 0;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px 10px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            color: #666;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab-btn.active {
-            color: #ed3237;
-            background: white;
-            border-bottom-color: #ed3237;
-        }
-
-        .tab-btn:hover {
-            color: #ed3237;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .tab-content.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-            flex-shrink: 0;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.95em;
-        }
-
-        input[type='text'],
-        input[type='number'],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        input[type='text']:focus,
-        input[type='number']:focus,
-        select:focus {
-            outline: none;
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
-        }
-
-        .price-input-container {
-            display: flex;
-            align-items: center;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-            overflow: hidden;
-        }
-
-        .price-input-container:focus-within {
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
-        }
-
-        .price-symbol {
-            padding: 12px 12px;
-            background: #f8f9fa;
-            color: #666;
-            font-weight: 600;
-            font-size: 1.1em;
-            border-right: 2px solid #ddd;
-            flex-shrink: 0;
-        }
-
-        .price-input-container input {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-size: 1em;
-            outline: none;
-            background: white;
-        }
-
-        .price-input-container input:focus {
-            outline: none;
-            box-shadow: none;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-
-        .add-button,
-        .pdf-button {
-            flex: 1;
-            padding: 12px;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .add-button {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-
-        .add-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
-        }
-
-        .pdf-button {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
-        }
-
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
-        }
-
-        .pdf-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #ddd;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .suggestions.show {
-            display: block;
-        }
-
-        .suggestion-item {
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9em;
-        }
-
-        .suggestion-item:hover,
-        .suggestion-item.suggestion-active {
-            background: #f0f0f0;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .items-table {
-            margin-top: 20px;
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            border-collapse: collapse;
-            border-spacing: 0;
-            table-layout: fixed;
-        }
-
-        .items-table h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1em;
-            flex-shrink: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            font-size: 0.9em;
-        }
-
-        thead {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
-            color: white;
-            flex-shrink: 0;
-        }
-
-        th {
-            padding: 5px;
-            text-align: center;
-            font-weight: 600;
-            border: 1px solid #ed3237;
-            height: 30px;
-        }
-
-        td {
-            padding: 2px 4px !important;
-            border: 1px solid #ddd;
-            text-align: center;
-            height: 20px !important;
-            max-height: 20px !important;
-            min-height: 20px !important;
-            line-height: 1 !important;
-            overflow: hidden;
-            white-space: nowrap;
-            vertical-align: middle !important;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        tbody tr:nth-child(even) {
-            background: #f8f9fa;
-        }
-
-        .delete-btn {
-            background: #ff6b6b;
-            color: white;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .delete-btn:hover {
-            background: #ff5252;
-            transform: scale(1.05);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 20px 10px;
-            color: #999;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            flex: 1;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
-            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
-        </div>
-
-        <div id="basic" class="tab-content active">
-            <div style="flex: 0 0 auto;">
-                <div class="form-group">
-                    <label for="size">Size</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="text"
-                            id="size"
-                            placeholder="Select or type size"
-                            oninput="filterSuggestions('size')"
-                            inputmode="numeric" 
-                        />
-                        <div class="suggestions" id="sizeSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="surface">Surface</label>
-                    <div class="input-wrapper">
-                        <input
-                            type="text"
-                            id="surface"
-                            placeholder="Select or type surface"
-                            
-                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
-                            
-                            title="Please enter only letters and spaces."
-                        />
-                        <div class="suggestions" id="surfaceSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <div class="price-input-container">
-                        <span class="price-symbol">₹</span>
-                        <input
-                            type="number"
-                            id="price"
-                            placeholder="Enter price"
-                            min="0"
-                            step="0.01"
-
-                            oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
-                        />
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="add-button" onclick="addItem()">Add</button>
-                    <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
-                        Generate PDF
-                    </button>
-                </div>
-            </div>
-
-            <div class="items-table">
-                <h3>Added Items</h3>
-                <div class="table-wrapper">
-                    <div id="itemsContainer"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="advance" class="tab-content">
-            <p style="text-align: center; color: #999; padding: 40px;">
-                Advance features coming soon...
-            </p>
-        </div>
-    </div>
-
-    <script>
-        // 🌟 नई लाइब्रेरी को window ऑब्जेक्ट पर सेट करना
-        window.jsPDF = window.jspdf.jsPDF;
+<script>
+        // 🌟 (V9 FIX): मैंने यहाँ से बग वाली (window.jsPDF = ...) लाइन हटा दी है।
+        // अब addItem और बाकी सब फ़ंक्शन काम करेंगे।
 
         // --- (आपके पुराने फ़ंक्शन वैसे ही रहेंगे) ---
         const sizes = [
@@ -550,7 +142,7 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
+                        <td><button class-="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
                     </tr>
                 `;
             });
@@ -559,14 +151,297 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V8 - USING jsPDF] 🌟🌟🌟
-        // यह फ़ंक्शन अब HTML का "स्क्रीनशॉट" नहीं लेता है, 
-        // बल्कि PDF को सटीक रूप से "ड्रॉ" करता है।
+        // 🌟🌟🌟 [MODIFIED FUNCTION V9 - BUG FIX] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
+            
+            // 🌟 (V9 FIX) हम jsPDF ऑब्जेक्ट को सीधे window.jspdf से लेंगे
+            const { jsPDF } = window.jspdf;
 
-            // --- 🏁 स्टेप 1: आपके Base64 लोगो यहाँ पेस्ट कर दिए गए हैं ---
-            const base64LogoA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEMAAABVCAYAAAASRVn1AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHfaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+PHhtcDpDcmVhdG9yVG9vbD5BZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKTwveG1wOkNyZWF0b3JUb29sPjx4bXA6Y3JlYXRvcnRvb2w+QWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cyk8L3htcDpjcmVhdG9ydG9vbD48L3JkZjpEZXNjcmlwdGlvbj48L3JkZjpSREY+PC94OnhtcG1ldGE+DQo8P3hwYWNrZXQgZW5kPSd3Jz8+yZQ12QAACa1JREFUeF7dnP1vHEcZx7/PzOzu2T47znvTkLi0JrbPcezruVEKbV21gFCRUENJVfLWlrRNnTh9oUhU/AWg/kCrKmoBVS1BQvyAKEJI4adWgh+iVrmEOCYvFCWAaGigpIqNX863Ow8/2E7PE+/c2+7dhY8UKXmevfX6k9lnZmdnDmgAznRuem57X/8bZrzWCDNQD1a1Lt/nus63zHitqbsMPTi4YZkQm1kqrOnu/pKZryV1lzGZ5yfyzIBmtCRbv2fma0ndZYDkkwDA0BCEe9Pp9M3mIbWirjL+0ZO+Xym5jsEMZh8gCGC/eVytqKsMFhgRIIA5YCJmMIQQ+8zjakXdZIylUslmz3tQa/1pkAEl1fq+np57Co+tFXWTsTqRHCYAGmym4LjeM2asFtRNhsv0PNP1IrTWcB3noa1bt7aZubipi4xLPel7WNC6JRrFHETQvn/QDMdNXWSQomeEIDN8DWaGEHLEjMdNzWWMpVJJ13G2sw5rFnMI4Obb+/ruNuNxUnMZOeE93iSl0FxEhpSAEDUtpDWXscF1XpgJAjN8Haw1HMd9aO3atS1mLi5qKmO87/a7HRIdBSOLUDQzhBC0fs1NT5q5uKipjJyQB5mA8NK5GM0absL7thmPi5rJuJxKJUnQN0K706VggJk3DA4MfN5Mx
+            if (!jsPDF) {
+                alert('Error: PDF library (jspdf) not found!');
+                return;
+            }
+
+            // --- 🏁 स्टेप 1: अपने Base64 लोगो यहाँ पेस्ट करें ---
+            // (ये सिर्फ प्लेसहोल्डर हैं, इन्हें अपने टेक्स्ट से बदलें)
+            const base64LogoA = 'PASTE_YOUR_BASE64_FOR_A_LOGO.png_HERE';
+            const base64LogoGranicer = 'PASTE_YOUR_BASE64_FOR_GRANICER_LOGO.png_HERE';
+
+            // चेतावनी अगर लोगो अपडेट नहीं किए गए हैं
+            if (base64LogoA.includes('PASTE_') || base64LogoGranicer.includes('PASTE_')) {
+                alert('कृपया generatePDF() फ़ंक्शन में Base64 लोगो स्ट्रिंग्स को अपडेट करें!');
+                return;
+            }
+            
+            // A4 पेज (210mm चौड़ा x 297mm लंबा)
+            const doc = new jsPDF('p', 'mm', 'a4'); // यह अब सही से काम करेगा
+            const currentDate = new Date().toLocaleDateString('en-GB');
+
+            // --- टेबल के लिए डेटा तैयार करें ---
+            const head = [['Sr. No.', 'Size', 'Surface Type', 'Price (/sq feet)']];
+            const body = items.map((item, index) => [
+                index + 1,
+                item.size,
+                item.surface,
+                `₹ ${item.price.toFixed(2)}`
+            ]);
+
+            // --- AutoTable का इस्तेमाल ---
+            doc.autoTable({
+                head: head,
+                body: body,
+                startY: 98, // टेबल पेज 1 पर कहाँ से शुरू हो (हेडर के नीचे)
+                margin: { left: 20, right: 20, top: 30, bottom: 30 }, // पेज मार्जिन
+                
+                // --- स्टाइलिंग ---
+                styles: {
+                    font: 'helvetica', // सुरक्षित फॉन्ट
+                    fontSize: 9,
+                    cellPadding: 1.8,
+                    overflow: 'linebreak'
+                },
+                headStyles: {
+                    fillColor: [237, 50, 55], // [R, G, B] (Granicer Red)
+                    textColor: [255, 255, 255], // White
+                    fontSize: 10,
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
+                alternateRowStyles: {
+                    fillColor: [248, 249, 250] // Light Grey
+                },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 15 }, // Sr. No.
+                    1: { cellWidth: 'auto' }, // Size
+                    2: { cellWidth: 'auto' }, // Surface
+                    3: { halign: 'right', cellWidth: 30 } // Price
+                },
+
+                // --- 🌟 हुक (Hook): हर पेज को ड्रॉ करने के बाद ---
+                didDrawPage: function (data) {
+                    
+                    // --- 1. कोने वाले लोगो (हर पेज पर) ---
+                    try {
+                        // टॉप-राइट (रोटेट किया हुआ)
+                        doc.addImage(base64LogoA, 'PNG', 192, 0, 18, 21.5, '', 'NONE', 180);
+                        // बॉटम-लेफ्ट
+                        doc.addImage(base64LogoA, 'PNG', 0, 275.2, 18, 21.5);
+                    } catch (e) {
+                        console.error("Corner logo error:", e.message);
+                    }
+
+                    // --- 2. पेज-स्पेसिफिक हेडर ---
+                    if (data.pageNumber === 1) {
+                        // --- पेज 1: बड़ा हेडर ---
+                        try {
+                            // GRANICER Logo
+                            doc.addImage(base64LogoGranicer, 'PNG', 70, 15, 70, 23.5);
+                        } catch (e) {
+                            console.error("Granicer logo error:", e.message);
+                        }
+                        
+                        // कंपनी की जानकारी
+                        doc.setFontSize(9);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Company Details:', 20, 48);
+                        doc.text('Registered Office:', 105, 48);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('COMET GRANITO PVT.LTD.', 20, 53);
+                        doc.text('C.I. No.: U26914GJ2006PTC049091', 20, 58, { textColor: [100, 100, 100] });
+                        doc.text('Survey No. 118, National Highway No. 8-A', 105, 53);
+                        doc.text('Tal. Morbi, Nava Jambudiya,', 105, 58);
+                        doc.text('GJ 363642, INDIA', 105, 63);
+
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Contact:', 20, 71);
+                        doc.text('Unit - 2:', 105, 71);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text('📧 Email: info@granicer.in', 20, 76);
+                        doc.text('🌐 Web: www.granicer.in', 20, 81);
+                        doc.text('Revenue Survey No. 168 P1 and P2', 105, 76);
+                        doc.text('Revenue Survey No. 169 P1 and P6', 105, 81);
+                        doc.text('At Ratavirda, Wankaner, Morbi-Guj. -363621', 105, 86);
+                        
+                        // "PRICE LIST" बॉक्स
+                        doc.setDrawColor(237, 50, 55); // Red
+                        doc.setLineWidth(0.5);
+                        doc.line(20, 90, 190, 90); // Top line
+                        doc.line(20, 96, 190, 96); // Bottom line
+                        doc.setFontSize(16);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('PRICE LIST', 105, 94.5, { align: 'center' });
+
+                    } else {
+                        // --- पेज 2+: छोटा हेडर ---
+                        doc.setDrawColor(237, 50, 55); // Red
+                        doc.setLineWidth(0.5);
+                        doc.line(20, 25, 190, 25); // Bottom line
+                        doc.setFontSize(14);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('PRICE LIST (Continued)', 105, 22, { align: 'center' });
+                        // इस पेज के लिए टेबल को ऊपर से शुरू करें
+                        data.settings.startY = 30; 
+                    }
+                }
+            });
+
+            // --- 3. फुटर (सिर्फ आखिरी पेज पर) ---
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setPage(pageCount); // आखिरी पेज पर जाएं
+            
+            let finalY = doc.autoTable.previous.finalY; // टेबल कहाँ खत्म हुई
+            if (finalY > 230) {
+                 doc.addPage();
+                 //... और इस नए पेज पर हेडर और लोगो फिर से बनाएं
+                 // (छोटा हेडर)
+                 doc.setDrawColor(237, 50, 55); 
+                 doc.setLineWidth(0.5);
+                 doc.line(20, 25, 190, 25); 
+                 doc.setFontSize(14);
+                 doc.setFont('helvetica', 'bold');
+                 doc.text('PRICE LIST (Continued)', 105, 22, { align: 'center' });
+                 // (लोगो)
+                 try {
+                     doc.addImage(base64LogoA, 'PNG', 192, 0, 18, 21.5, '', 'NONE', 180);
+                     doc.addImage(base64LogoA, 'PNG', 0, 275.2, 18, 21.5);
+                 } catch (e) { console.error("Logo error on new page:", e.message); }
+                 
+                 finalY = 30; // पेज के टॉप से फुटर शुरू करें
+            }
+
+            // फुटर ड्रॉ करें
+            drawFooter(finalY + 10); // 10mm मार्जिन के साथ
+            
+            function drawFooter(startY) {
+                doc.setDrawColor(237, 50, 55); // Red
+                doc.setLineWidth(1);
+                doc.line(20, startY, 190, startY); // टॉप रेड लाइन
+                
+                startY += 5;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Terms & Conditions:', 20, startY);
+                
+                startY += 4;
+                doc.setFontSize(8);
+                doc.setFont('helvetica', 'normal');
+                const terms = [
+                    'All prices are ex-factory and exclusive of GST unless stated otherwise.',
+                    'Prices are subject to change without prior notice depending on market conditions.',
+                    'Delivery period will be confirmed after order placement.',
+                    'The company is not responsible for delays due to transport or unforeseen events.',
+                    'The company is not liable once goods leave the factory.',
+                    'GST and any other government levies will be charged extra as applicable at the time of billing.',
+                    'No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.',
+                    'Placing an order implies acceptance of the above terms & conditions.'
+                ];
+                doc.text(terms, 23, startY, { lineHeightFactor: 1.5, maxWidth: 167 });
+                
+                startY += (terms.length * 8 * 0.5) + 8; // जगह का अनुमान लगाएं
+                
+                doc.setDrawColor(200, 200, 200); // Grey
+                doc.setLineWidth(0.25);
+                doc.line(20, startY, 190, startY); // ग्रे सेपरेटर
+                
+                startY += 4;
+                doc.setFontSize(7);
+                doc.setTextColor(150, 150, 150); // Grey text
+                doc.text('This is an electronically generated price list. For further information, please contact our sales team.', 105, startY, { align: 'center' });
+                startY += 3;
+                doc.text(`Generated on: ${currentDate}`, 105, startY, { align: 'center' });
+                startY += 3;
+                doc.text("GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer", 105, startY, { align: 'center' });
+            }
+
+            // --- PDF को सेव करें ---
+            doc.save('Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf');
+        }
+
+
+        function clearForm() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('size').focus();
+        }
+
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach((tab) => tab.classList.remove('active'));
+            buttons.forEach((btn) => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // बाहर क्लिक करने पर सजेशन छिपाएं
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.input-wrapper')) {
+                document.getElementById('sizeSuggestions').classList.remove('show');
+                document.getElementById('surfaceSuggestions').classList.remove('show');
+                activeSuggestionIndex = -1; 
+            }
+        });
+
+        // Initialize
+        renderItems();
+
+        // कीबोर्ड नेविगेशन के लिए फ़ंक्शन
+        function handleSuggestionKeydown(e, type) {
+            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            
+            if (!suggestionsDiv.classList.contains('show')) {
+                activeSuggestionIndex = -1;
+                return;
+            }
+
+            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+            if (items.length === 0) {
+                activeSuggestionIndex = -1;
+                return;
+            }
+
+            items.forEach(item => item.classList.remove('suggestion-active'));
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault(); 
+                activeSuggestionIndex++;
+                if (activeSuggestionIndex >= items.length) {
+                    activeSuggestionIndex = 0; 
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault(); 
+                activeSuggestionIndex--;
+                if (activeSuggestionIndex < 0) {
+                    activeSuggestionIndex = items.length - 1; 
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault(); 
+                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                    items[activeSuggestionIndex].click(); 
+                    activeSuggestionIndex = -1; 
+                }
+            } else if (e.key === 'Escape') {
+                suggestionsDiv.classList.remove('show'); 
+                activeSuggestionIndex = -1;
+            }
+
+            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                items[activeSuggestionIndex].classList.add('suggestion-active');
+                items[activeSuggestionIndex].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        }
+
+        document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
+        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
+    </script>

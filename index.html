@@ -406,7 +406,7 @@
     </div>
 
     <script>
-        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
+        // --- (V18 - SINGLE LONG PAGE + POSITIONING HACK) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -521,7 +521,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V17 - SINGLE LONG PAGE] 🌟🌟🌟
+        // 🌟🌟🌟 [MODIFIED FUNCTION V18] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -539,23 +539,20 @@
                 jsPDF: { 
                     orientation: 'portrait', 
                     unit: 'mm', 
-                    format: 'a4' // <-- इसे A4 पर रखें, html2pdf खुद इसे लंबा कर देगा
+                    format: 'a4' 
                 }
             };
 
-            // html2pdf फ़ंक्शन को कॉल करें
             html2pdf().set(opt).from(element).save();
         }
 
         /**
-         * 🌟 (V17) यह फ़ंक्शन अब पेज नहीं गिनता।
-         * यह सिर्फ एक लंबा HTML पेज बनाता है।
+         * 🌟 (V18) एक लंबा पेज + फुटर को नीचे 'पिन' करने के लिए पोजीशनिंग हैक
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
-            let currentItemIndex = 1;
             let tableRows = '';
 
             items.forEach((item, idx) => {
@@ -572,7 +569,11 @@
 
 
             // --- पेज HTML ---
-            // 🌟 [V17 FIX] ऊंचाई (height) को 'auto' और min-height को A4 साइज़ पर सेट किया
+            // 🌟 [V18 FIX 1]
+            // min-height: 296.5mm; (A4 साइज़)
+            // height: auto; (ताकि यह लंबा हो सके)
+            // position: relative; (ताकि फुटर को 'पिन' किया जा सके)
+            // padding-bottom: 120px; (ताकि फुटर के लिए नीचे जगह बची रहे)
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden;">
                     
@@ -583,14 +584,7 @@
                         />
                     </div>
 
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img 
-                            src="A LOGO.png" 
-                            style="width: 100%; height: 100%; object-fit: contain; display: block;" 
-                        />
-                    </div>
-
-                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px; padding-bottom: 140px;">
                         
                         <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
                             <img
@@ -644,6 +638,17 @@
                                 ${tableRows}
                             </tbody>
                         </table>
+                    </div>
+
+
+                    <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 20; padding-left: 5px; padding-right: 5px;">
+                        
+                        <div style="position: absolute; bottom: -20px; left: -20px; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: -1;">
+                            <img 
+                                src="A LOGO.png" 
+                                style="width: 100%; height: 100%; object-fit: contain; display: block;" 
+                            />
+                        </div>
 
                         <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 25px;">
                             <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
@@ -668,8 +673,8 @@
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-
                     </div>
+                    
                 </div>
             `;
             

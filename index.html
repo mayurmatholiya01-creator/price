@@ -573,64 +573,87 @@
         }
 
         /**
-         * 🌟 [MODIFIED FUNCTION V3 - BUG FIX] 🌟
-         * 1. `itemsOnFirstPage` को 23 (यूज़र के अनुसार) पर अपडेट किया गया।
-         * 2. `isLastPage` को `splice()` के *बाद* में सेट किया गया, ताकि यह सही से काम करे।
+         * 🌟 [MODIFIED FUNCTION V6 - USER'S EXACT LOGIC] 🌟
+         * 1. (1-15 आइटम): पेज 1 + फुटर।
+         * 2. (16-23 आइटम): पेज 1 (आइटम) + पेज 2 (सिर्फ फुटर)।
+         * 3. (24+ आइटम): पेज 1 (23 आइटम) + पेज 2 (बाकी आइटम + फुटर)।
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
-            // --- पेजिंग के लिए अनुमानित संख्या ---
+            // --- आपके लॉजिक के अनुसार पेज ब्रेकपॉइंट ---
             
-            // (अनुमानित) बड़ा हेडर + फुटर।
-            // यह ब्रेकपॉइंट है। अगर इससे ज़्यादा, तो फुटर अगले पेज पर चला जाता है।
-            const itemsOnFirstPageOnly = 15; 
+            // (1-15) आइटम: पेज 1 पर फुटर के साथ
+            const itemsOnFirstPageWithFooter = 15; 
             
-            // (यूज़र के अनुसार) बड़ा हेडर, कोई फुटर नहीं।
-            const itemsOnFirstPage = 23;   
+            // (16-23) आइटम: पेज 1 पर बिना फुटर के
+            const itemsOnFirstPageMax = 23;   
             
-            // (अनुमानित) कोई हेडर नहीं, कोई फुटर नहीं।
+            // (24+) आइटम: पेज 2+ (बीच के पेज) पर
             const itemsOnMiddlePage = 40;  
             
-            // (अनुमानित) कोई हेडर नहीं + फुटर।
+            // (24+) आइटम: पेज 2+ (आखिरी पेज) पर
             const itemsOnLastPage = 30;    
 
-            let remainingItems = [...items]; // प्रोसेस करने के लिए आइटम की कॉपी
+            let remainingItems = [...items];
+            const totalItems = items.length;
+            let currentItemIndex = 1;
             let pageNum = 0;
-            let currentItemIndex = 1; // Sr. No. के लिए
+            let footerHasBeenAdded = false;
 
-            while (remainingItems.length > 0) {
+            // हम तब तक पेज बनाते रहेंगे जब तक फुटर जुड़ नहीं जाता।
+            while (!footerHasBeenAdded) {
                 let showHeader = (pageNum === 0);
+                let showFooter = false;
+                let pageItems = [];
                 let itemsForThisPage;
+                
+                // यह स्केलिंग बग को ठीक करने के लिए है
+                let pageBreakStyle = '';
 
-                if (showHeader) { // पेज 1
-                    if (remainingItems.length <= itemsOnFirstPageOnly) {
-                        // (जैसे, 1 से 15 आइटम)
-                        // यह *एकमात्र* पेज है
-                        itemsForThisPage = remainingItems.length;
+                if (pageNum === 0) {
+                    // --- पेज 1 का लॉजिक ---
+                    if (totalItems <= itemsOnFirstPageWithFooter) {
+                        // स्थिति 1 (1-15 आइटम)
+                        itemsForThisPage = totalItems;
+                        pageItems = remainingItems.splice(0, itemsForThisPage);
+                        showFooter = true;
+                        footerHasBeenAdded = true; // लूप खत्म
+                    } else if (totalItems <= itemsOnFirstPageMax) {
+                        // स्थिति 2 (16-23 आइटम)
+                        itemsForThisPage = totalItems;
+                        pageItems = remainingItems.splice(0, itemsForThisPage);
+                        showFooter = false; // फुटर अगले पेज पर जाएगा
+                        pageBreakStyle = 'page-break-after: always;'; // पेज 2 को मजबूर करें
                     } else {
-                        // (जैसे, 16+ आइटम)
-                        // और पेज भी होंगे, 23 (यूज़र के अनुसार) आइटम लें
-                        itemsForThisPage = itemsOnFirstPage; 
+                        // स्थिति 3 (24+ आइटम)
+                        itemsForThisPage = itemsOnFirstPageMax; // पेज 1 पर 23 आइटम
+                        pageItems = remainingItems.splice(0, itemsForThisPage);
+                        showFooter = false; // फुटर आखिरी पेज पर जाएगा
+                        pageBreakStyle = 'page-break-after: always;'; // पेज 2 को मजबूर करें
                     }
-                } else { // पेज 2+
-                    if (remainingItems.length <= itemsOnLastPage) {
-                        // यह *आखिरी* पेज है
+                } else {
+                    // --- पेज 2+ का लॉजिक ---
+                    if (remainingItems.length === 0) {
+                        // स्थिति 2 (16-23) का दूसरा हिस्सा: *सिर्फ फुटर* वाला पेज
+                        pageItems = []; // इस पेज पर कोई आइटम नहीं
+                        showFooter = true;
+                        footerHasBeenAdded = true; // लूप खत्म
+                    } else if (remainingItems.length <= itemsOnLastPage) {
+                        // स्थिति 3 का आखिरी पेज
                         itemsForThisPage = remainingItems.length;
+                        pageItems = remainingItems.splice(0, itemsForThisPage);
+                        showFooter = true;
+                        footerHasBeenAdded = true; // लूप खत्म
                     } else {
-                        // यह *बीच* का पेज है
+                        // स्थिति 3 का बीच का पेज
                         itemsForThisPage = itemsOnMiddlePage;
+                        pageItems = remainingItems.splice(0, itemsForThisPage);
+                        showFooter = false;
+                        pageBreakStyle = 'page-break-after: always;'; // अगले पेज को मजबूर करें
                     }
                 }
-
-                // *** 🌟🌟🌟 [BUG FIX HERE] 🌟🌟🌟 ***
-                // पहले आइटम को `splice` करें, *फिर* चेक करें कि क्या यह आखिरी पेज है।
-                const pageItems = remainingItems.splice(0, itemsForThisPage);
-                
-                // `splice` के बाद चेक करें
-                let isLastPage = (remainingItems.length === 0); 
-                let showFooter = isLastPage;
 
                 let tableRows = '';
                 pageItems.forEach((item) => {
@@ -646,7 +669,7 @@
 
                 // --- पेज HTML ---
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden;">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden; ${pageBreakStyle}">
                         
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                             <img
@@ -708,19 +731,21 @@
                                     </div>
                             `}
 
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                                <thead>
-                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody style="background: white;">
-                                    ${tableRows}
-                                </tbody>
-                            </table>
+                            ${(pageItems.length > 0) ? `
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                                    <thead>
+                                        <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
+                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
+                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
+                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="background: white;">
+                                        ${tableRows}
+                                    </tbody>
+                                </table>
+                            ` : ''}
 
                             ${showFooter ? `
                                 <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 25px;">

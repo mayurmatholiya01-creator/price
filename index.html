@@ -406,7 +406,7 @@
     </div>
 
     <script>
-        // --- (V16 - SINGLE LONG PAGE HACK) ---
+        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -521,7 +521,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V16 - SINGLE LONG PAGE] 🌟🌟🌟
+        // 🌟🌟🌟 [MODIFIED FUNCTION V17 - SINGLE LONG PAGE] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -529,11 +529,8 @@
             }
 
             const element = document.createElement('div');
-            // हम generatePDFContent को कॉल करते हैं, जो हमें HTML स्ट्रिंग देता है
             element.innerHTML = generatePDFContent();
 
-            // 🌟 [V16 HACK] हम A4 का इस्तेमाल नहीं करेंगे।
-            // हम लाइब्रेरी को पेज की ऊंचाई (height) खुद तय करने देंगे।
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -551,7 +548,7 @@
         }
 
         /**
-         * 🌟 (V16) यह फ़ंक्शन अब पेज नहीं गिनता।
+         * 🌟 (V17) यह फ़ंक्शन अब पेज नहीं गिनता।
          * यह सिर्फ एक लंबा HTML पेज बनाता है।
          */
         function generatePDFContent() {
@@ -561,7 +558,6 @@
             let currentItemIndex = 1;
             let tableRows = '';
 
-            // 🌟 [V16] सभी आइटम के लिए एक बार में लूप चलाएँ
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
                 tableRows += `
@@ -576,9 +572,9 @@
 
 
             // --- पेज HTML ---
-            // 🌟 [V16] ऊंचाई (height) को 'auto' पर सेट कर दिया गया है
+            // 🌟 [V17 FIX] ऊंचाई (height) को 'auto' और min-height को A4 साइज़ पर सेट किया
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img

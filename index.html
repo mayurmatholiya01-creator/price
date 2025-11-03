@@ -585,31 +585,29 @@
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${actualIndex}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.size}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.surface}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">₹ ${item.price.toFixed(2)}</td>
+                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
 
                 // Add blank rows ONLY if not the last page (to avoid overflow)
+                const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
                 const itemsPerPageDisplay = showFooter ? pageItems.length : 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;"></td>
                         </tr>
                     `;
                 }
-
-                const showHeader = pageNum === 0;
-                const showFooter = pageNum === totalPages - 1;
 
                 pagesHTML += `
                     <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ">

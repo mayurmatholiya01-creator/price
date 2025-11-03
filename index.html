@@ -548,15 +548,8 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
-            // Remove blank second page if it exists
-            const pages = element.querySelectorAll('div[style*="width: 210mm"]');
-            if (pages.length >= 2) {
-                // Delete the second page (index 1)
-                pages[1].remove();
-            }
-
             const opt = {
-                margin: [0, 0, 0, 0],
+                margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
@@ -594,10 +587,8 @@
                     `;
                 });
 
-                // Add blank rows ONLY if not the last page (to avoid overflow)
-                const showHeader = pageNum === 0;
-                const showFooter = pageNum === totalPages - 1;
-                const itemsPerPageDisplay = showFooter ? pageItems.length : 15;
+                // Add blank rows to always show 10 rows total
+                const itemsPerPageDisplay = 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
@@ -608,6 +599,9 @@
                         </tr>
                     `;
                 }
+
+                const showHeader = pageNum === 0;
+                const showFooter = pageNum === totalPages - 1;
 
                 pagesHTML += `
                     <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ">
@@ -628,7 +622,7 @@
                         </div>
 
                         <!-- Main Content Area -->
-                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                        <div style="padding: 15px 20px; position: relative; z-index: 10;">
                             
                             ${showHeader ? `
                                 <!-- Header with Logo -->

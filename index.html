@@ -556,10 +556,14 @@
 
             const element = document.createElement('div');
 
-            // *** FIX ***
-            // This line tells html2pdf to render an element that is exactly
-            // 210mm wide, which prevents alignment issues on desktop browsers.
+            // *** FIX 1 (from last time) ***
+            // Set element width to 210mm
             element.style.width = '210mm';
+
+            // *** FIX 2 (NEW) ***
+            // Set margin to '0 auto' to center the element horizontally
+            // before html2pdf captures it.
+            element.style.margin = '0 auto';
 
             element.innerHTML = generatePDFContent();
 

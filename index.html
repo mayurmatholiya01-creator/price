@@ -33,7 +33,9 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 100vh;
+            /* *** CHANGE 1: Mobile/iOS compatibility *** */
+            height: 100dvh; /* Use dynamic viewport height */
+            max-height: 100dvh; /* Constrain max height */
         }
 
         .tabs {
@@ -221,7 +223,9 @@
             font-size: 0.9em;
         }
 
-        .suggestion-item:hover {
+        /* *** CHANGE 5: Style for keyboard-selected item *** */
+        .suggestion-item:hover,
+        .suggestion-item.suggestion-active {
             background: #f0f0f0;
         }
 
@@ -340,6 +344,7 @@
                             id="size"
                             placeholder="Select or type size"
                             oninput="filterSuggestions('size')"
+                            inputmode="numeric" /* *** CHANGE 2: Show numeric-first keypad *** */
                         />
                         <div class="suggestions" id="sizeSuggestions"></div>
                     </div>
@@ -353,6 +358,8 @@
                             id="surface"
                             placeholder="Select or type surface"
                             oninput="filterSuggestions('surface')"
+                            pattern="[a-zA-Z\s]*" /* *** CHANGE 3: Allow only letters/spaces *** */
+                            title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
                     </div>
@@ -433,8 +440,11 @@
 
         let items = [];
         let itemIdCounter = 0;
+        let activeSuggestionIndex = -1; // *** CHANGE 5: Track keyboard selection ***
 
         function filterSuggestions(type) {
+            activeSuggestionIndex = -1; // *** CHANGE 5: Reset index on new input ***
+            
             const inputId = type === 'size' ? 'size' : 'surface';
             const suggestionsId = type === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions';
             const data = type === 'size' ? sizes : surfaces;
@@ -465,6 +475,7 @@
         }
 
         function selectSuggestion(inputId, value) {
+            activeSuggestionIndex = -1; // *** CHANGE 5: Reset index on select ***
             document.getElementById(inputId).value = value;
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
@@ -561,7 +572,6 @@
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             
-            // Calculate items per page - 15 entries per page for better spacing
             const itemsPerPage = 15;
             const totalPages = Math.ceil(items.length / itemsPerPage);
             let pagesHTML = '';
@@ -573,7 +583,6 @@
 
                 let tableRows = '';
 
-                // Add rows for actual items
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
@@ -586,8 +595,7 @@
                     `;
                 });
 
-                // Add blank rows to always show 15 rows total
-                const itemsPerPageDisplay = 15; 
+                const itemsPerPageDisplay = 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
@@ -602,17 +610,13 @@
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
-                // *** FIX FOR BLANK PAGE (METHOD 1) ***
-                // Height is slightly reduced to 296.5mm to prevent 
-                // the library from calculating a tiny overflow 
-                // and adding a blank page.
-                
+                // FIX for blank page (Height hack)
                 pagesHTML += `
                     <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden;">
                         
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                             <img
-                                src="A LOGO.png" 
+                                src="A LOGO.png"
                                 style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;"
                             />
                         </div>
@@ -737,18 +741,73 @@
             event.target.classList.add('active');
         }
 
-        // *** FIX FOR SUGGESTION BOX ***
         // Hide suggestions when clicking outside
         document.addEventListener('click', function (event) {
-            // This now correctly checks if the click was *outside* the entire input wrapper
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');
                 document.getElementById('surfaceSuggestions').classList.remove('show');
+                activeSuggestionIndex = -1; // *** CHANGE 5: Reset index on click outside ***
             }
         });
 
         // Initialize
         renderItems();
+
+        // *** CHANGE 5: NEW Function for keyboard navigation ***
+        function handleSuggestionKeydown(e, type) {
+            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            
+            if (!suggestionsDiv.classList.contains('show')) {
+                activeSuggestionIndex = -1;
+                return;
+            }
+
+            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+            if (items.length === 0) {
+                activeSuggestionIndex = -1;
+                return;
+            }
+
+            // Remove active class from all items
+            items.forEach(item => item.classList.remove('suggestion-active'));
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault(); // Prevent cursor from moving in input
+                activeSuggestionIndex++;
+                if (activeSuggestionIndex >= items.length) {
+                    activeSuggestionIndex = 0; // Wrap to top
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault(); // Prevent cursor from moving in input
+                activeSuggestionIndex--;
+                if (activeSuggestionIndex < 0) {
+                    activeSuggestionIndex = items.length - 1; // Wrap to bottom
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission
+                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                    items[activeSuggestionIndex].click(); // Simulate click on the active item
+                    activeSuggestionIndex = -1; // Reset
+                }
+            } else if (e.key === 'Escape') {
+                suggestionsDiv.classList.remove('show'); // Hide suggestions
+                activeSuggestionIndex = -1;
+            }
+
+            // Add active class to the new index and scroll it into view
+            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                items[activeSuggestionIndex].classList.add('suggestion-active');
+                items[activeSuggestionIndex].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        }
+
+        // *** CHANGE 5: Attach keydown listeners to inputs ***
+        document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
+        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
     </script>
 </body>
 </html>

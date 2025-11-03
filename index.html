@@ -289,6 +289,7 @@
             background: #f8f9fa;
         }
 
+        /* Yeh PDF mein kaam nahi karega, ise JS mein karna hoga */
         tbody tr:nth-child(even) {
             background: #f8f9fa;
         }
@@ -548,10 +549,10 @@
         }
 
         /**
-         * 🌟 [GEMINI FINAL FIX v3]: 'pt' + '!important'
-         * 💡 [NEW PIN-POINT LINE FIX v3]:
-         * 'border' को 'linear-gradient' से बदला गया
-         * 10% fade, 80% solid, 10% fade + 1px shadow for 3D look
+         * 🌟 [GEMINI FINAL FIX v4 - PROFESSIONAL]:
+         * 1. Zebra Striping (Alternating row colors) added to table.
+         * 2. Spacing (margin) increased for better breathing room.
+         * 3. Pin-point lines (v3) retained.
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -562,8 +563,15 @@
 
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
+                
+                // [NEW 1] - Zebra Striping ke liye row style
+                // (idx 0 se shuru hota hai, isliye even index (0, 2, 4...) white hai)
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; // Halka grey
+
                 tableRows += `
-                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
+                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
@@ -574,8 +582,6 @@
 
 
             // --- पेज HTML ---
-            // (rgba(237, 50, 55, 0) = ट्रांसपेरेंट लाल, rgba(237, 50, 55, 1) = सॉलिड लाल)
-            // 10% fade, 80% solid, 10% fade + 1px shadow for 3D look
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
@@ -631,7 +637,7 @@
                         </div>
 
                         
-                        <div style="padding: 12px 0; margin-bottom: 10px; text-align: center;">
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
                             <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
@@ -653,7 +659,7 @@
                         </table>
 
                         
-                        <div style="padding-top: 12px; margin-top: 25px;">
+                        <div style="padding-top: 12px; margin-top: 30px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
                                 Terms & Conditions:

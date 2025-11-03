@@ -407,7 +407,7 @@
     </div>
 
     <script>
-        // --- (V13 - DEBUGGING) ---
+        // --- (V13 - Bug Fix) ---
 
         const sizes = [
             '1200x1200x9MM',
@@ -558,7 +558,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V13 - PLACEHOLDER FIX] 🌟🌟🌟
+        // 🌟🌟🌟 [MODIFIED FUNCTION V13 - ERROR FIX] 🌟🌟🌟
         function generatePDF() {
             
             try {
@@ -568,30 +568,22 @@
                 }
                 
                 const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4'); // पहले doc को इनिशियलाइज़ (initialize) करें
 
-                if (!jsPDF) {
-                    alert('Error: PDF library (jspdf) not found!');
-                    return;
-                }
-                if (!window.jspdf.plugin.autotable) {
-                    alert('Error: PDF library (autotable) not found!');
+                // 🌟 [V13 FIX] यह सही तरीका है चेक करने का
+                if (typeof doc.autoTable !== 'function') {
+                    alert('Error: PDF library (autotable) not found or not loaded correctly!');
                     return;
                 }
 
-                // --- 🏁 स्टेप 1: Base64 प्लेसहोल्डर ---
-                // 
-                // ❗❗❗ [FIX] मैंने यहाँ प्लेसहोल्डर डाल दिए हैं ताकि कोड चल सके ❗❗❗
-                // 
-                // बाद में इन्हें अपने असली Base64 टेक्स्ट से बदल दें
+                // --- 🏁 Base64 प्लेसहोल्डर ---
+                // (V11 से अस्थायी लोगो)
                 const base64LogoA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='; // यह एक लाल बिंदु है
                 const base64LogoGranicer = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkqP5fDwAD/AG48P2I5wAAAABJRU5ErkJggg=='; // यह एक नीला बिंदु है
                 // 
-                // ❗❗❗ --------------------------------------------------- ❗❗❗
-
+                // बाद में इन्हें अपने असली Base64 टेक्स्ट से बदल दें
+                // --- -------------------- ---
                 
-                // 🌟 [V13 FIX]: Base64 'PASTE_' वाले सेफ्टी-चेक को हटा दिया गया है
-                
-                const doc = new jsPDF('p', 'mm', 'a4');
                 const currentDate = new Date().toLocaleDateString('en-GB');
 
                 const head = [['Sr. No.', 'Size', 'Surface Type', 'Price (/sq feet)']];
@@ -755,7 +747,6 @@
                 doc.save('Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf');
             
             } catch (e) {
-                // 🌟 अगर V12 टेस्ट के बाद भी कोई एरर आती है, तो यह अलर्ट दिखेगा
                 alert("PDF बनाने में एरर आई: " + e.message);
             }
         }

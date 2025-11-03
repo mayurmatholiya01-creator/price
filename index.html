@@ -587,7 +587,6 @@
                 });
 
                 // Add blank rows to always show 15 rows total
-                // (Comment fixed to match code)
                 const itemsPerPageDisplay = 15; 
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
@@ -603,13 +602,13 @@
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
-                // *** FIX FOR BLANK PAGE ***
-                // This variable checks if it's the last page.
-                // If it is, it sets 'auto', otherwise it sets 'always'
-                const pageBreakStyle = (pageNum === totalPages - 1) ? 'page-break-after: auto;' : 'page-break-after: always;';
-
+                // *** FIX FOR BLANK PAGE (ATTEMPT 2) ***
+                // The 'page-break-after' logic has been completely removed.
+                // We now rely *only* on the 'height: 297mm' to tell the library
+                // to create a new page for each div.
+                
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ${pageBreakStyle}">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden;">
                         
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                             <img

@@ -603,9 +603,8 @@
                 const showHeader = pageNum === 0;
                 const showFooter = pageNum === totalPages - 1;
 
-                const pageBreakStyle = pageNum === totalPages - 1 ? '' : 'page-break-after: always;';
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ${pageBreakStyle}">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ">
                         
                         <!-- Background: Logos positioned absolutely with clip-path to prevent overflow -->
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
@@ -623,7 +622,7 @@
                         </div>
 
                         <!-- Main Content Area -->
-                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                        <div style="padding: 15px 20px; position: relative; z-index: 10;">
                             
                             ${showHeader ? `
                                 <!-- Header with Logo -->

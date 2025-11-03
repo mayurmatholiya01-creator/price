@@ -601,22 +601,22 @@
                     <div style="width: 210mm; height: 297mm; position: relative; page-break-after: always; font-family: Arial, sans-serif; background: white; border: 3px solid #000; margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column;">
                         
                         <!-- LEFT BOTTOM LOGO - ORIGINAL -->
-                        <img src="${A_LOGO}" style="position: absolute; bottom: 12mm; left: 12mm; width: 26mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; max-width: none;">
+                        <img src="${A_LOGO}" style="position: absolute; bottom: 15mm; left: 15mm; width: 35mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; max-width: none;">
                         
                         <!-- RIGHT TOP LOGO - ROTATED 180 + FLIPPED -->
-                        <img src="${A_LOGO}" style="position: absolute; top: 12mm; right: 12mm; width: 26mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; transform: rotate(180deg) scaleY(-1); max-width: none;">
+                        <img src="${A_LOGO}" style="position: absolute; top: 15mm; right: 15mm; width: 35mm; height: auto; object-fit: contain; opacity: 0.9; z-index: 1; transform: rotate(180deg) scaleY(-1); max-width: none;">
 
                         <!-- MAIN CONTENT WRAPPER -->
-                        <div style="position: relative; z-index: 2; padding: 12mm; flex: 1; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; overflow: hidden;">
+                        <div style="position: relative; z-index: 2; padding: 15mm; flex: 1; display: flex; flex-direction: column; width: 100%; box-sizing: border-box; overflow: hidden;">
                             
                             <!-- HEADER WITH LOGO -->
-                            <div style="text-align: center; margin-bottom: 5px; border-bottom: 3px solid #d32f2f; padding-bottom: 5px; flex-shrink: 0; width: 100%;">
-                                <img src="${GRANICER_LOGO}" style="max-width: 100%; max-height: 36px; object-fit: contain; height: 36px;">
+                            <div style="text-align: center; margin-bottom: 6px; border-bottom: 3px solid #d32f2f; padding-bottom: 6px; flex-shrink: 0; width: 100%;">
+                                <img src="${GRANICER_LOGO}" style="max-width: 100%; max-height: 42px; object-fit: contain; height: 42px;">
                             </div>
 
                             <!-- COMPANY INFO -->
-                            <div style="width: 100%; margin-bottom: 5px; font-size: 7.8pt; line-height: 1.25; flex-shrink: 0; display: flex; gap: 8px;">
-                                <div style="width: 50%; padding-right: 4px;">
+                            <div style="width: 100%; margin-bottom: 6px; font-size: 9pt; line-height: 1.35; flex-shrink: 0; display: flex; gap: 10px;">
+                                <div style="width: 50%; padding-right: 5px;">
                                     <strong>Company Details:</strong><br>
                                     ${companyInfo.name}<br>
                                     ${companyInfo.cin}<br><br>
@@ -624,7 +624,7 @@
                                     Email: ${companyInfo.email}<br>
                                     Web: ${companyInfo.web}
                                 </div>
-                                <div style="width: 50%; padding-left: 4px;">
+                                <div style="width: 50%; padding-left: 5px;">
                                     <strong>${companyInfo.registeredOffice.title}</strong><br>
                                     ${companyInfo.registeredOffice.address.join('<br>')}<br><br>
                                     <strong>${companyInfo.unit2.title}</strong><br>
@@ -633,48 +633,48 @@
                             </div>
 
                             <!-- PRICE LIST TITLE -->
-                            <h2 style="text-align: center; color: #d32f2f; font-size: 11pt; margin: 3px 0; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;">Price List</h2>
+                            <h2 style="text-align: center; color: #d32f2f; font-size: 12pt; margin: 4px 0; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0;">Price List</h2>
 
                             <!-- TABLE -->
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px; flex-grow: 1; font-size: 7.5pt; table-layout: fixed;">
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px; flex-grow: 1; font-size: 8pt; table-layout: fixed;">
                                 <thead>
-                                    <tr style="background: #d32f2f; color: white; height: 20px;">
-                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: center; width: 8%; font-weight: bold;">Sr.</th>
-                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: left; width: 32%; font-weight: bold;">Size</th>
-                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: left; width: 32%; font-weight: bold;">Surface Type</th>
-                                        <th style="border: 1px solid #999; padding: 3px 2px; text-align: right; width: 28%; font-weight: bold;">Price</th>
+                                    <tr style="background: #d32f2f; color: white; height: 22px;">
+                                        <th style="border: 1px solid #999; padding: 4px 2px; text-align: center; width: 10%; font-weight: bold;">Sr. No.</th>
+                                        <th style="border: 1px solid #999; padding: 4px 2px; text-align: left; width: 30%; font-weight: bold;">Size</th>
+                                        <th style="border: 1px solid #999; padding: 4px 2px; text-align: left; width: 30%; font-weight: bold;">Surface Type</th>
+                                        <th style="border: 1px solid #999; padding: 4px 2px; text-align: right; width: 30%; font-weight: bold;">Price (Per Unit)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     ${pageItems.map((item, idx) => `
-                                        <tr style="background: ${(startIdx + idx) % 2 === 0 ? '#fafafa' : 'white'}; height: 16px;">
-                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: center;">${startIdx + idx + 1}</td>
-                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: left; word-break: break-word;">${item.size}</td>
-                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: left; word-break: break-word;">${item.surface}</td>
-                                            <td style="border: 1px solid #ddd; padding: 2px; text-align: right;">₹ ${item.price.toFixed(2)}</td>
+                                        <tr style="background: ${(startIdx + idx) % 2 === 0 ? '#fafafa' : 'white'}; height: 18px;">
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px; text-align: center;">${startIdx + idx + 1}</td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px; text-align: left; word-break: break-word;">${item.size}</td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px; text-align: left; word-break: break-word;">${item.surface}</td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px; text-align: right;">₹ ${item.price.toFixed(2)}</td>
                                         </tr>
                                     `).join('')}
                                     ${Array(blankRows).fill(0).map(() => `
-                                        <tr style="background: white; height: 16px;">
-                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
-                                            <td style="border: 1px solid #ddd; padding: 2px;"></td>
+                                        <tr style="background: white; height: 18px;">
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 3px 2px;"></td>
                                         </tr>
                                     `).join('')}
                                 </tbody>
                             </table>
 
                             <!-- FOOTER -->
-                            <div style="border-top: 2px solid #d32f2f; padding-top: 3px; font-size: 5.8pt; line-height: 1.15; flex-shrink: 0; width: 100%; box-sizing: border-box; overflow: hidden;">
+                            <div style="border-top: 2px solid #d32f2f; padding-top: 4px; font-size: 6.5pt; line-height: 1.25; flex-shrink: 0; width: 100%; box-sizing: border-box; overflow: hidden;">
                                 <strong style="color: #d32f2f;">Terms & Conditions:</strong>
-                                <ul style="margin-left: 8px; margin-top: 1px; padding-left: 0; margin-bottom: 2px;">
-                                    ${terms.map(term => `<li style="margin: 0.5px 0; text-align: justify;">${term}</li>`).join('')}
+                                <ul style="margin-left: 10px; margin-top: 2px; padding-left: 0; margin-bottom: 2px;">
+                                    ${terms.map(term => `<li style="margin: 1px 0; text-align: justify;">${term}</li>`).join('')}
                                 </ul>
-                                <div style="text-align: center; margin-top: 2px; color: #666; border-top: 1px solid #ddd; padding-top: 1px;">
-                                    <p style="margin: 0.3px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                    <p style="margin: 0.3px 0;">Generated on: ${new Date().toLocaleDateString()}</p>
-                                    <p style="margin: 0.3px 0;"><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
+                                <div style="text-align: center; margin-top: 2px; color: #666; border-top: 1px solid #ddd; padding-top: 2px;">
+                                    <p style="margin: 0.5px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                    <p style="margin: 0.5px 0;">Generated on: ${new Date().toLocaleDateString()}</p>
+                                    <p style="margin: 0.5px 0;"><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
                                 </div>
                             </div>
                         </div>

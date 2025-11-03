@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Granicer Ceramica - Price List Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -404,6 +407,10 @@
     </div>
 
     <script>
+        // 🌟 नई लाइब्रेरी को window ऑब्जेक्ट पर सेट करना
+        window.jsPDF = window.jspdf.jsPDF;
+
+        // --- (आपके पुराने फ़ंक्शन वैसे ही रहेंगे) ---
         const sizes = [
             '1200x1200x9MM',
             '1200x1790x9MM',
@@ -552,319 +559,14 @@
             container.innerHTML = tableHTML;
         }
 
+        // 🌟🌟🌟 [MODIFIED FUNCTION V8 - USING jsPDF] 🌟🌟🌟
+        // यह फ़ंक्शन अब HTML का "स्क्रीनशॉट" नहीं लेता है, 
+        // बल्कि PDF को सटीक रूप से "ड्रॉ" करता है।
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
-            const element = document.createElement('div');
-            element.innerHTML = generatePDFContent();
-
-            const opt = {
-                margin: 0,
-                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-            };
-
-            html2pdf().set(opt).from(element).save();
-        }
-
-        /**
-         * 🌟 [MODIFIED FUNCTION V6 - USER'S EXACT LOGIC] 🌟
-         * 1. (1-15 आइटम): पेज 1 + फुटर।
-         * 2. (16-23 आइटम): पेज 1 (आइटम) + पेज 2 (सिर्फ फुटर)।
-         * 3. (24+ आइटम): पेज 1 (23 आइटम) + पेज 2 (बाकी आइटम + फुटर)।
-         */
-        function generatePDFContent() {
-            const currentDate = new Date().toLocaleDateString('en-GB');
-            let pagesHTML = '';
-            
-            // --- आपके लॉजिक के अनुसार पेज ब्रेकपॉइंट ---
-            
-            // (1-15) आइटम: पेज 1 पर फुटर के साथ
-            const itemsOnFirstPageWithFooter = 15; 
-            
-            // (16-23) आइटम: पेज 1 पर बिना फुटर के
-            const itemsOnFirstPageMax = 23;   
-            
-            // (24+) आइटम: पेज 2+ (बीच के पेज) पर
-            const itemsOnMiddlePage = 40;  
-            
-            // (24+) आइटम: पेज 2+ (आखिरी पेज) पर
-            const itemsOnLastPage = 30;    
-
-            let remainingItems = [...items];
-            const totalItems = items.length;
-            let currentItemIndex = 1;
-            let pageNum = 0;
-            let footerHasBeenAdded = false;
-
-            // हम तब तक पेज बनाते रहेंगे जब तक फुटर जुड़ नहीं जाता।
-            while (!footerHasBeenAdded) {
-                let showHeader = (pageNum === 0);
-                let showFooter = false;
-                let pageItems = [];
-                let itemsForThisPage;
-                
-                // यह स्केलिंग बग को ठीक करने के लिए है
-                let pageBreakStyle = '';
-
-                if (pageNum === 0) {
-                    // --- पेज 1 का लॉजिक ---
-                    if (totalItems <= itemsOnFirstPageWithFooter) {
-                        // स्थिति 1 (1-15 आइटम)
-                        itemsForThisPage = totalItems;
-                        pageItems = remainingItems.splice(0, itemsForThisPage);
-                        showFooter = true;
-                        footerHasBeenAdded = true; // लूप खत्म
-                    } else if (totalItems <= itemsOnFirstPageMax) {
-                        // स्थिति 2 (16-23 आइटम)
-                        itemsForThisPage = totalItems;
-                        pageItems = remainingItems.splice(0, itemsForThisPage);
-                        showFooter = false; // फुटर अगले पेज पर जाएगा
-                        pageBreakStyle = 'page-break-after: always;'; // पेज 2 को मजबूर करें
-                    } else {
-                        // स्थिति 3 (24+ आइटम)
-                        itemsForThisPage = itemsOnFirstPageMax; // पेज 1 पर 23 आइटम
-                        pageItems = remainingItems.splice(0, itemsForThisPage);
-                        showFooter = false; // फुटर आखिरी पेज पर जाएगा
-                        pageBreakStyle = 'page-break-after: always;'; // पेज 2 को मजबूर करें
-                    }
-                } else {
-                    // --- पेज 2+ का लॉजिक ---
-                    if (remainingItems.length === 0) {
-                        // स्थिति 2 (16-23) का दूसरा हिस्सा: *सिर्फ फुटर* वाला पेज
-                        pageItems = []; // इस पेज पर कोई आइटम नहीं
-                        showFooter = true;
-                        footerHasBeenAdded = true; // लूप खत्म
-                    } else if (remainingItems.length <= itemsOnLastPage) {
-                        // स्थिति 3 का आखिरी पेज
-                        itemsForThisPage = remainingItems.length;
-                        pageItems = remainingItems.splice(0, itemsForThisPage);
-                        showFooter = true;
-                        footerHasBeenAdded = true; // लूप खत्म
-                    } else {
-                        // स्थिति 3 का बीच का पेज
-                        itemsForThisPage = itemsOnMiddlePage;
-                        pageItems = remainingItems.splice(0, itemsForThisPage);
-                        showFooter = false;
-                        pageBreakStyle = 'page-break-after: always;'; // अगले पेज को मजबूर करें
-                    }
-                }
-
-                let tableRows = '';
-                pageItems.forEach((item) => {
-                    tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${currentItemIndex++}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-
-                // --- पेज HTML ---
-                pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden; ${pageBreakStyle}">
-                        
-                        <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img
-                                src="A LOGO.png"
-                                style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;"
-                            />
-                        </div>
-
-                        <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                            <img 
-                                src="A LOGO.png" 
-                                style="width: 100%; height: 100%; object-fit: contain; display: block;" 
-                            />
-                        </div>
-
-                        <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
-                            
-                            ${showHeader ? `
-                                <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
-                                    <img
-                                        src="GRANICER LOGO.png"
-                                        style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                                    />
-                                </div>
-
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                                        <div>COMET GRANITO PVT.LTD.</div>
-                                        <div style="color: #666; font-size: 10px;">C.I. No.: U26914GJ2006PTC049091</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                        <div style="font-size: 10px;">Survey No. 118, National Highway No. 8-A</div>
-                                        <div style="font-size: 10px;">Tal. Morbi, Nava Jambudiya,</div>
-                                        <div style="font-size: 10px;">GJ 363642, INDIA</div>
-                                    </div>
-                                </div>
-
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 11px; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                        <div style="font-size: 10px;">📧 Email: info@granicer.in</div>
-                                        <div style="font-size: 10px;">🌐 Web: www.granicer.in</div>
-                                    </div>
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                        <div style="font-size: 10px;">Revenue Survey No. 168 P1 and P2</div>
-                                        <div style="font-size: 10px;">Revenue Survey No. 169 P1 and P6</div>
-                                        <div style="font-size: 10px;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                                    </div>
-                                </div>
-
-                                <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 12px 0; margin-bottom: 15px; text-align: center;">
-                                    <div style="font-size: 20px; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                                </div>
-                            ` : `
-                                <div style="height: 90px; margin-bottom: 15px; border-bottom: 2px solid #ed3237;">
-                                    </div>
-                            `}
-
-                            ${(pageItems.length > 0) ? `
-                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                                    <thead>
-                                        <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Sr. No.</th>
-                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Size</th>
-                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Surface Type</th>
-                                            <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 11px; font-weight: 600; height: 30px;">Price <span style="font-size: 8px; display: block;">(/sq feet)</span></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style="background: white;">
-                                        ${tableRows}
-                                    </tbody>
-                                </table>
-                            ` : ''}
-
-                            ${showFooter ? `
-                                <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 25px;">
-                                    <div style="font-size: 12px; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
-                                        Terms & Conditions:
-                                    </div>
-                                    <ul style="font-size: 10px; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
-                                        <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-                                        <li>Prices are subject to change without prior notice depending on market conditions.</li>
-                                        <li>Delivery period will be confirmed after order placement.</li>
-                                        <li>The company is not responsible for delays due to transport or unforeseen events.</li>
-                                        <li>The company is not liable once goods leave the factory.</li>
-                                        <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-                                        <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-                                        <li>Placing an order implies acceptance of the above terms & conditions.</li>
-                                    </ul>
-                                </div>
-
-                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">
-                                    <div style="font-size: 9px; color: #999; line-height: 1.4;">
-                                        <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                        <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                        <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                        </div>
-                    </div>
-                `;
-
-                pageNum++; // अगले पेज पर जाएं
-            }
-
-            return pagesHTML;
-        }
-
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('size').focus();
-        }
-
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach((tab) => tab.classList.remove('active'));
-            buttons.forEach((btn) => btn.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // बाहर क्लिक करने पर सजेशन छिपाएं
-        document.addEventListener('click', function (event) {
-            if (!event.target.closest('.input-wrapper')) {
-                document.getElementById('sizeSuggestions').classList.remove('show');
-                document.getElementById('surfaceSuggestions').classList.remove('show');
-                activeSuggestionIndex = -1; 
-            }
-        });
-
-        // Initialize
-        renderItems();
-
-        // कीबोर्ड नेविगेशन के लिए फ़ंक्शन
-        function handleSuggestionKeydown(e, type) {
-            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
-            const suggestionsDiv = document.getElementById(suggestionsId);
-            
-            if (!suggestionsDiv.classList.contains('show')) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
-            if (items.length === 0) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            items.forEach(item => item.classList.remove('suggestion-active'));
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault(); 
-                activeSuggestionIndex++;
-                if (activeSuggestionIndex >= items.length) {
-                    activeSuggestionIndex = 0; 
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault(); 
-                activeSuggestionIndex--;
-                if (activeSuggestionIndex < 0) {
-                    activeSuggestionIndex = items.length - 1; 
-                }
-            } else if (e.key === 'Enter') {
-                e.preventDefault(); 
-                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                    items[activeSuggestionIndex].click(); 
-                    activeSuggestionIndex = -1; 
-                }
-            } else if (e.key === 'Escape') {
-                suggestionsDiv.classList.remove('show'); 
-                activeSuggestionIndex = -1;
-            }
-
-            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                items[activeSuggestionIndex].classList.add('suggestion-active');
-                items[activeSuggestionIndex].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-        }
-
-        document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
-        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
-    </script>
-</body>
-</html>
+            // --- 🏁 स्टेप 1: आपके Base64 लोगो यहाँ पेस्ट कर दिए गए हैं ---
+            const base64LogoA = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEMAAABVCAYAAAASRVn1AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAHfaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49J++7vycgaWQ9J1c1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCc/Pg0KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyI+PHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj48cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0idXVpZDpmYWY1YmRkNS1iYTNkLTExZGEtYWQzMS1kMzNkNzUxODJmMWIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+PHhtcDpDcmVhdG9yVG9vbD5BZG9iZSBQaG90b3Nob3AgQ1M2IChXaW5kb3dzKTwveG1wOkNyZWF0b3JUb29sPjx4bXA6Y3JlYXRvcnRvb2w+QWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cyk8L3htcDpjcmVhdG9ydG9vbD48L3JkZjpEZXNjcmlwdGlvbj48L3JkZjpSREY+PC94OnhtcG1ldGE+DQo8P3hwYWNrZXQgZW5kPSd3Jz8+yZQ12QAACa1JREFUeF7dnP1vHEcZx7/PzOzu2T47znvTkLi0JrbPcezruVEKbV21gFCRUENJVfLWlrRNnTh9oUhU/AWg/kCrKmoBVS1BQvyAKEJI4adWgh+iVrmEOCYvFCWAaGigpIqNX863Ow8/2E7PE+/c2+7dhY8UKXmevfX6k9lnZmdnDmgAznRuem57X/8bZrzWCDNQD1a1Lt/nus63zHitqbsMPTi4YZkQm1kqrOnu/pKZryV1lzGZ5yfyzIBmtCRbv2fma0ndZYDkkwDA0BCEe9Pp9M3mIbWirjL+0ZO+Xym5jsEMZh8gCGC/eVytqKsMFhgRIIA5YCJmMIQQ+8zjakXdZIylUslmz3tQa/1pkAEl1fq+np57Co+tFXWTsTqRHCYAGmym4LjeM2asFtRNhsv0PNP1IrTWcB3noa1bt7aZubipi4xLPel7WNC6JRrFHETQvn/QDMdNXWSQomeEIDN8DWaGEHLEjMdNzWWMpVJJ13G2sw5rFnMI4Obb+/ruNuNxUnMZOeE93iSl0FxEhpSAEDUtpDWXscF1XpgJAjN8Haw1HMd9aO3atS1mLi5qKmO87/a7HRIdBSOLUDQzhBC0fs1NT5q5uKipjJyQB5mA8NK5GM0absL7thmPi5rJuJxKJUnQN0K706VggJk3DA4MfN5Mx

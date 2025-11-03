@@ -235,6 +235,9 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            border-collapse: collapse;
+            border-spacing: 0;
+            table-layout: fixed;
         }
 
         .items-table h3 {
@@ -247,10 +250,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            border-spacing: 0;
             background: white;
             font-size: 0.9em;
-            table-layout: fixed;
         }
 
         thead {
@@ -548,14 +549,8 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
-            // Remove blank second page if it exists
-            const pages = element.querySelectorAll('div[style*="width: 210mm"]');
-            if (pages.length >= 2) {
-                pages[1].remove();
-            }
-
             const opt = {
-                margin: [0, 0, 0, 0],
+                margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
@@ -593,10 +588,8 @@
                     `;
                 });
 
-                // Add blank rows ONLY if not the last page
-                const showHeader = pageNum === 0;
-                const showFooter = pageNum === totalPages - 1;
-                const itemsPerPageDisplay = showFooter ? pageItems.length : 15;
+                // Add blank rows to always show 10 rows total
+                const itemsPerPageDisplay = 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
@@ -608,8 +601,11 @@
                     `;
                 }
 
+                const showHeader = pageNum === 0;
+                const showFooter = pageNum === totalPages - 1;
+
                 pagesHTML += `
-                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; ">
+                    <div style="font-family: 'Arial', sans-serif; width: 210mm; height: 297mm; margin: 0; background: white; position: relative; overflow: hidden; page-break-after: always;">
                         
                         <!-- Background: Logos positioned absolutely with clip-path to prevent overflow -->
                         <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">

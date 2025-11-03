@@ -9,16 +9,22 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
@@ -38,16 +44,18 @@
 
         .tab-button {
             flex: 1;
-            padding: 16px;
+            padding: 14px 16px;
             border: none;
             background: transparent;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #666;
             border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
             text-align: center;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .tab-button.active {
@@ -55,12 +63,8 @@
             border-bottom-color: #d32f2f;
         }
 
-        .tab-button:hover {
-            color: #d32f2f;
-        }
-
         .content {
-            padding: 32px;
+            padding: 20px;
         }
 
         .tab-content {
@@ -73,24 +77,20 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #333;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .input-wrapper {
@@ -100,12 +100,14 @@
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 12px 16px;
+            padding: 12px 14px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.3s ease;
             font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .form-group input:focus,
@@ -115,22 +117,31 @@
             box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
         }
 
-        .price-input {
+        .price-input-wrapper {
             display: flex;
             align-items: center;
-            gap: 0;
+            position: relative;
         }
 
         .price-symbol {
             position: absolute;
-            left: 16px;
+            left: 14px;
             font-weight: 600;
             color: #666;
             font-size: 16px;
+            pointer-events: none;
+            z-index: 2;
         }
 
-        .price-input input {
-            padding-left: 40px;
+        .price-input-wrapper input {
+            padding-left: 36px;
+            -moz-appearance: textfield;
+        }
+
+        .price-input-wrapper input::-webkit-outer-spin-button,
+        .price-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
         .suggestions {
@@ -142,10 +153,11 @@
             border: 1px solid #ddd;
             border-top: none;
             border-radius: 0 0 8px 8px;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
-            z-index: 10;
+            z-index: 100;
             display: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .suggestions.show {
@@ -153,39 +165,45 @@
         }
 
         .suggestion-item {
-            padding: 10px 16px;
+            padding: 11px 14px;
             cursor: pointer;
             transition: background 0.2s ease;
-            font-size: 14px;
+            font-size: 13px;
+            color: #333;
+            user-select: none;
         }
 
-        .suggestion-item:hover {
-            background: #f5f5f5;
-        }
-
-        .suggestion-item.selected {
+        .suggestion-item:active,
+        .suggestion-item.selected,
+        .suggestion-item.highlighted {
             background: #f5f5f5;
             color: #d32f2f;
             font-weight: 600;
         }
 
+        .suggestion-item:hover {
+            background: #f9f9f9;
+        }
+
         .buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 32px;
+            gap: 12px;
+            margin-top: 24px;
         }
 
         .btn {
-            padding: 14px 24px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .btn-add {
@@ -193,16 +211,14 @@
             color: white;
         }
 
-        .btn-add:hover {
+        .btn-add:active {
             background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
 
         .btn-add:disabled {
             background: #ccc;
             cursor: not-allowed;
-            transform: none;
+            opacity: 0.6;
         }
 
         .btn-pdf {
@@ -210,27 +226,26 @@
             color: white;
         }
 
-        .btn-pdf:hover {
+        .btn-pdf:active {
             background: #b71c1c;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
         }
 
         .items-section {
-            margin-top: 32px;
+            margin-top: 24px;
         }
 
         .items-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .items-table {
             width: 100%;
             border-collapse: collapse;
             background: white;
+            font-size: 13px;
         }
 
         .items-table thead {
@@ -239,66 +254,91 @@
         }
 
         .items-table th {
-            padding: 14px;
+            padding: 10px 8px;
             text-align: left;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .items-table td {
-            padding: 14px;
+            padding: 10px 8px;
             border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
+            font-size: 12px;
         }
 
-        .items-table tbody tr:hover {
-            background: #f9f9f9;
+        .items-table tbody tr:active {
+            background: #f5f5f5;
         }
 
         .btn-delete {
             background: #ef5350;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             transition: all 0.2s ease;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        .btn-delete:hover {
+        .btn-delete:active {
             background: #e53935;
-            transform: scale(1.05);
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             color: #999;
             background: #f9f9f9;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .advance-empty {
             text-align: center;
-            padding: 100px 20px;
+            padding: 60px 20px;
             color: #999;
-            font-size: 18px;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
-            .buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .items-table {
-                font-size: 12px;
-            }
-
-            .items-table th,
-            .items-table td {
+            body {
                 padding: 8px;
             }
 
@@ -307,9 +347,93 @@
             }
 
             .tab-button {
+                font-size: 13px;
+                padding: 12px 12px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+
+            .buttons {
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .btn {
+                padding: 11px 16px;
+                font-size: 13px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px 6px;
+                font-size: 11px;
+            }
+
+            .btn-delete {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .items-title {
                 font-size: 14px;
+            }
+
+            .items-section {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
                 padding: 12px;
             }
+
+            .buttons {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .tab-button {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .form-group label {
+                font-size: 12px;
+            }
+
+            .form-group input {
+                font-size: 16px;
+                padding: 11px 12px;
+            }
+
+            .items-table {
+                font-size: 10px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 6px 4px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d32f2f;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b71c1c;
         }
     </style>
 </head>
@@ -321,6 +445,9 @@
         </div>
 
         <div class="content">
+            <!-- SUCCESS MESSAGE -->
+            <div class="success-message" id="successMsg">✓ Entry added successfully</div>
+
             <!-- BASIC TAB -->
             <div class="tab-content active" id="basic">
                 <!-- SIZE FIELD -->
@@ -332,7 +459,9 @@
                             id="size" 
                             placeholder="Select or type size"
                             autocomplete="off"
+                            spellcheck="false"
                         >
+                        <div class="error-message" id="sizeError">Only numbers allowed</div>
                         <div class="suggestions" id="sizeSuggestions"></div>
                     </div>
                 </div>
@@ -346,7 +475,9 @@
                             id="surface" 
                             placeholder="Select or type surface"
                             autocomplete="off"
+                            spellcheck="false"
                         >
+                        <div class="error-message" id="surfaceError">Only alphabets allowed</div>
                         <div class="suggestions" id="surfaceSuggestions"></div>
                     </div>
                 </div>
@@ -354,7 +485,7 @@
                 <!-- PRICE FIELD -->
                 <div class="form-group">
                     <label for="price">Price</label>
-                    <div class="input-wrapper">
+                    <div class="price-input-wrapper">
                         <span class="price-symbol">₹</span>
                         <input 
                             type="number" 
@@ -362,8 +493,10 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
+                            inputmode="decimal"
                         >
                     </div>
+                    <div class="error-message" id="priceError">Please enter valid price</div>
                 </div>
 
                 <!-- BUTTONS -->
@@ -387,7 +520,7 @@
     </div>
 
     <script>
-        // DATA - SIZES
+        // DATA
         const sizes = [
             '1200x1200x9MM',
             '1200x1790x9MM',
@@ -407,7 +540,6 @@
             '800x3200x15MM'
         ];
 
-        // DATA - SURFACES
         const surfaces = [
             'ELEGANCE',
             'REPOSE',
@@ -422,77 +554,159 @@
             'GALAXY'
         ];
 
-        // ITEMS ARRAY
         let items = [];
+        let currentSuggestionIndex = -1;
+        let currentSuggestionField = null;
 
         // TAB SWITCHING
         document.querySelectorAll('.tab-button').forEach(button => {
             button.addEventListener('click', () => {
                 const tabName = button.getAttribute('data-tab');
-                
                 document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
                 button.classList.add('active');
                 document.getElementById(tabName).classList.add('active');
             });
         });
 
-        // AUTOCOMPLETE FUNCTION
-        function setupAutocomplete(inputId, suggestionsId, dataArray) {
+        // INPUT VALIDATION & AUTOCOMPLETE
+        function setupAutocomplete(inputId, suggestionsId, dataArray, validationType) {
             const input = document.getElementById(inputId);
             const suggestionsDiv = document.getElementById(suggestionsId);
+            const errorDiv = document.getElementById(inputId + 'Error');
 
             input.addEventListener('input', (e) => {
-                const value = e.target.value.toUpperCase().trim();
+                const value = e.target.value;
                 
-                if (value.length === 0) {
+                // VALIDATION
+                if (validationType === 'numeric') {
+                    const numericValue = value.replace(/[^0-9x]/gi, '');
+                    if (numericValue !== value) {
+                        input.value = numericValue;
+                        errorDiv.style.display = 'block';
+                        setTimeout(() => { errorDiv.style.display = 'none'; }, 2000);
+                        return;
+                    }
+                } else if (validationType === 'alpha') {
+                    const alphaValue = value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+                    if (alphaValue !== value.toUpperCase()) {
+                        input.value = alphaValue;
+                        errorDiv.style.display = 'block';
+                        setTimeout(() => { errorDiv.style.display = 'none'; }, 2000);
+                        return;
+                    }
+                }
+
+                const searchValue = value.toUpperCase().trim();
+                
+                if (searchValue.length === 0) {
                     suggestionsDiv.classList.remove('show');
+                    currentSuggestionIndex = -1;
                     return;
                 }
 
                 const filtered = dataArray.filter(item => 
-                    item.toUpperCase().includes(value)
+                    item.toUpperCase().includes(searchValue)
                 );
 
                 if (filtered.length === 0) {
                     suggestionsDiv.classList.remove('show');
+                    currentSuggestionIndex = -1;
                     return;
                 }
 
-                suggestionsDiv.innerHTML = filtered.map(item => 
-                    `<div class="suggestion-item" data-value="${item}">${item}</div>`
+                suggestionsDiv.innerHTML = filtered.map((item, idx) => 
+                    `<div class="suggestion-item" data-value="${item}" data-index="${idx}">${item}</div>`
                 ).join('');
 
                 suggestionsDiv.classList.add('show');
+                currentSuggestionField = inputId;
+                currentSuggestionIndex = -1;
 
                 document.querySelectorAll(`#${suggestionsId} .suggestion-item`).forEach(item => {
                     item.addEventListener('click', () => {
-                        input.value = item.getAttribute('data-value');
-                        suggestionsDiv.classList.remove('show');
+                        selectSuggestion(inputId, suggestionsId, item.getAttribute('data-value'));
                     });
                 });
+            });
+
+            input.addEventListener('keydown', (e) => {
+                const items = document.querySelectorAll(`#${suggestionsId} .suggestion-item`);
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    currentSuggestionIndex = Math.min(currentSuggestionIndex + 1, items.length - 1);
+                    updateHighlight(suggestionsId, items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    currentSuggestionIndex = Math.max(currentSuggestionIndex - 1, -1);
+                    updateHighlight(suggestionsId, items);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (currentSuggestionIndex >= 0 && items[currentSuggestionIndex]) {
+                        selectSuggestion(inputId, suggestionsId, items[currentSuggestionIndex].getAttribute('data-value'));
+                    }
+                }
             });
 
             document.addEventListener('click', (e) => {
                 if (!input.contains(e.target) && !suggestionsDiv.contains(e.target)) {
                     suggestionsDiv.classList.remove('show');
+                    currentSuggestionIndex = -1;
                 }
             });
         }
 
+        function updateHighlight(suggestionsId, items) {
+            items.forEach((item, idx) => {
+                item.classList.remove('highlighted');
+                if (idx === currentSuggestionIndex) {
+                    item.classList.add('highlighted');
+                    item.scrollIntoView({ block: 'nearest' });
+                }
+            });
+        }
+
+        function selectSuggestion(inputId, suggestionsId, value) {
+            document.getElementById(inputId).value = value;
+            document.getElementById(suggestionsId).classList.remove('show');
+            currentSuggestionIndex = -1;
+        }
+
+        // PRICE INPUT VALIDATION
+        document.getElementById('price').addEventListener('input', (e) => {
+            if (e.target.value) {
+                const price = parseFloat(e.target.value);
+                if (price < 0) {
+                    e.target.value = '';
+                }
+            }
+        });
+
         // SETUP AUTOCOMPLETE
-        setupAutocomplete('size', 'sizeSuggestions', sizes);
-        setupAutocomplete('surface', 'surfaceSuggestions', surfaces);
+        setupAutocomplete('size', 'sizeSuggestions', sizes, 'numeric');
+        setupAutocomplete('surface', 'surfaceSuggestions', surfaces, 'alpha');
 
         // ADD BUTTON
-        document.getElementById('addBtn').addEventListener('click', () => {
+        document.getElementById('addBtn').addEventListener('click', addItem);
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('price') === document.activeElement) {
+                addItem();
+            }
+        });
+
+        function addItem() {
             const size = document.getElementById('size').value.trim();
-            const surface = document.getElementById('surface').value.trim();
+            const surface = document.getElementById('surface').value.trim().toUpperCase();
             const price = document.getElementById('price').value.trim();
 
-            if (!size || !surface || !price) {
-                alert('Please fill all fields');
+            const errorMsgs = [];
+            if (!size) errorMsgs.push('Size required');
+            if (!surface) errorMsgs.push('Surface required');
+            if (!price || parseFloat(price) <= 0) errorMsgs.push('Valid price required');
+
+            if (errorMsgs.length > 0) {
+                alert(errorMsgs.join('\n'));
                 return;
             }
 
@@ -505,15 +719,23 @@
 
             items.push(item);
             renderItems();
+            showSuccessMessage();
             
             // CLEAR FIELDS
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
             document.getElementById('size').focus();
-        });
+        }
 
-        // RENDER ITEMS
+        function showSuccessMessage() {
+            const msg = document.getElementById('successMsg');
+            msg.classList.add('show');
+            setTimeout(() => {
+                msg.classList.remove('show');
+            }, 2000);
+        }
+
         function renderItems() {
             const container = document.getElementById('itemsContainer');
 
@@ -550,13 +772,11 @@
             container.innerHTML = tableHTML;
         }
 
-        // DELETE ITEM
         window.deleteItem = (id) => {
             items = items.filter(item => item.id !== id);
             renderItems();
         };
 
-        // PDF BUTTON
         document.getElementById('pdfBtn').addEventListener('click', () => {
             if (items.length === 0) {
                 alert('Please add at least one item before generating PDF');
@@ -567,6 +787,13 @@
 
         // INITIAL RENDER
         renderItems();
+
+        // PREVENT CONTEXT MENU ON MOBILE FOR BETTER UX
+        document.addEventListener('contextmenu', (e) => {
+            if (e.target.tagName === 'INPUT') {
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>

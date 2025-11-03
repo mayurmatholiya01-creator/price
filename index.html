@@ -355,9 +355,7 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
-                            
                             oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
-                            
                             title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
@@ -374,7 +372,6 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-
                             oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
@@ -550,6 +547,7 @@
             container.innerHTML = tableHTML;
         }
 
+        // *** THIS FUNCTION IS UPDATED ***
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -557,6 +555,12 @@
             }
 
             const element = document.createElement('div');
+
+            // *** FIX ***
+            // This line tells html2pdf to render an element that is exactly
+            // 210mm wide, which prevents alignment issues on desktop browsers.
+            element.style.width = '210mm';
+
             element.innerHTML = generatePDFContent();
 
             const opt = {
@@ -569,6 +573,7 @@
 
             html2pdf().set(opt).from(element).save();
         }
+        // *** END OF UPDATE ***
 
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');

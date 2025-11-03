@@ -269,8 +269,13 @@
             padding: 8px;
             border: 1px solid #ddd;
             text-align: center;
-            height: 20px;
-        }
+            height: 20px !important;
+            max-height: 20px !important;
+            min-height: 20px !important;
+            overflow: hidden;
+            white-space: nowrap;
+}
+
 
         tbody tr:hover {
             background: #f8f9fa;
@@ -570,11 +575,11 @@
                 pageItems.forEach((item, idx) => {
                     const actualIndex = startIdx + idx + 1;
                     tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${actualIndex}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.size}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">${item.surface}</td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;">₹ ${item.price.toFixed(2)}</td>
+                        <tr style="height: 24px; max-height: 24px; min-height: 24px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;">${actualIndex}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;">${item.size}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;">${item.surface}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
@@ -583,11 +588,11 @@
                 const itemsPerPageDisplay = 15;
                 for (let i = pageItems.length; i < itemsPerPageDisplay; i++) {
                     tableRows += `
-                        <tr style="height: 24px;">
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
-                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 11px;"></td>
+                        <tr style="height: 24px; max-height: 24px; min-height: 24px;">
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;"></td>
+                            <td style="padding: 8px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 11px; overflow: hidden; white-space: nowrap;"></td>
                         </tr>
                     `;
                 }

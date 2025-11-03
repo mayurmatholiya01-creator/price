@@ -7,6 +7,12 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -20,8 +26,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* [NEW 4] - Font Family Updated */
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* [NEW 5] - Subtle Background */
+            background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
         }
@@ -31,7 +40,9 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            
+            /* [NEW 5] - Subtle Shadow */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -57,6 +68,9 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            
+            /* [NEW 4] - Font Family Updated */
+            font-family: 'Poppins', sans-serif;
         }
 
         .tab-btn.active {
@@ -103,7 +117,8 @@
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* [NEW 4] - Font Family Updated */
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         input[type='text']:focus,
@@ -170,6 +185,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            
+            /* [NEW 3] - Icon alignment */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Icon aur text ke beech space */
         }
 
         .add-button {
@@ -304,6 +325,12 @@
             transition: all 0.3s ease;
             font-weight: 600;
             white-space: nowrap;
+            
+            /* [NEW 3] - Icon alignment */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px; /* Chhota space chote button ke liye */
         }
 
         .delete-btn:hover {
@@ -383,9 +410,11 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="add-button" onclick="addItem()">Add</button>
+                    <button class="add-button" onclick="addItem()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
                     <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
-                        Generate PDF
+                        <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
             </div>
@@ -513,7 +542,8 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
+                        
+                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
                 `;
             });
@@ -521,7 +551,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V17 - SINGLE LONG PAGE] 🌟🌟🌟
+        // 🌟🌟🌟 [PDF Function - Isme koi badlav nahi] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -539,21 +569,16 @@
                 jsPDF: { 
                     orientation: 'portrait', 
                     unit: 'mm', 
-                    format: 'a4' // <-- इसे A4 पर रखें, html2pdf खुद इसे लंबा कर देगा
+                    format: 'a4' 
                 }
             };
 
-            // html2pdf फ़ंक्शन को कॉल करें
             html2pdf().set(opt).from(element).save();
         }
 
         /**
          * 🌟 [GEMINI FINAL FIX v6 - PREMIUM (No Watermark)]:
-         * 1. [REMOVED] Background watermark nikal diya.
-         * 2. [KEPT] "Terms & Conditions" heading color laal rakha hai.
-         * 3. [KEPT] Footer line 3D pin-point line rakhi hai.
-         * 4. [KEPT] Zebra Striping & Spacing rakha hai.
-         * 5. [KEPT] Corner logos z-index 1 (default) kar diya hai.
+         * (Is function mein koi badlav nahi kiya gaya hai)
          */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -579,7 +604,6 @@
             });
 
 
-            // --- पेज HTML ---
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
@@ -595,6 +619,7 @@
                     <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
+                    
                     <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">

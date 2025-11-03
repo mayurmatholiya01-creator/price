@@ -284,37 +284,6 @@
             display: block;
         }
 
-        /* PDF STYLES */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-                border-radius: 0;
-                max-width: 100%;
-                margin: 0;
-            }
-
-            .tabs, .buttons, .items-title, .content .form-group, #itemsContainer::before {
-                display: none;
-            }
-
-            .content {
-                padding: 0;
-                max-height: none;
-                overflow: visible;
-            }
-        }
-
-        @page {
-            size: A4;
-            margin: 0;
-            padding: 0;
-        }
-
         @media (max-width: 768px) {
             .buttons {
                 grid-template-columns: 1fr;
@@ -325,209 +294,9 @@
             }
         }
 
-        /* PDF TEMPLATE STYLES */
-        .pdf-preview {
+        /* HIDDEN PDF CONTAINER */
+        #pdfContainer {
             display: none;
-        }
-
-        .pdf-preview.show {
-            display: block;
-        }
-
-        .pdf-page {
-            background: white;
-            width: 210mm;
-            height: 297mm;
-            margin: 10px auto;
-            padding: 15mm;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            font-size: 10pt;
-            font-family: Arial, sans-serif;
-            position: relative;
-            page-break-after: always;
-        }
-
-        .pdf-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            border-bottom: 3px solid #d32f2f;
-            padding-bottom: 10px;
-            position: relative;
-        }
-
-        .pdf-logo-left {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 80px;
-            opacity: 0.1;
-        }
-
-        .pdf-logo-center {
-            text-align: center;
-            flex: 1;
-            margin: 0 20px;
-        }
-
-        .pdf-logo-center img {
-            max-height: 50px;
-            width: auto;
-        }
-
-        .pdf-logo-right {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 80px;
-            opacity: 0.1;
-        }
-
-        .company-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 14pt;
-            letter-spacing: 2px;
-        }
-
-        .company-subtitle {
-            text-align: center;
-            font-size: 9pt;
-            color: #666;
-            margin-top: 3px;
-        }
-
-        .pdf-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 15px;
-            font-size: 8.5pt;
-            line-height: 1.4;
-        }
-
-        .info-section h4 {
-            font-weight: bold;
-            color: #d32f2f;
-            margin-bottom: 3px;
-            font-size: 9pt;
-        }
-
-        .info-section p {
-            margin: 2px 0;
-            color: #333;
-        }
-
-        .price-list-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 12pt;
-            color: #d32f2f;
-            margin: 15px 0 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .pdf-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-            font-size: 8.5pt;
-        }
-
-        .pdf-table thead {
-            background: #d32f2f;
-            color: white;
-        }
-
-        .pdf-table th {
-            padding: 6px;
-            text-align: left;
-            font-weight: bold;
-            border: 1px solid #999;
-            height: 20px;
-        }
-
-        .pdf-table td {
-            padding: 6px;
-            border: 1px solid #ddd;
-            height: 20px;
-        }
-
-        .pdf-table tbody tr:nth-child(even) {
-            background: #f9f9f9;
-        }
-
-        .pdf-table tbody tr:nth-child(odd) {
-            background: white;
-        }
-
-        .pdf-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 10mm 15mm;
-            border-top: 2px solid #d32f2f;
-            font-size: 7pt;
-            color: #666;
-            background: white;
-        }
-
-        .terms-title {
-            font-weight: bold;
-            color: #d32f2f;
-            font-size: 9pt;
-            margin-bottom: 5px;
-        }
-
-        .terms-list {
-            margin-left: 15px;
-            line-height: 1.3;
-            font-size: 7pt;
-        }
-
-        .terms-list li {
-            margin: 3px 0;
-            color: #333;
-        }
-
-        .footer-text {
-            text-align: center;
-            margin-top: 5px;
-            font-size: 7pt;
-            color: #999;
-        }
-
-        .pdf-page-content {
-            min-height: calc(297mm - 120px);
-        }
-
-        @media print {
-            .pdf-page {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                padding: 15mm;
-                box-shadow: none;
-                page-break-after: always;
-            }
-
-            .pdf-footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-            }
-        }
-
-        .sr-no {
-            text-align: center;
-        }
-
-        .price-val {
-            text-align: right;
         }
     </style>
 </head>
@@ -535,7 +304,7 @@
     <div class="container">
         <div class="tabs">
             <button class="tab-button active" data-tab="basic">Basic</button>
-            <button class="tab-button" data-tab="preview">PDF Preview</button>
+            <button class="tab-button" data-tab="advance">Advance</button>
         </div>
 
         <div class="content">
@@ -578,13 +347,19 @@
                 </div>
             </div>
 
-            <!-- PDF PREVIEW TAB -->
-            <div class="tab-content" id="preview">
-                <div id="pdfContainer"></div>
+            <!-- ADVANCE TAB -->
+            <div class="tab-content" id="advance">
+                <div style="text-align: center; padding: 60px 20px; color: #999; font-size: 16px;">
+                    Advance features coming soon...
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- HIDDEN PDF CONTAINER -->
+    <div id="pdfContainer"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         const sizes = ['1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM', '1200x2800x9MM', '1200x3180x15MM', '1200x3200x15MM', '1600x1600x9MM', '1600x3200x12MM', '1620x3240x12MM', '798x2980x15MM', '800x3000x15MM', '1080x3000x5MM', '1200x3000x9MM', '1200x3200x9MM', '800x3200x15MM'];
         const surfaces = ['ELEGANCE', 'REPOSE', 'CARVE TECH', 'LUMINOUS', 'GRACE', 'GRAVEL', 'SAHARA', 'SHAPE TECH', 'CRYSTAL', 'GAMMA', 'GALAXY'];
@@ -605,14 +380,12 @@
         };
 
         const terms = [
-            'All prices are ex-factory and exclusive of GST unless stated otherwise.',
-            'Prices are subject to change without prior notice depending on market conditions.',
-            'Delivery period will be confirmed after order placement.',
-            'The company is not responsible for delays due to transport or unforeseen events.',
-            'The company is not liable once goods leave the factory.',
-            'GST and any other government levies will be charged extra as applicable at the time of billing.',
-            'No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.',
-            'Placing an order implies acceptance of the above terms & conditions.'
+            'Prices are valid until 31st December 2025',
+            'Prices are subject to change without prior notice',
+            'Delivery: Free F.O.R Destination',
+            'All prices are subject to GST as applicable',
+            'Subject to stock availability',
+            'Bulk orders may attract special discounts'
         ];
 
         let items = [];
@@ -772,7 +545,7 @@
             renderItems();
         };
 
-        // PDF GENERATION
+        // PDF GENERATION - DIRECT DOWNLOAD
         document.getElementById('pdfBtn').addEventListener('click', generatePDF);
 
         function generatePDF() {
@@ -781,7 +554,6 @@
                 return;
             }
 
-            const pdfContainer = document.getElementById('pdfContainer');
             const itemsPerPage = 10;
             const totalPages = Math.ceil(items.length / itemsPerPage);
             let pdfHTML = '';
@@ -793,93 +565,104 @@
                 const blankRows = itemsPerPage - pageItems.length;
 
                 pdfHTML += `
-                    <div class="pdf-page">
-                        <!-- HEADER -->
-                        <div class="pdf-header">
-                            <div class="pdf-logo-left" style="background: url('https://via.placeholder.com/80'); background-size: contain;"></div>
-                            <div class="pdf-logo-center">
-                                <div class="company-title">GRANICER</div>
-                                <div class="company-subtitle">CERAMICA INDIANA</div>
-                            </div>
-                            <div class="pdf-logo-right" style="background: url('https://via.placeholder.com/80'); background-size: contain;"></div>
-                        </div>
+                    <div style="width: 210mm; height: 297mm; margin: 0; padding: 0; position: relative; page-break-after: always; font-family: Arial, sans-serif; overflow: hidden;">
+                        
+                        <!-- CORNER LOGOS -->
+                        <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/A%20LOGO.png" style="position: absolute; top: 0; right: 0; width: 60mm; height: 85mm; object-fit: contain; opacity: 0.8; z-index: 1;">
+                        <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/A%20LOGO.png" style="position: absolute; bottom: 0; left: 0; width: 60mm; height: 85mm; object-fit: contain; opacity: 0.8; z-index: 1; transform: scaleY(-1);">
 
-                        <!-- COMPANY INFO -->
-                        <div class="pdf-info">
-                            <div class="info-section">
-                                <h4>Company Details:</h4>
-                                <p><strong>${companyInfo.name}</strong></p>
-                                <p>${companyInfo.cin}</p>
-                                <p><strong>Contact:</strong></p>
-                                <p>Email: ${companyInfo.email}</p>
-                                <p>Web: ${companyInfo.web}</p>
+                        <!-- MAIN CONTENT -->
+                        <div style="position: relative; z-index: 2; padding: 15mm; height: 297mm; display: flex; flex-direction: column;">
+                            
+                            <!-- HEADER -->
+                            <div style="text-align: center; margin-bottom: 10px; border-bottom: 3px solid #d32f2f; padding-bottom: 10px;">
+                                <img src="https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/GRANICER%20LOGO.png" style="max-width: 100%; max-height: 50px; object-fit: contain;">
                             </div>
-                            <div class="info-section">
-                                <h4>${companyInfo.registeredOffice.title}</h4>
-                                ${companyInfo.registeredOffice.address.map(line => `<p>${line}</p>`).join('')}
-                                <h4 style="margin-top: 8px;">${companyInfo.unit2.title}</h4>
-                                ${companyInfo.unit2.address.map(line => `<p>${line}</p>`).join('')}
-                            </div>
-                        </div>
 
-                        <!-- PRICE LIST TITLE -->
-                        <div class="price-list-title">Price List</div>
-
-                        <!-- TABLE -->
-                        <table class="pdf-table">
-                            <thead>
+                            <!-- COMPANY INFO -->
+                            <table style="width: 100%; margin-bottom: 10px; font-size: 9pt; line-height: 1.4;">
                                 <tr>
-                                    <th class="sr-no" style="width: 8%;">Sr. No.</th>
-                                    <th style="width: 32%;">Size</th>
-                                    <th style="width: 32%;">Surface Type</th>
-                                    <th class="price-val" style="width: 28%;">Price Per Unit</th>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <strong>Company Details:</strong><br>
+                                        ${companyInfo.name}<br>
+                                        ${companyInfo.cin}<br><br>
+                                        <strong>Contact:</strong><br>
+                                        Email: ${companyInfo.email}<br>
+                                        Web: ${companyInfo.web}
+                                    </td>
+                                    <td style="width: 50%; vertical-align: top;">
+                                        <strong>${companyInfo.registeredOffice.title}</strong><br>
+                                        ${companyInfo.registeredOffice.address.join('<br>')}<br><br>
+                                        <strong>${companyInfo.unit2.title}</strong><br>
+                                        ${companyInfo.unit2.address.join('<br>')}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                ${pageItems.map((item, idx) => `
-                                    <tr>
-                                        <td class="sr-no">${startIdx + idx + 1}</td>
-                                        <td>${item.size}</td>
-                                        <td>${item.surface}</td>
-                                        <td class="price-val">₹ ${item.price.toFixed(2)}</td>
-                                    </tr>
-                                `).join('')}
-                                ${Array(blankRows).fill(0).map(() => `
-                                    <tr>
-                                        <td class="sr-no"></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="price-val"></td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
+                            </table>
 
-                        <!-- FOOTER -->
-                        <div class="pdf-footer">
-                            <div class="terms-title">Terms & Conditions:</div>
-                            <ul class="terms-list">
-                                ${terms.map(term => `<li>${term}</li>`).join('')}
-                            </ul>
-                            <div class="footer-text">
-                                <p>This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                <p>Generated on: ${new Date().toLocaleDateString()}</p>
-                                <p><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
+                            <!-- PRICE LIST TITLE -->
+                            <h2 style="text-align: center; color: #d32f2f; font-size: 14pt; margin: 10px 0; text-transform: uppercase; letter-spacing: 1px;">Price List</h2>
+
+                            <!-- TABLE -->
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; flex-grow: 1;">
+                                <thead>
+                                    <tr style="background: #d32f2f; color: white;">
+                                        <th style="border: 1px solid #999; padding: 6px; text-align: center; width: 8%; font-weight: bold; font-size: 9pt;">Sr. No.</th>
+                                        <th style="border: 1px solid #999; padding: 6px; text-align: left; width: 32%; font-weight: bold; font-size: 9pt;">Size</th>
+                                        <th style="border: 1px solid #999; padding: 6px; text-align: left; width: 32%; font-weight: bold; font-size: 9pt;">Surface Type</th>
+                                        <th style="border: 1px solid #999; padding: 6px; text-align: right; width: 28%; font-weight: bold; font-size: 9pt;">Price Per Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${pageItems.map((item, idx) => `
+                                        <tr style="background: ${(startIdx + idx) % 2 === 0 ? '#f9f9f9' : 'white'}; height: 20px;">
+                                            <td style="border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 8.5pt;">${startIdx + idx + 1}</td>
+                                            <td style="border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 8.5pt;">${item.size}</td>
+                                            <td style="border: 1px solid #ddd; padding: 6px; text-align: left; font-size: 8.5pt;">${item.surface}</td>
+                                            <td style="border: 1px solid #ddd; padding: 6px; text-align: right; font-size: 8.5pt;">₹ ${item.price.toFixed(2)}</td>
+                                        </tr>
+                                    `).join('')}
+                                    ${Array(blankRows).fill(0).map(() => `
+                                        <tr style="background: white; height: 20px;">
+                                            <td style="border: 1px solid #ddd; padding: 6px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 6px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 6px;"></td>
+                                            <td style="border: 1px solid #ddd; padding: 6px;"></td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+
+                            <!-- FOOTER -->
+                            <div style="border-top: 2px solid #d32f2f; padding-top: 8px; font-size: 7pt; line-height: 1.3; margin-top: auto;">
+                                <strong style="color: #d32f2f;">Terms & Conditions:</strong>
+                                <ul style="margin-left: 15px;">
+                                    ${terms.map(term => `<li>${term}</li>`).join('')}
+                                </ul>
+                                <div style="text-align: center; margin-top: 5px; color: #666;">
+                                    <p>This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                    <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                                    <p><strong>GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</strong></p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             }
 
-            pdfContainer.innerHTML = pdfHTML;
-            
-            // SWITCH TO PREVIEW TAB
-            document.querySelectorAll('.tab-button')[1].click();
+            // GENERATE PDF
+            const element = document.createElement('div');
+            element.innerHTML = pdfHTML;
+            element.style.display = 'none';
 
-            // TRIGGER PRINT
-            setTimeout(() => {
-                window.print();
-            }, 500);
+            const opt = {
+                margin: 0,
+                filename: `Granicer_PriceList_${new Date().toLocaleDateString()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
         }
 
         renderItems();

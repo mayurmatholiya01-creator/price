@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V30 - FINAL FIX) ---
+        // --- (V31 - EXPLICIT HEIGHT FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -541,17 +541,14 @@
             container.innerHTML = tableHTML;
         }
 
-        // ---[YAHAN V28 KA PDF LOGIC HAI - YE BILKUL SAHI HAI]---
+        // ---[YAHAN V31 KA PDF LOGIC HAI]---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
-            const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(); 
-
-            // Ek row ki approx height (mm me)
+            // [FIX 1] Height ko yahan calculate karo
             const basePageHeight = 296.5; // A4 height
             const baseRows = 10;          // 10 row tak normal height
             const extraPerRow = 10;       // Har extra row ke liye 10mm
@@ -559,10 +556,13 @@
             let totalRows = items.length;
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
             
-            // Height ko Math.ceil() se round up karenge (blank page bug fix)
             let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
 
-            // HTML to PDF options (dynamic page height)
+            const element = document.createElement('div');
+            // [FIX 2] Height ko HTML content function me pass karo
+            element.innerHTML = generatePDFContent(totalHeight); 
+
+            // [FIX 3] Calculated height ko jsPDF format me use karo
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -571,12 +571,12 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // dynamic height
+                    format: [210, totalHeight] // Dynamic height
                 },
                 pagebreak: { mode: ['avoid'] } // Single page force
             };
 
-            // Single Page Enforcement Logic
+            // Single Page Enforcement Logic (Ye wahi hai)
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
                 while (pdf.internal.getNumberOfPages() > 1) {
                     pdf.deletePage(pdf.internal.getNumberOfPages());
@@ -584,8 +584,9 @@
             }).save();
         }
         
-        // ---[YAHAN V30 KA HTML LAYOUT HAI - LOGO FIX KE SAATH]---
-        function generatePDFContent() {
+        // ---[YAHAN V31 KA HTML LAYOUT HAI]---
+        // [FIX 4] Function ab 'totalHeight' parameter lega
+        function generatePDFContent(totalHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
@@ -613,19 +614,19 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
     
-            // Outer div - position: relative to allow fixed elements on page
+            // [FIX 5] Outer div ab 'totalHeight' ko CSS me use karega
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            height: auto; 
+                            height: ${totalHeight}mm; /* Explicit Height Fix */
                             margin: 0; background: white; 
-                            position: relative; /* Fixed elements ke liye zaroori */
+                            position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
 
-                    <div style="position: fixed; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 9999; pointer-events: none;">
+                    <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
@@ -691,11 +692,11 @@
                     </div>
 
                     <div style="position: absolute; 
-                                z-index: 5; /* reduced from 10 -> 5 */
-                                bottom: 20px; /* Niche se 20px ki doori */
-                                left: 25px; /* Padding match karne ke liye */
-                                right: 25px; /* Padding match karne ke liye */
-                                height: 120mm; /* Footer ki lagbhag height */
+                                z-index: 5; 
+                                bottom: 20px; 
+                                left: 25px; 
+                                right: 25px; 
+                                height: 120mm;
                     ">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">

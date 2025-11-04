@@ -357,8 +357,8 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('basic', event)">Basic</button>
-            <button class="tab-btn" onclick="switchTab('advance', event)">Advance</button>
+            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
+            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
         </div>
 
         <div id="basic" class="tab-content active">
@@ -514,29 +514,16 @@
             renderItems();
         }
 
-        // -----------------------------------------------------------------
-        // [CHANGE 2] renderItems() ko update kiya
-        // -----------------------------------------------------------------
-        // Isse error nahi aayega jab aap 'Advance' tab par honge
         function renderItems() {
             const container = document.getElementById('itemsContainer');
             const pdfBtn = document.getElementById('pdfBtn');
 
-            // [NEW] Check karo ki container (table) screen par hai ya nahi
-            // Agar aap Advance tab par hain, to 'container' null hoga (nahi milega)
-            if (!container) {
-                return; 
-            }
-
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                // [NEW] Check karo ki pdfBtn screen par hai ya nahi
-                if (pdfBtn) pdfBtn.disabled = true;
+                pdfBtn.disabled = true;
                 return;
             }
-            
-            if (pdfBtn) pdfBtn.disabled = false;
-            
+            pdfBtn.disabled = false;
             let tableHTML = `
                 <table>
                     <thead>
@@ -564,8 +551,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // (generatePDF aur generatePDFContent functions waise hi hain jaise aapne diye the)
-        // ... (PDF Generation logic - Original)
+        // 🌟🌟🌟 [PDF Function - Isme koi badlav nahi] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -587,13 +573,13 @@
                 }
             };
 
-            // [FIXED] Error handling daal diya hai
-            html2pdf().set(opt).from(element).save().catch(function(err) {
-                alert('Sorry, an error occurred while generating the PDF: ' + err); 
-                console.error(err);
-            });
+            html2pdf().set(opt).from(element).save();
         }
 
+        /**
+         * 🌟 [GEMINI FINAL FIX v6 - PREMIUM (No Watermark)]:
+         * (Is function mein koi badlav nahi kiya gaya hai)
+         */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -622,40 +608,7 @@
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
-            
-            // [FIXED] Error waala 'display: grid' nikaal kar 'table' layout use kiya
-            const companyDetailsHTML = `
-                <table style="width: 100%; border-collapse: collapse; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                    <tbody>
-                        <tr>
-                            <td style="width: 50%; vertical-align: top; padding: 0; border: none;">
-                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                                <div>COMET GRANITO PVT.LTD.</div>
-                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
-                            </td>
-                            <td style="width: 50%; vertical-align: top; padding: 0; border: none;">
-                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
-                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
-                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 50%; vertical-align: top; padding: 15px 0 0 0; border: none;">
-                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
-                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
-                            </td>
-                            <td style="width: 50%; vertical-align: top; padding: 15px 0 0 0; border: none;">
-                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
-                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
-                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
+
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -677,7 +630,37 @@
                             ${pinPointLine}
                         </div>
 
-                        ${companyDetailsHTML} <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
+                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
+                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                            </div>
+                        </div>
+
+                        
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
                             <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
@@ -740,18 +723,7 @@
             document.getElementById('size').focus();
         }
 
-        // -----------------------------------------------------------------
-        // [CHANGE 3] Naya function (khaali) add kiya
-        // -----------------------------------------------------------------
-        function clearAdvanceForm() {
-            // Abhi 'Advance' tab mein sirf text hai.
-            // Jab hum form banayenge, to uska clear logic yaha aayega.
-        }
-
-        // -----------------------------------------------------------------
-        // [CHANGE 4] switchTab() ko poori tarah badal diya
-        // -----------------------------------------------------------------
-        function switchTab(tabName, event) {
+        function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
 
@@ -759,29 +731,7 @@
             buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            
-            // event.target se 'active' class add karna
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-
-            // --- [NEW LOGIC START] ---
-            // 1. Puraane data ko clear karo
-            items = []; 
-            itemIdCounter = 0;
-            
-            // 2. Table UI ko clear karo (ye pdfBtn ko bhi disable kar dega)
-            renderItems(); 
-            
-            // 3. Dono forms ko unki zaroorat ke hisaab se clear karo
-            if (tabName === 'basic') {
-                // 'Basic' tab par ja rahe hain, to 'Advance' ko clear karo
-                clearAdvanceForm(); 
-            } else {
-                // 'Advance' tab par ja rahe hain, to 'Basic' ko clear karo
-                clearForm(); 
-            }
-            // --- [NEW LOGIC END] ---
+            event.target.classList.add('active');
         }
 
         document.addEventListener('click', function (event) {

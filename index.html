@@ -161,11 +161,12 @@
             box-shadow: none;
         }
 
+        /* --- GRADE BUTTON STYLES --- */
         .grade-btn-group {
             display: flex;
             justify-content: space-between;
             gap: 8px;
-            margin-top: 10px; 
+            margin-top: 10px; /* Space from price box */
         }
 
         .grade-btn {
@@ -192,12 +193,13 @@
             border-color: #ed3237;
             box-shadow: 0 4px 12px rgba(237, 50, 55, 0.3);
         }
+        /* --- END GRADE STYLES --- */
 
         .button-group {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
-            margin-top: 15px; 
+            margin-top: 15px; /* Added margin-top to space from grade buttons */
         }
 
         .add-button,
@@ -214,7 +216,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px; 
+            gap: 8px; /* Icon aur text ke beech space */
         }
 
         .add-button {
@@ -338,22 +340,23 @@
             background: #f8f9fa;
         }
 
+        /* --- DELETE BUTTON (Icon only) --- */
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            padding: 8px; 
-            width: 36px;  
-            height: 36px; 
+            padding: 8px; /* Adjusted padding for icon only */
+            width: 36px;  /* Fixed width */
+            height: 36px; /* Fixed height */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em; 
+            font-size: 1em; /* Make icon a bit larger */
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0; 
-            line-height: 1; 
+            gap: 0; /* Removed gap */
+            line-height: 1; /* Ensure proper alignment */
         }
 
         .delete-btn:hover {
@@ -441,8 +444,6 @@
                         <button class="grade-btn" data-grade="ECO" type="button">ECO</button>
                     </div>
                 </div>
-
-
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -616,7 +617,7 @@
         }
 
         // --- 
-        // --- !!! FUNCTION MEIN BADLAV YAHAN HAI (HACK) !!! ---
+        // --- !!! FUNCTION MEIN BADLAV YAHAN HAI (FINAL FIX) !!! ---
         // --- 
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -631,21 +632,22 @@
                     ? 'background: white;' 
                     : 'background: #f8f9fa;'; 
 
+                // --- PDF TABLE ROW (widths adjusted) ---
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 10%;">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 8%;">
                             ${actualIndex}
                         </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 30%;">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 29%;">
                             ${item.size}
                         </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 25%;">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 23%;">
                             ${item.surface}
                         </td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 15%;">
                             ${item.grade}
                         </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 20%;">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 25%;">
                             ₹ ${item.price.toFixed(2)}
                         </td>
                     </tr>
@@ -660,6 +662,9 @@
 
 
             // --- YAHAN BADLAV KIYA GAYA HAI ---
+            // Humne "width: 100%" hack ko hata diya hai aur aapka original "width: 210mm" use kiya hai.
+            // Humne "padding: 10mm 12mm" ko bhi hata kar aapka original "padding-left: 25px" (pixel wala) use kiya hai.
+            // Iske saath "box-sizing: border-box" lagaya hai taaki padding width ke andar rahe.
             pagesHTML = `
                 <style>
                     * { 
@@ -667,7 +672,7 @@
                         -webkit-box-sizing: border-box !important; 
                     }
                 </style>
-                <div style="font-family: 'Arial', sans-serif; width: 100%; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow-x: hidden !important; -webkit-text-size-adjust: none; text-size-adjust: none; box-sizing: border-box !important;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none; box-sizing: border-box !important;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
@@ -676,7 +681,7 @@
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
                     
-                    <div style="padding: 10mm 12mm; position: relative; z-index: 10; width: 100%; box-sizing: border-box !important;">
+                    <div style="padding: 20px 25px; position: relative; z-index: 10; width: 100%; box-sizing: border-box !important;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
                             <img
@@ -725,11 +730,11 @@
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed;">
                             <thead>
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 30%;">Size</th>
-                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 8%;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 29%;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 23%;">Surface Type</th>
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 15%;">Grade</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
                             <tbody style="background: white;">

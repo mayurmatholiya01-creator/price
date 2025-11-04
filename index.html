@@ -340,27 +340,23 @@
             background: #f8f9fa;
         }
 
-        /* --- [CSS BADLAV] Delete Button ko chhota kiya gaya --- */
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            /* padding: 6px 10px; */ /* Purani padding */
-            width: 30px;  /* Nayi width */
-            height: 30px; /* Nayi height */
-            line-height: 30px; /* Icon ko center karega */
+            width: 30px; 
+            height: 30px; 
+            line-height: 30px; 
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9em; /* Icon size thoda adjust kiya */
+            font-size: 0.9em; 
             transition: all 0.3s ease;
             font-weight: 600;
-            /* white-space: nowrap; */ /* Zaroori nahi */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0; /* Text nahi hai to gap 0 */
+            gap: 0;
         }
-        /* --- [CSS BADLAV KHATAM] --- */
 
         .delete-btn:hover {
             background: #ff5252;
@@ -381,6 +377,49 @@
             overflow-x: auto;
             flex: 1;
         }
+
+        /* --- [CSS BADLAV] Advance Tab ke liye styles --- */
+        #advance-form-container {
+            flex-shrink: 0; /* Form ko shrink hone se roko */
+        }
+
+        #surfacePriceList {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 column layout */
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            max-height: 250px; /* List ko scrollable banaya */
+            overflow-y: auto;
+        }
+
+        .surface-price-item {
+            display: contents; /* Grid layout ko follow karega */
+        }
+        
+        /* Surface name ka label */
+        .surface-price-item label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+            text-align: right;
+            padding: 12px 10px;
+            border-radius: 8px 0 0 8px;
+            background: #e9ecef;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        /* Price input ka container */
+        .surface-price-item .price-input-container {
+            border-radius: 0 8px 8px 0;
+            border-left: none;
+        }
+        /* --- [CSS BADLAV KHATAM] --- */
     </style>
 </head>
 <body>
@@ -413,9 +452,7 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
-                            
                             oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
-                            
                             title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
@@ -432,7 +469,6 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-
                             oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
@@ -443,18 +479,14 @@
                     <div class="grade-buttons">
                         <input type="radio" id="grade_pre" name="grade" value="PRE" checked>
                         <label for="grade_pre">PRE</label>
-
                         <input type="radio" id="grade_std" name="grade" value="STD">
                         <label for="grade_std">STD</label>
-
                         <input type="radio" id="grade_gold" name="grade" value="GOLD">
                         <label for="grade_gold">GOLD</label>
-
                         <input type="radio" id="grade_eco" name="grade" value="ECO">
                         <label for="grade_eco">ECO</label>
                     </div>
                 </div>
-
 
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
@@ -473,17 +505,58 @@
                 </div>
             </div>
         </div>
-
         <div id="advance" class="tab-content">
-            <p style="text-align: center; color: #999; padding: 40px;">
-                Advance features coming soon...
-            </p>
+            
+            <div id="advance-form-container">
+                <div class="form-group">
+                    <label for="advanceSizeSelect">1. Select Size</label>
+                    <select id="advanceSizeSelect">
+                        </select>
+                </div>
+
+                <div class="form-group">
+                    <label>2. Select Master Grade</label>
+                    <div class="grade-buttons">
+                        <input type="radio" id="adv_grade_pre" name="adv_grade" value="PRE" checked>
+                        <label for="adv_grade_pre">PRE</label>
+                        <input type="radio" id="adv_grade_std" name="adv_grade" value="STD">
+                        <label for="adv_grade_std">STD</label>
+                        <input type="radio" id="adv_grade_gold" name="adv_grade" value="GOLD">
+                        <label for="adv_grade_gold">GOLD</label>
+                        <input type="radio" id="adv_grade_eco" name="adv_grade" value="ECO">
+                        <label for="adv_grade_eco">ECO</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>3. Enter Prices (Rapid Entry)</label>
+                    <div id="surfacePriceList">
+                        </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="add-button" onclick="addAdvanceItems()">
+                        <i class="fas fa-plus"></i> Add Items
+                    </button>
+                    <button class="pdf-button" onclick="generatePDF()" id="advancePdfBtn" disabled>
+                        <i class="fas fa-file-pdf"></i> Generate PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="items-table">
+                <h3>Added Items</h3>
+                <div class="table-wrapper">
+                    <div id="advanceItemsContainer"></div>
+                </div>
+            </div>
         </div>
-    </div>
+        </div>
 
     <script>
-        // --- (V33 - ICON BUTTON FIX) ---
+        // --- (V34 - ADVANCE TAB LOGIC) ---
 
+        // Global Data (Dono tabs use karte hain)
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
             '1200x2800x6MM', '1200x3180x15MM', '1200x3200x15MM', '1600x1600x9MM',
@@ -498,10 +571,11 @@
             'CRYSTAL', 'GAMMA', 'GALAXY',
         ];
 
-        let items = [];
+        let items = []; // Global items list (tab switch par clear hoti hai)
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
 
+        // --- BASIC TAB FUNCTIONS (Unchanged) ---
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
             const inputId = type === 'size' ? 'size' : 'surface';
@@ -558,16 +632,151 @@
             clearForm();
         }
 
-        function deleteItem(id) {
-            items = items.filter((item) => item.id !== id);
-            renderItems();
+        function clearForm() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('grade_pre').checked = true; 
+            document.getElementById('size').focus();
         }
 
-        // --- [JS BADLAV] renderItems function ---
-        // 'Delete' text hata diya gaya
+        // --- ADVANCE TAB FUNCTIONS (New) ---
+
+        /**
+         * Advance Tab ke 'Size' dropdown ko Sizes array se bharta hai.
+         */
+        function populateSizeDropdown() {
+            const select = document.getElementById('advanceSizeSelect');
+            if (select.options.length > 0) return; // Pehle se bhara hai
+            
+            sizes.forEach(size => {
+                const option = document.createElement('option');
+                option.value = size;
+                option.textContent = size;
+                select.appendChild(option);
+            });
+        }
+
+        /**
+         * Advance Tab ke 'Surface Price List' ko Surfaces array se bharta hai.
+         */
+        function populateSurfaceList() {
+            const listDiv = document.getElementById('surfacePriceList');
+            if (listDiv.innerHTML !== '') return; // Pehle se bhara hai
+
+            let html = '';
+            surfaces.forEach(surface => {
+                // Har item ke liye ek unique ID banate hain
+                const inputId = `adv_price_${surface.replace(/\s+/g, '_')}`; 
+                html += `
+                    <div class="surface-price-item">
+                        <label for="${inputId}">${surface}</label>
+                        <div class="price-input-container">
+                            <span class="price-symbol">₹</span>
+                            <input
+                                type="number"
+                                id="${inputId}"
+                                data-surface-name="${surface}"
+                                placeholder="Enter price"
+                                min="0"
+                                step="0.01"
+                                oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
+                            />
+                        </div>
+                    </div>
+                `;
+            });
+            listDiv.innerHTML = html;
+        }
+
+        /**
+         * Advance tab ke sabhi price inputs ko clear karta hai.
+         */
+        function clearAdvancePriceInputs() {
+            const inputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+        }
+
+        /**
+         * Advance tab se items ko list me add karta hai (Rapid Entry Logic).
+         */
+        function addAdvanceItems() {
+            const size = document.getElementById('advanceSizeSelect').value;
+            const grade = document.querySelector('input[name="adv_grade"]:checked').value;
+            
+            const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
+            let itemsAdded = 0;
+
+            priceInputs.forEach(input => {
+                const price = input.value.trim();
+                const surface = input.getAttribute('data-surface-name');
+
+                // Sirf un items ko add karo jinka price daala gaya hai
+                if (price && parseFloat(price) > 0) {
+                    const item = {
+                        id: itemIdCounter++,
+                        size: size,
+                        surface: surface,
+                        grade: grade,
+                        price: parseFloat(price),
+                    };
+                    items.push(item);
+                    itemsAdded++;
+                }
+            });
+
+            if (itemsAdded === 0) {
+                alert('Please enter at least one price.');
+                return;
+            }
+
+            renderItems(); // Naye items ko table me dikhao
+            clearAdvancePriceInputs(); // Price boxes ko clear karo
+        }
+
+
+        // --- SHARED FUNCTIONS (Modified) ---
+
+        /**
+         * Dono tabs ke items list ko clear karta hai.
+         */
+        function clearBasicTab() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('grade_pre').checked = true; 
+            items = [];
+            renderItems(); 
+        }
+
+        function clearAdvanceTab() {
+            items = [];
+            renderItems();
+            // Form reset
+            const sizeSelect = document.getElementById('advanceSizeSelect');
+            if (sizeSelect) sizeSelect.selectedIndex = 0;
+            
+            const gradePre = document.getElementById('adv_grade_pre');
+            if (gradePre) gradePre.checked = true;
+            
+            clearAdvancePriceInputs();
+        }
+
+        /**
+         * Active tab ke hisaab se items ko render karta hai.
+         */
         function renderItems() {
-            const container = document.getElementById('itemsContainer');
-            const pdfBtn = document.getElementById('pdfBtn');
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            
+            const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
+            const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
+
+            const container = document.getElementById(containerId);
+            const pdfBtn = document.getElementById(pdfBtnId);
+
+            if (!container || !pdfBtn) return; // Agar tab abhi load nahi hua hai
 
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
@@ -604,7 +813,9 @@
             container.innerHTML = tableHTML;
         }
 
-        // --- PDF Logic (V31) ---
+        /**
+         * Dono tabs ke liye PDF generate karta hai (Global 'items' list se).
+         */
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -643,7 +854,9 @@
             }).save();
         }
         
-        // --- PDF Content Logic (V31 + V32 Grade Column) ---
+        /**
+         * PDF ka HTML content banata hai (V32 logic).
+         */
         function generatePDFContent(totalHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -789,32 +1002,9 @@
             return pagesHTML;
         }
 
-
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('grade_pre').checked = true; 
-            document.getElementById('size').focus();
-        }
-
-        // --- Baaki ka JavaScript code (koi badlav nahi) ---
-
-        function clearBasicTab() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('grade_pre').checked = true; 
-            
-            items = [];
-            renderItems(); 
-        }
-
-        function clearAdvanceTab() {
-            console.log("Advance tab cleared (future use)");
-        }
-
-
+        /**
+         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
+         */
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
@@ -825,13 +1015,20 @@
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active'); 
 
+            // --- Naya Clear Logic ---
             if (tabName === 'advance') {
+                // Advance me jaane se pehle Basic ko clear karo
                 clearBasicTab();
+                // Advance tab ko pehli baar load karo
+                populateSizeDropdown();
+                populateSurfaceList();
             } else if (tabName === 'basic') {
+                // Basic me jaane se pehle Advance ko clear karo
                 clearAdvanceTab();
             }
         }
         
+        // --- EVENT LISTENERS (Bas basic wale hi hain) ---
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');
@@ -840,7 +1037,7 @@
             }
         });
 
-        renderItems();
+        renderItems(); // Page load par (khali state)
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
@@ -893,6 +1090,10 @@
 
         document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
         document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
+        
+        // --- Page Load ---
+        // 'Basic' tab ke table ko render karo
+        renderItems(); 
     </script>
 </body>
 </html>

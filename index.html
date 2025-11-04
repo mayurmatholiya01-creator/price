@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai */
+        /* Pura CSS wahi hai (V37) */
         * {
             margin: 0;
             padding: 0;
@@ -43,7 +43,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 100dvh; /* Mobile/iOS compatibility */
+            height: 100dvh; 
             max-height: 100dvh; 
         }
 
@@ -376,13 +376,11 @@
             overflow-x: auto;
             flex: 1;
         }
-
-        /* --- [CSS BADLAV V37] Advance Tab ka naya layout --- */
+        
         #advance-form-container {
             flex-shrink: 0;
         }
 
-        /* Bada dropdown */
         #advanceSizeSelect {
             padding: 14px;
             font-size: 1.05em;
@@ -390,51 +388,50 @@
             color: #333;
         }
 
-        /* Chhote grade buttons */
         #advance-options-container .grade-buttons label {
-            padding: 6px 8px; /* Padding kam ki */
-            font-size: 0.8em;  /* Font size chhota kiya */
-            gap: 8px;          /* Gap kam kiya */
+            padding: 6px 8px; 
+            font-size: 0.8em;  
+            gap: 8px;          
         }
 
-        /* Naya container jo hide/show hoga */
         #advance-options-container {
-             /* Default hidden, JS ise 'block' karega */
+             /* Default hidden */
         }
 
-        /* Naya Surface Grid Layout */
         #surfacePriceList {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* 3 column layout */
-            gap: 0; /* Gap 0 for borders */
-            border: 1px solid #eee; /* Light grey border */
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 0; 
+            border: 1px solid #eee; 
             border-radius: 8px;
-            overflow: hidden; /* To clip child borders */
+            overflow: hidden; 
         }
 
         .surface-item-wrapper {
             display: flex;
             flex-direction: column; 
             gap: 5px;
-            padding: 10px; /* Padding kam ki */
-            border-bottom: 1px solid #eee; /* Light grey line */
+            padding: 10px; 
+            border-bottom: 1px solid #eee; 
         }
         
-        /* Vertical line */
-        /* Har 3rd item ke baad border na ho */
         .surface-item-wrapper:not(:nth-child(3n)) {
              border-right: 1px solid #eee;
         }
 
-        /* Last row se bottom border hatao */
         .surface-item-wrapper:nth-last-child(-n+3) {
             border-bottom: none;
+        }
+        
+        /* Agar item count 3 se divide nahi hota (e.g. 13 items), to last row fix */
+        .surface-item-wrapper:last-child:nth-child(3n-1) {
+             border-bottom: none;
         }
         
         .surface-item-wrapper label {
             font-weight: 600;
             color: #333;
-            font-size: 0.85em; /* Font chhota kiya */
+            font-size: 0.85em; 
             margin-bottom: 0;
         }
 
@@ -442,17 +439,15 @@
             border-radius: 6px; 
             border-left: 2px solid #ddd;
         }
-
-        /* Chhota Price Box (Symbol hata diya) */
+ 
         .surface-item-wrapper .price-symbol {
-             display: none; /* Symbol hide kiya */
+             display: none; 
         }
         .surface-item-wrapper .price-input-container input {
-            padding: 8px 10px; /* Padding kam ki */
-            font-size: 0.9em;  /* Font chhota kiya */
-            text-align: center; /* Text center kiya */
+            padding: 8px 10px; 
+            font-size: 0.9em;  
+            text-align: center; 
         }
-        /* --- [CSS BADLAV KHATAM] --- */
     </style>
 </head>
 <body>
@@ -581,9 +576,9 @@
         </div>
 
     <script>
-        // --- (V37 - ADVANCE TAB CSS TWEAKS) ---
+        // --- (V38 - SCRIPT ORDER FIX) ---
 
-        // Global Data
+        // --- 1. Global Variables ---
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
             '1200x2800x6MM', '1200x3180x15MM', '1200x3200x15MM', '1600x1600x9MM',
@@ -602,7 +597,9 @@
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
 
-        // --- BASIC TAB FUNCTIONS (Unchanged) ---
+        // --- 2. Function Definitions ---
+
+        // --- BASIC TAB FUNCTIONS ---
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
             const inputId = type === 'size' ? 'size' : 'surface';
@@ -667,8 +664,56 @@
             document.getElementById('size').focus();
         }
 
-        // --- ADVANCE TAB FUNCTIONS (V35 Logic) ---
+        function handleSuggestionKeydown(e, type) {
+            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
+            const suggestionsDiv = document.getElementById(suggestionsId);
+            
+            if (!suggestionsDiv || !suggestionsDiv.classList.contains('show')) {
+                activeSuggestionIndex = -1;
+                return;
+            }
 
+            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
+            if (items.length === 0) {
+                activeSuggestionIndex = -1;
+                return;
+            }
+
+            items.forEach(item => item.classList.remove('suggestion-active'));
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault(); 
+                activeSuggestionIndex++;
+                if (activeSuggestionIndex >= items.length) {
+                    activeSuggestionIndex = 0; 
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault(); 
+                activeSuggestionIndex--;
+                if (activeSuggestionIndex < 0) {
+                    activeSuggestionIndex = items.length - 1; 
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault(); 
+                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                    items[activeSuggestionIndex].click(); 
+                    activeSuggestionIndex = -1; 
+                }
+            } else if (e.key === 'Escape') {
+                suggestionsDiv.classList.remove('show'); 
+                activeSuggestionIndex = -1;
+            }
+
+            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+                items[activeSuggestionIndex].classList.add('suggestion-active');
+                items[activeSuggestionIndex].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            }
+        }
+
+        // --- ADVANCE TAB FUNCTIONS ---
         function populateSizeDropdown() {
             const select = document.getElementById('advanceSizeSelect');
             if (select.options.length > 0) return; 
@@ -697,7 +742,6 @@
             }
         }
 
-        // --- [JS BADLAV V37] Price box se ₹ hataya ---
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
             if (listDiv.children.length > 0) return; 
@@ -770,39 +814,16 @@
             clearAdvancePriceInputs(); 
         }
 
-
-        // --- SHARED FUNCTIONS (Modified) ---
-
-        function clearBasicTab() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('grade_pre').checked = true; 
-            items = [];
-            renderItems(); 
-        }
-
-        function clearAdvanceTab() {
-            items = [];
+        // --- SHARED FUNCTIONS ---
+        function deleteItem(id) {
+            items = items.filter((item) => item.id !== id);
             renderItems();
-            
-            const sizeSelect = document.getElementById('advanceSizeSelect');
-            if (sizeSelect) sizeSelect.value = ""; 
-            
-            const gradePre = document.getElementById('adv_grade_pre');
-            if (gradePre) gradePre.checked = true;
-            
-            const optionsContainer = document.getElementById('advance-options-container');
-            if(optionsContainer) optionsContainer.style.display = 'none';
-
-            clearAdvancePriceInputs();
         }
 
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
-            if (!activeTab) return; 
-            
-            const activeTabId = activeTab.id;
+            // [FIX] Initial load par default 'basic' tab ko render karo
+            const activeTabId = activeTab ? activeTab.id : 'basic';
             
             const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
             const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
@@ -1030,9 +1051,31 @@
             return pagesHTML;
         }
 
-        /**
-         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
-         */
+        function clearBasicTab() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('grade_pre').checked = true; 
+            items = [];
+            renderItems(); 
+        }
+
+        function clearAdvanceTab() {
+            items = [];
+            
+            const sizeSelect = document.getElementById('advanceSizeSelect');
+            if (sizeSelect) sizeSelect.value = ""; 
+            
+            const gradePre = document.getElementById('adv_grade_pre');
+            if (gradePre) gradePre.checked = true;
+            
+            const optionsContainer = document.getElementById('advance-options-container');
+            if(optionsContainer) optionsContainer.style.display = 'none';
+
+            clearAdvancePriceInputs();
+            renderItems(); // Advance tab ko bhi empty render karo
+        }
+
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
@@ -1051,6 +1094,7 @@
             }
         }
         
+        // --- 3. Event Listeners & Initial Calls ---
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 const sizeSuggestions = document.getElementById('sizeSuggestions');
@@ -1061,61 +1105,10 @@
             }
         });
 
-        renderItems(); 
-
-        function handleSuggestionKeydown(e, type) {
-            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
-            const suggestionsDiv = document.getElementById(suggestionsId);
-            
-            if (!suggestionsDiv || !suggestionsDiv.classList.contains('show')) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
-            if (items.length === 0) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            items.forEach(item => item.classList.remove('suggestion-active'));
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault(); 
-                activeSuggestionIndex++;
-                if (activeSuggestionIndex >= items.length) {
-                    activeSuggestionIndex = 0; 
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault(); 
-                activeSuggestionIndex--;
-                if (activeSuggestionIndex < 0) {
-                    activeSuggestionIndex = items.length - 1; 
-                }
-            } else if (e.key === 'Enter') {
-                e.preventDefault(); 
-                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                    items[activeSuggestionIndex].click(); 
-                    activeSuggestionIndex = -1; 
-                }
-            } else if (e.key === 'Escape') {
-                suggestionsDiv.classList.remove('show'); 
-                activeSuggestionIndex = -1;
-            }
-
-            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                items[activeSuggestionIndex].classList.add('suggestion-active');
-                items[activeSuggestionIndex].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-        }
-
         document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
         document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
         
-        // --- Page Load ---
+        // Initial page load
         renderItems(); 
     </script>
 </body>

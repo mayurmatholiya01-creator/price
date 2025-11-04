@@ -1,3 +1,26 @@
+नमस्ते bro\! Aapne bilkul sahi pakda. Galti meri thi.  apologies\! 🙏
+
+Aapke dono issues (entry na dikhna aur PDF download na hona) ek hi galti se jude hain.
+
+**Problem Kya Tha:**
+Maine `Added Items` waali table (`<div class="items-table">...</div>`) ko galti se 'Basic' tab ke andar daal diya tha.
+
+Iska matlab, jab aap 'Advance' tab par click karte the, to 'Basic' tab (aur uske saath table) chhip jaata tha (`display: none`).
+
+Aap `+` icon daba rahe the, data `items` array mein add **ho raha tha**, lekin table dikh nahi rahi thi. Aur kyunki table `disabled` PDF button ko `enable` nahi kar paa rahi thi, isliye PDF download bhi nahi ho raha tha.
+
+**Solution:**
+Maine `.items-table` waale pure `div` ko `basic` aur `advance` tab waale `div` se **bahar nikal kar** sabse aakhir mein (lekin `.container` ke andar) daal diya hai.
+
+Ab ye table hamesha dikhegi, chahe aap koi bhi tab select karein.
+
+-----
+
+### 📦 Ye Raha Aapka Pura Sahi Code
+
+Ise paste karein, ab aapka 'Advance' tab perfect kaam karega.
+
+```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -79,8 +102,7 @@
         .tab-content {
             display: none;
             padding: 20px;
-            overflow-y: auto;
-            flex: 1;
+            /* [REMOVED] flex: 1 aur overflow-y yaha se hata diya */
         }
 
         .tab-content.active {
@@ -88,17 +110,17 @@
             flex-direction: column;
         }
         
-        /* [NEW] Dono tabs ke form area ke liye common container */
         .form-area {
-             flex: 0 0 auto; /* Basic tab ke form ko shrink hone se rokta hai */
+             flex-shrink: 0; /* Form area ko shrink nahi hone dena */
+             padding-bottom: 10px;
         }
         
-        /* [NEW] Advance tab ke form ko scrollable banana */
+        /* Advance tab ke form ko scrollable banana */
         #advance .form-area {
-            flex: 1; /* Taaki ye bachi hui jagah le */
             overflow-y: auto; /* Sirf surface list scroll hogi */
-            min-height: 200px; /* Ek min height */
-            padding-bottom: 15px;
+            flex-shrink: 1;
+            min-height: 150px; /* Ek min height */
+            padding-right: 5px; /* Scrollbar ke liye */
         }
 
 
@@ -222,13 +244,12 @@
         }
         
         
-        /* [NEW] Advance Tab ke Form Styles */
+        /* Advance Tab ke Form Styles */
         #advanceSurfaceList {
             margin-top: 20px;
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding-right: 5px; /* Scrollbar ke liye space */
         }
         
         .surface-row {
@@ -264,7 +285,7 @@
             border-radius: 6px 0 0 6px;
         }
         
-        /* [NEW] Advance Add Button (+) */
+        /* Advance Add Button (+) */
         .advance-add-btn {
             flex-shrink: 0;
             width: 44px;
@@ -324,19 +345,19 @@
             position: relative;
         }
 
+        /* [MODIFIED] items-table ab tab-content ke bahar hai */
         .items-table {
-            margin-top: 20px;
-            flex: 1;
-            overflow-y: auto;
+            padding: 0 20px 20px 20px; /* Padding adjust ki */
+            flex: 1; /* Ye bachi hui poori space lega */
+            overflow-y: auto; /* Aur scroll hoga */
             display: flex;
             flex-direction: column;
-            border-collapse: collapse;
-            border-spacing: 0;
-            table-layout: fixed;
+            border-top: 2px solid #f0f0f0;
         }
 
         .items-table h3 {
             color: #333;
+            margin-top: 20px; /* Upar space */
             margin-bottom: 10px;
             font-size: 1em;
             flex-shrink: 0;
@@ -418,7 +439,7 @@
 
         .table-wrapper {
             overflow-x: auto;
-            flex: 1;
+            flex: 1; /* Table wrapper scrollable part hai */
         }
     </style>
 </head>
@@ -484,13 +505,7 @@
                 </div>
             </div>
             
-            <div class="items-table">
-                <h3>Added Items</h3>
-                <div class="table-wrapper">
-                    <div id="itemsContainer"></div>
-                </div>
             </div>
-        </div>
 
         
         <div id="advance" class="tab-content">
@@ -506,10 +521,18 @@
                 </div>
             </div>
             
-            <div class="button-group" style="margin-top: 15px; border-top: 2px solid #f0f0f0; padding-top: 15px;">
+            <div class="button-group" style="margin-top: auto; border-top: 2px solid #f0f0f0; padding-top: 15px;">
                 <button class="pdf-button" onclick="generatePDF()" id="pdfBtnAdvance" disabled>
                     <i class="fas fa-file-pdf"></i> Generate PDF
                 </button>
+            </div>
+        </div>
+        
+        <div class="items-table">
+            <h3>Added Items</h3>
+            <div class="table-wrapper">
+                <div id="itemsContainer">
+                    </div>
             </div>
         </div>
         
@@ -603,7 +626,7 @@
         function renderItems() {
             const pdfBtnBasic = document.getElementById('pdfBtn');
             const pdfBtnAdvance = document.getElementById('pdfBtnAdvance');
-            const container = document.getElementById('itemsContainer');
+            const container = document.getElementById('itemsContainer'); // Ye hamesha milega
 
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
@@ -815,7 +838,6 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // (Baaki ka poora HTML waisa hi hai, yaha shorten kar raha hoon...)
             return `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; z-index: 1;"><img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" /></div>
@@ -860,17 +882,14 @@
             
             // 1. Items ko Size ke hisaab se Group karna
             const groupedItems = items.reduce((acc, item) => {
-                // (acc[item.size] || []) -> Agar us size ka group nahi hai to naya array banao
-                // .concat(item) -> Us array mein item ko daalo
                 acc[item.size] = (acc[item.size] || []).concat(item);
                 return acc;
-            }, {}); // {} -> shuruaat ek khaali object se karo
+            }, {}); 
             
             
             // 2. Har group ke liye HTML Table banana
             let allTablesHTML = '';
             
-            // Object.keys(groupedItems) -> ['1200x1200x9MM', '800x2400x15MM', ...]
             Object.keys(groupedItems).forEach(size => {
                 const itemsInGroup = groupedItems[size];
                 let tableRows = '';
@@ -879,7 +898,6 @@
                     const actualIndex = idx + 1;
                     const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
                     
-                    // Is table mein 'Size' column ki zaroorat nahi
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
@@ -891,7 +909,7 @@
                 
                 // Poora table block
                 allTablesHTML += `
-                    <div style="margin-bottom: 15px;">
+                    <div style="margin-bottom: 15px; page-break-inside: avoid;">
                         <h3 style="font-size: 11pt; color: #333; margin-bottom: 8px; padding-left: 5px;">
                             Size: ${size}
                         </h3>
@@ -908,7 +926,7 @@
                             </tbody>
                         </table>
                     </div>
-                    `;
+                `;
             });
 
 
@@ -940,7 +958,7 @@
             `;
         }
         
-        // ######## [NEW] PDF Helper Functions (Code saaf rakhne ke liye) ########
+        // ######## PDF Helper Functions (Code saaf rakhne ke liye) ########
         
         function getPDFTableHeaderHTML() {
             // Basic tab ka header (Size column ke saath)
@@ -989,7 +1007,7 @@
         
         function getPDFFooterHTML(pinPointLine, currentDate) {
              return `
-                <div style="padding-top: 12px; margin-top: 30px;">
+                <div style="padding-top: 12px; margin-top: 30px; page-break-inside: avoid;">
                     <div style="margin-bottom: 12px;">${pinPointLine}</div>
                     <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                         Terms & Conditions:
@@ -1005,7 +1023,7 @@
                         <li>Placing an order implies acceptance of the above terms & conditions.</li>
                     </ul>
                 </div>
-                <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                <div style="margin-top: 20px; padding-top: 10px; text-align: center; page-break-inside: avoid;">
                     ${pinPointLine}
                     <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
                         <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
@@ -1098,3 +1116,4 @@
     </script>
 </body>
 </html>
+```

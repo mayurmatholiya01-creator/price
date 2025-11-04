@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Aapka poora CSS code (koi badlav nahi) */
+        /* Pura CSS wahi hai */
         * {
             margin: 0;
             padding: 0;
@@ -160,6 +160,44 @@
             outline: none;
             box-shadow: none;
         }
+
+        /* --- [CSS BADLAV 1] Grade Buttons ke liye style --- */
+        .grade-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .grade-buttons input[type="radio"] {
+            display: none; /* Radio button ko chupao */
+        }
+
+        .grade-buttons label {
+            flex: 1;
+            text-align: center;
+            padding: 8px 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            margin-bottom: 0; /* label ki default margin hatao */
+        }
+
+        /* Jab radio button select ho, tab label ka style badlo */
+        .grade-buttons input[type="radio"]:checked + label {
+            background-color: #ed3237;
+            color: white;
+            border-color: #ed3237;
+            box-shadow: 0 4px 15px rgba(237, 50, 55, 0.3);
+        }
+
+        .grade-buttons label:hover {
+            border-color: #b82329;
+        }
+        /* --- [CSS BADLAV KHATAM] --- */
+
 
         .button-group {
             display: flex;
@@ -399,6 +437,22 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>Grade</label>
+                    <div class="grade-buttons">
+                        <input type="radio" id="grade_pre" name="grade" value="PRE" checked>
+                        <label for="grade_pre">PRE</label>
+
+                        <input type="radio" id="grade_std" name="grade" value="STD">
+                        <label for="grade_std">STD</label>
+
+                        <input type="radio" id="grade_gold" name="grade" value="GOLD">
+                        <label for="grade_gold">GOLD</label>
+
+                        <input type="radio" id="grade_eco" name="grade" value="ECO">
+                        <label for="grade_eco">ECO</label>
+                    </div>
+                </div>
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -425,7 +479,7 @@
     </div>
 
     <script>
-        // --- (V31 - EXPLICIT HEIGHT FIX) ---
+        // --- (V32 - GRADE COLUMN FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -479,12 +533,15 @@
                 .classList.remove('show');
         }
 
+        // --- [JS BADLAV 1] addItem function ---
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
             const price = document.getElementById('price').value.trim();
+            // Grade ki value ko yahan get karo
+            const grade = document.querySelector('input[name="grade"]:checked').value;
 
-            if (!size || !surface || !price) {
+            if (!size || !surface || !price || !grade) { // Grade ko check me daalo
                 alert('Please fill all fields');
                 return;
             }
@@ -492,6 +549,7 @@
                 id: itemIdCounter++,
                 size: size,
                 surface: surface,
+                grade: grade, // Grade ko item object me save karo
                 price: parseFloat(price),
             };
             items.push(item);
@@ -504,6 +562,7 @@
             renderItems();
         }
 
+        // --- [JS BADLAV 2] renderItems function ---
         function renderItems() {
             const container = document.getElementById('itemsContainer');
             const pdfBtn = document.getElementById('pdfBtn');
@@ -520,7 +579,7 @@
                         <tr>
                             <th>Size</th>
                             <th>Surface</th>
-                            <th>Price</th>
+                            <th>Grade</th> <th>Price</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -531,7 +590,7 @@
                     <tr>
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
-                        <td>₹ ${item.price.toFixed(2)}</td>
+                        <td>${item.grade}</td> <td>₹ ${item.price.toFixed(2)}</td>
                         
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
@@ -541,7 +600,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // ---[YAHAN V31 KA PDF LOGIC HAI]---
+        // --- [JS BADLAV 3] generatePDF function (V31 logic) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -576,7 +635,7 @@
                 pagebreak: { mode: ['avoid'] } // Single page force
             };
 
-            // Single Page Enforcement Logic (Ye wahi hai)
+            // Single Page Enforcement Logic
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
                 while (pdf.internal.getNumberOfPages() > 1) {
                     pdf.deletePage(pdf.internal.getNumberOfPages());
@@ -584,9 +643,8 @@
             }).save();
         }
         
-        // ---[YAHAN V31 KA HTML LAYOUT HAI]---
-        // [FIX 4] Function ab 'totalHeight' parameter lega
-        function generatePDFContent(totalHeight) { 
+        // --- [JS BADLAV 4] generatePDFContent function (V31 layout) ---
+        function generatePDFContent(totalHeight) { // totalHeight parameter le raha hai
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
@@ -598,11 +656,13 @@
                     ? 'background: white;' 
                     : 'background: #f8f9fa;'; 
 
+                // [PDF TABLE BADLAV 1] Naya TD yahan daala gaya
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
                     </tr>
                 `;
@@ -614,7 +674,7 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
     
-            // [FIX 5] Outer div ab 'totalHeight' ko CSS me use karega
+            // Outer div ab 'totalHeight' ko CSS me use karega
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}mm; /* Explicit Height Fix */
@@ -642,7 +702,6 @@
                             />
                             ${pinPointLine}
                         </div>
-
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
@@ -669,7 +728,6 @@
                                 <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
                             </div>
                         </div>
-
                         <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
@@ -679,10 +737,11 @@
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                             <thead>
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
-                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
                             <tbody style="background: white;">
@@ -715,7 +774,6 @@
                                 <li>Placing an order implies acceptance of the above terms & conditions.</li>
                             </ul>
                         </div>
-
                         <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
                             ${pinPointLine}
                             <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
@@ -730,46 +788,33 @@
             return pagesHTML;
         }
 
-
+        // --- [JS BADLAV 5] clearForm function ---
         function clearForm() {
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
+            // Grade ko 'PRE' par reset karo
+            document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
         }
 
         // --- Baaki ka JavaScript code (koi badlav nahi) ---
 
-        /**
-         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
-         */
         function clearBasicTab() {
-            // Form inputs clear karo
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
+            document.getElementById('grade_pre').checked = true; // Reset grade
             
-            // Added items ki array clear karo aur table update karo
             items = [];
-            renderItems(); // Yeh table ko "No items added" state mein daal dega
+            renderItems(); 
         }
 
-        /**
-         * Advance tab ke content ko clear karta hai (future use).
-         */
         function clearAdvanceTab() {
-            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
-            // Jab aap advance tab mein content daalenge, 
-            // toh use clear karne ka code yahan aayega.
             console.log("Advance tab cleared (future use)");
         }
 
 
-        /**
-         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
-         * @param {Event} event - Click event
-         * @param {string} tabName - 'basic' ya 'advance'
-         */
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
@@ -778,14 +823,11 @@
             buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active'); // 'event' ko yahan pass kiya gaya hai
+            event.target.classList.add('active'); 
 
-            // --- Naya Clear Logic ---
             if (tabName === 'advance') {
-                // Agar 'Advance' par click kiya, toh 'Basic' tab clear karo
                 clearBasicTab();
             } else if (tabName === 'basic') {
-                // Agar 'Basic' par click kiya, toh 'Advance' tab clear karo
                 clearAdvanceTab();
             }
         }

@@ -660,7 +660,6 @@
 
 
             // --- YAHAN BADLAV KIYA GAYA HAI ---
-            // Ek naya <style> tag joda gaya hai
             pagesHTML = `
                 <style>
                     * { 
@@ -677,7 +676,7 @@
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
                     
-                    <div style="padding: 20px 25px; position: relative; z-index: 10; box-sizing: border-box !important;">
+                    <div style="padding: 10mm 12mm; position: relative; z-index: 10; width: 100%; box-sizing: border-box !important;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
                             <img
@@ -761,7 +760,7 @@
                             <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
                                 <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
                                 <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                <p style="margin: 20px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
 
@@ -881,7 +880,7 @@
                 activeSuggestionIndex = -1;
             }
 
-            if (activeSuggzestionIndex > -1 && items[activeSuggestionIndex]) {
+            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
                 items[activeSuggestionIndex].classList.add('suggestion-active');
                 items[activeSuggestionIndex].scrollIntoView({
                     behavior: 'smooth',
@@ -891,7 +890,7 @@
         }
 
         document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
-        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeyD(e, 'surface'));
+        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
     </script>
 </body>
 </html>

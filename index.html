@@ -280,19 +280,15 @@
             position: relative;
         }
 
-        /* --- [CSS BADLAV] Table se scroll hata diya --- */
         .items-table {
             margin-top: 20px;
-            /* flex: 1; */ /* Hata diya */
-            /* overflow-y: auto; */ /* Hata diya */
             display: flex;
             flex-direction: column;
             border-collapse: collapse;
             border-spacing: 0;
             table-layout: fixed;
-            flex-shrink: 0; /* Ensures it doesn't shrink */
+            flex-shrink: 0; 
         }
-        /* --- [CSS BADLAV KHATAM] --- */
 
         .items-table h3 {
             color: #333;
@@ -381,9 +377,23 @@
             flex: 1;
         }
 
-        /* --- [CSS BADLAV] Advance Tab ka naya layout --- */
+        /* --- [CSS BADLAV V36] Advance Tab ka naya layout --- */
         #advance-form-container {
             flex-shrink: 0;
+        }
+
+        /* Bada dropdown */
+        #advanceSizeSelect {
+            padding: 14px;
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Chhote grade buttons */
+        #advance-options-container .grade-buttons label {
+            padding: 6px 8px;
+            font-size: 0.85em;
         }
 
         /* Naya container jo hide/show hoga */
@@ -391,22 +401,34 @@
              /* Default hidden, JS ise 'block' karega */
         }
 
-        /* Scrollable box ki styling hata di */
+        /* Naya Surface Grid Layout */
         #surfacePriceList {
             display: grid;
             grid-template-columns: 1fr 1fr; /* 2 column layout */
-            gap: 15px; /* Columns ke beech gap */
-            /* background, padding, border, max-height, overflow hata diya */
+            gap: 0; /* Gap 0 for borders */
+            border: 1px solid #eee; /* Light grey border */
+            border-radius: 8px;
+            overflow: hidden; /* To clip child borders */
         }
 
-        /* Price-item wrapper (ye ab grid item hai) */
         .surface-item-wrapper {
             display: flex;
-            flex-direction: column; /* Label upar, price niche */
+            flex-direction: column; 
             gap: 5px;
+            padding: 12px; /* Padding inside the cell */
+            border-bottom: 1px solid #eee; /* Light grey line */
         }
         
-        /* Surface name ka label (ab normal label hai) */
+        /* Vertical line */
+        .surface-item-wrapper:nth-child(odd) {
+            border-right: 1px solid #eee; 
+        }
+
+        /* Last row se bottom border hatao */
+        .surface-item-wrapper:last-child { border-bottom: none; }
+        /* Agar last item odd hai, to second last se border hatao */
+        .surface-item-wrapper:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+        
         .surface-item-wrapper label {
             font-weight: 600;
             color: #333;
@@ -414,10 +436,19 @@
             margin-bottom: 0;
         }
 
-        /* Price input ka container (ab full width hai) */
         .surface-item-wrapper .price-input-container {
-            border-radius: 8px; /* Poora radius */
-            border-left: 2px solid #ddd; /* Border add kiya */
+            border-radius: 8px; 
+            border-left: 2px solid #ddd;
+        }
+
+        /* Chhota Price Box */
+        .surface-item-wrapper .price-symbol {
+            padding: 10px;
+            font-size: 0.95em;
+        }
+        .surface-item-wrapper .price-input-container input {
+            padding: 10px;
+            font-size: 0.95em;
         }
         /* --- [CSS BADLAV KHATAM] --- */
     </style>
@@ -554,7 +585,7 @@
         </div>
 
     <script>
-        // --- (V35 - ADVANCE TAB LAYOUT FIX) ---
+        // --- (V36 - ADVANCE TAB CSS TWEAKS) ---
 
         // Global Data
         const sizes = [
@@ -640,21 +671,16 @@
             document.getElementById('size').focus();
         }
 
-        // --- ADVANCE TAB FUNCTIONS (New / Modified) ---
+        // --- ADVANCE TAB FUNCTIONS (V35 Logic) ---
 
-        /**
-         * [MODIFIED] Advance Tab ke 'Size' dropdown ko Sizes array se bharta hai.
-         */
         function populateSizeDropdown() {
             const select = document.getElementById('advanceSizeSelect');
-            if (select.options.length > 0) return; // Pehle se bhara hai
+            if (select.options.length > 0) return; 
             
-            // Default "Select" option
             const defaultOption = document.createElement('option');
             defaultOption.value = "";
             defaultOption.textContent = "Select a Size...";
             defaultOption.selected = true;
-            // defaultOption.disabled = true; // Isko hata dete hain taki user reset kar sake
             select.appendChild(defaultOption);
 
             sizes.forEach(size => {
@@ -665,32 +691,23 @@
             });
         }
 
-        /**
-         * [NEW] Size select karne par Grade/Surface list ko dikhata/chhipata hai.
-         */
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
             if (selectElement.value) {
-                // Agar koi size select kiya hai
                 optionsContainer.style.display = 'block';
-                populateSurfaceList(); // List ko (sirf pehli baar) bharta hai
+                populateSurfaceList(); 
             } else {
-                // Agar "Select a Size..." chuna hai
                 optionsContainer.style.display = 'none';
             }
         }
 
-        /**
-         * [MODIFIED] Advance Tab ke 'Surface Price List' ko Surfaces array se bharta hai.
-         */
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
-            if (listDiv.children.length > 0) return; // Check for actual elements
+            if (listDiv.children.length > 0) return; 
 
             let html = '';
             surfaces.forEach(surface => {
                 const inputId = `adv_price_${surface.replace(/\s+/g, '_')}`; 
-                // [NEW HTML LAYOUT]
                 html += `
                     <div class="surface-item-wrapper"> 
                         <label for="${inputId}">${surface}</label>
@@ -712,9 +729,6 @@
             listDiv.innerHTML = html;
         }
 
-        /**
-         * Advance tab ke sabhi price inputs ko clear karta hai.
-         */
         function clearAdvancePriceInputs() {
             const inputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             inputs.forEach(input => {
@@ -722,12 +736,8 @@
             });
         }
 
-        /**
-         * Advance tab se items ko list me add karta hai (Rapid Entry Logic).
-         */
         function addAdvanceItems() {
             const size = document.getElementById('advanceSizeSelect').value;
-            // [FIX] Check karo ki size select kiya hai ya nahi
             if (!size) {
                 alert('Please select a size first.');
                 return;
@@ -766,9 +776,6 @@
 
         // --- SHARED FUNCTIONS (Modified) ---
 
-        /**
-         * Dono tabs ke items list ko clear karta hai.
-         */
         function clearBasicTab() {
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
@@ -781,26 +788,22 @@
         function clearAdvanceTab() {
             items = [];
             renderItems();
-            // Form reset
+            
             const sizeSelect = document.getElementById('advanceSizeSelect');
-            if (sizeSelect) sizeSelect.value = ""; // Default option par reset
+            if (sizeSelect) sizeSelect.value = ""; 
             
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
             
-            // Options ko hide karo
             const optionsContainer = document.getElementById('advance-options-container');
             if(optionsContainer) optionsContainer.style.display = 'none';
 
             clearAdvancePriceInputs();
         }
 
-        /**
-         * Active tab ke hisaab se items ko render karta hai.
-         */
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
-            if (!activeTab) return; // Agar koi tab active nahi hai (shuruaat me)
+            if (!activeTab) return; 
             
             const activeTabId = activeTab.id;
             
@@ -847,9 +850,6 @@
             container.innerHTML = tableHTML;
         }
 
-        /**
-         * Dono tabs ke liye PDF generate karta hai (Global 'items' list se).
-         */
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -888,9 +888,6 @@
             }).save();
         }
         
-        /**
-         * PDF ka HTML content banata hai (V32 logic).
-         */
         function generatePDFContent(totalHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -1051,21 +1048,15 @@
 
             // --- Naya Clear Logic ---
             if (tabName === 'advance') {
-                // Advance me jaane se pehle Basic ko clear karo
                 clearBasicTab();
-                // Advance tab ko pehli baar load karo
                 populateSizeDropdown();
-                // populateSurfaceList(); // Ise yahan call nahi karna, handleAdvanceSizeChange karega
             } else if (tabName === 'basic') {
-                // Basic me jaane se pehle Advance ko clear karo
                 clearAdvanceTab();
             }
         }
         
-        // --- EVENT LISTENERS (Bas basic wale hi hain) ---
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
-                // Check if the elements exist before trying to remove class
                 const sizeSuggestions = document.getElementById('sizeSuggestions');
                 const surfaceSuggestions = document.getElementById('surfaceSuggestions');
                 if (sizeSuggestions) sizeSuggestions.classList.remove('show');
@@ -1074,7 +1065,7 @@
             }
         });
 
-        renderItems(); // Page load par (khali state)
+        renderItems(); 
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
@@ -1129,7 +1120,6 @@
         document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
         
         // --- Page Load ---
-        // 'Basic' tab ke table ko render karo
         renderItems(); 
     </script>
 </body>

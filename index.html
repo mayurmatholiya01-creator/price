@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V19 - SINGLE LONG PAGE + LOGO FIX) ---
+        // --- (V20 - SINGLE LONG PAGE + A4 MIN-HEIGHT FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -550,6 +550,7 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
+            // [LOGIC 1] 'format: a4' abhi bhi hata hua hai, taaki page lamba ho sake
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -594,9 +595,9 @@
             `;
 
             // ---[YAHAN BADLAV KIYA GAYA HAI]---
-            // 'min-height: 90px;' ko wapas joda gaya hai, taaki page hamesha logo se bada rahe.
+            // [LOGIC 2] 'min-height: 296.5mm;' ko wapas daal diya gaya hai (A4 height).
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; min-height: 90px; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; min-height: 296.5mm; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
@@ -704,7 +705,7 @@
         function clearForm() {
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
+            document.getElementById('price').vaxlue = '';
             document.getElementById('size').focus();
         }
 
@@ -767,8 +768,6 @@
                 activeSuggestionIndex = -1; 
             }
         });
-
-
 
         renderItems();
 

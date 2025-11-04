@@ -424,13 +424,12 @@
                     <div class="price-input-container">
                         <span class="price-symbol">₹</span>
                         <input
-                            type="number"
-                            id="price"
+                            type="text"  id="price"
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-
-                            oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
+                            
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '');"
                         />
                     </div>
                 </div>
@@ -527,7 +526,9 @@
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
-            const price = document.getElementById('price').value.trim();
+            
+            // Hum directly value le rahe hain kyonki oninput use clean rakhega
+            const price = document.getElementById('price').value;
 
             const activeGradeBtn = document.querySelector('.grade-btn.active');
             const grade = activeGradeBtn ? activeGradeBtn.dataset.grade : 'PRE'; 
@@ -540,7 +541,7 @@
                 id: itemIdCounter++,
                 size: size,
                 surface: surface,
-                price: parseFloat(price),
+                price: parseFloat(price), // Ab yeh hamesha safe number hoga
                 grade: grade 
             };
             items.push(item);
@@ -592,9 +593,6 @@
             container.innerHTML = tableHTML;
         }
 
-        // --- 
-        // --- !!! BADLAV YAHAN HAI (1) !!! ---
-        // --- 
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -612,16 +610,13 @@
                 jsPDF: { 
                     orientation: 'portrait', 
                     unit: 'mm'
-                    // 'format: a4' YAHAN SE HATA DIYA GAYA HAI
+                    // 'format: a4' ko hata diya gaya hai single long page ke liye
                 }
             };
 
             html2pdf().set(opt).from(element).save();
         }
-
-        // --- 
-        // --- !!! BADLAV YAHAN HAI (2) !!! ---
-        // --- 
+ 
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -673,12 +668,12 @@
                 </style>
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none; box-sizing: border-box !important;">
                     
-                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                    <div style="position: absolute; top: 0mm; right: 0mm; width: 30mm; height: 35mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
-                    </div>
+                    
+                    <div style="position: absolute; bottom: 0mm; left: 0mm; width: 30mm; height: 35mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block; transform: rotate(0deg);" /> </div>
                     
                     <div style="padding: 20px 25px; position: relative; z-index: 10; width: 100%; box-sizing: border-box !important;">
                         

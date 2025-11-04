@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -8,7 +7,15 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <script src="imagedata.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
     <style>
+        /* Aapka poora CSS code (koi badlav nahi) */
         * {
             margin: 0;
             padding: 0;
@@ -21,8 +28,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
         }
@@ -32,7 +39,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -58,6 +65,7 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            font-family: 'Poppins', sans-serif;
         }
 
         .tab-btn.active {
@@ -104,7 +112,7 @@
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         input[type='text']:focus,
@@ -171,6 +179,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Icon aur text ke beech space */
         }
 
         .add-button {
@@ -305,6 +317,10 @@
             transition: all 0.3s ease;
             font-weight: 600;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px; /* Chhota space chote button ke liye */
         }
 
         .delete-btn:hover {
@@ -331,9 +347,9 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
-            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
-        </div>
+            <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
+            <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
+            </div>
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
@@ -384,9 +400,11 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="add-button" onclick="addItem()">Add</button>
+                    <button class="add-button" onclick="addItem()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
                     <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
-                        Generate PDF
+                        <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
             </div>
@@ -407,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
+        // --- (V26 - SPACER + ABSOLUTE FOOTER FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -514,7 +532,8 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})">Delete</button></td>
+                        
+                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
                 `;
             });
@@ -522,7 +541,6 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [MODIFIED FUNCTION V17 - SINGLE LONG PAGE] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -532,6 +550,7 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
+            // [LOGIC 1] 'format: a4' HATA HUA HAI. 
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -539,19 +558,13 @@
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { 
                     orientation: 'portrait', 
-                    unit: 'mm', 
-                    format: 'a4' // <-- इसे A4 पर रखें, html2pdf खुद इसे लंबा कर देगा
+                    unit: 'mm' 
                 }
             };
 
-            // html2pdf फ़ंक्शन को कॉल करें
             html2pdf().set(opt).from(element).save();
         }
 
-        /**
-         * 🌟 [GEMINI FINAL FIX]: 'pt' + '!important' + 'text-size-adjust: none;'
-         * यह मोबाइल ब्राउज़र को फ़ॉन्ट साइज़ बदलने से ज़बरदस्ती रोक देगा।
-         */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -561,8 +574,12 @@
 
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; 
+
                 tableRows += `
-                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1;">
+                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
@@ -572,31 +589,60 @@
             });
 
 
-            // --- पेज HTML ---
+            const pinPointLine = `
+                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
+                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
+            `;
+
+            // ---[YAHAN BADLAV KIYA GAYA HAI (V26)]---
+            
+            // [LOGIC 2] Spacer ka Hisaab Lagao
+            const A4_HEIGHT_MM = 297;
+            const HEADER_HEIGHT_MM = 120; // Logo + Address + Title
+            const FOOTER_AREA_HEIGHT_MM = 130; // Terms + Footer Text (Absolute position space)
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 6.5; // Lagbhag 24px
+
+            let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+            
+            // Content ki height = Header + Table + padding
+            let contentHeight = HEADER_HEIGHT_MM + tableHeight + 20; // 20mm ka padding/margin
+
+            // Total height = Content + Footer space
+            let totalEstimatedHeight = contentHeight + FOOTER_AREA_HEIGHT_MM;
+            
+            let spacerHeight = 0;
+            if (totalEstimatedHeight < A4_HEIGHT_MM) {
+                 // Page ko A4 height tak push karne ke liye spacer
+                spacerHeight = A4_HEIGHT_MM - totalEstimatedHeight;
+            }
+
+            // [LOGIC 3] Outer div ko KOI height/min-height MAT DO.
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; 
+                            height: auto; /* Hamesha auto */
+                            margin: 0; background: white; 
+                            position: relative; /* Footer ke liye zaroori */
+                            overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img
-                            src="A LOGO.png"
-                            style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;"
-                        />
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img 
-                            src="A LOGO.png" 
-                            style="width: 100%; height: 100%; object-fit: contain; display: block;" 
-                        />
-                    </div>
-
-                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                    <div style="padding: 20px 25px; 
+                                position: relative; z-index: 10;
+                                padding-bottom: ${FOOTER_AREA_HEIGHT_MM}mm; /* Footer ke liye zaroori jagah */
+                    ">
                         
-                        <div style="border-bottom: 3px solid #ed3237; padding-bottom: 20px; margin-bottom: 20px; text-align: center;">
+                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
                             <img
-                                src="GRANICER LOGO.png"
+                                src="${logoGranicer_base64}"
                                 style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
                             />
+                            ${pinPointLine}
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
@@ -612,7 +658,6 @@
                                 <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
                             </div>
                         </div>
-
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
@@ -627,8 +672,10 @@
                             </div>
                         </div>
 
-                        <div style="border-top: 2px solid #ed3237; border-bottom: 2px solid #ed3237; padding: 12px 0; margin-bottom: 15px; text-align: center;">
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
                         </div>
                         
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
@@ -636,7 +683,7 @@
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
@@ -644,9 +691,20 @@
                                 ${tableRows}
                             </tbody>
                         </table>
+                        
+                        <div style="height: ${spacerHeight}mm;"></div>
 
-                        <div style="border-top: 3px solid #ed3237; padding-top: 12px; margin-top: 25px;">
-                            <div style="font-size: 9pt !important; font-weight: bold; color: #1a1a1a; margin-bottom: 8px;">
+                    </div> <div style="position: absolute; 
+                                z-index: 10;
+                                bottom: 20px; /* Niche se 20px ki doori */
+                                left: 25px; /* Padding match karne ke liye */
+                                right: 25px; /* Padding match karne ke liye */
+                                height: 120mm; /* Footer ki lagbhag height */
+                    ">
+                        
+                        <div style="padding-top: 12px; margin-top: 0px;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>
                             <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
@@ -661,17 +719,15 @@
                             </ul>
                         </div>
 
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; text-align: center;">
-                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4;">
+                        <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                            ${pinPointLine}
+                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
                                 <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
                                 <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-
-                    </div>
-                </div>
-            `;
+                    </div> </div> `;
             
             return pagesHTML;
         }
@@ -684,7 +740,39 @@
             document.getElementById('size').focus();
         }
 
-        function switchTab(tabName) {
+        // --- Baaki ka JavaScript code (koi badlav nahi) ---
+
+        /**
+         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
+         */
+        function clearBasicTab() {
+            // Form inputs clear karo
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            
+            // Added items ki array clear karo aur table update karo
+            items = [];
+            renderItems(); // Yeh table ko "No items added" state mein daal dega
+        }
+
+        /**
+         * Advance tab ke content ko clear karta hai (future use).
+         */
+        function clearAdvanceTab() {
+            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
+            // Jab aap advance tab mein content daalenge, 
+            // toh use clear karne ka code yahan aayega.
+            console.log("Advance tab cleared (future use)");
+        }
+
+
+        /**
+         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
+         * @param {Event} event - Click event
+         * @param {string} tabName - 'basic' ya 'advance'
+         */
+        function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
 
@@ -692,9 +780,18 @@
             buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
+            event.target.classList.add('active'); // 'event' ko yahan pass kiya gaya hai
 
+            // --- Naya Clear Logic ---
+            if (tabName === 'advance') {
+                // Agar 'Advance' par click kiya, toh 'Basic' tab clear karo
+                clearBasicTab();
+            } else if (tabName === 'basic') {
+                // Agar 'Basic' par click kiya, toh 'Advance' tab clear karo
+                clearAdvanceTab();
+            }
+        }
+        
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');

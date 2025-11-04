@@ -767,8 +767,11 @@
                 }
             };
 
-            // Loader nikal diya hai, ab simple save() hai
-            html2pdf().set(opt).from(element).save();
+            // [FIXED] Loader nikal diya, lekin .catch() rakha hai
+            html2pdf().set(opt).from(element).save().catch(function(err) {
+                alert('Sorry, an error occurred while generating the PDF: ' + err); 
+                console.error(err);
+            });
         }
 
         /**
@@ -916,33 +919,38 @@
         }
         
         function getPDFCompanyDetailsHTML() {
+            // [FIXED] display: grid ko table se replace kar diya
             return `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                        <div>COMET GRANITO PVT.LTD.</div>
-                        <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                        <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
-                        <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
-                        <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                        <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
-                        <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
-                    </div>
-                    <div>
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                        <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
-                        <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
-                        <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                    </div>
-                </div>
+                <table style="width: 100%; border-collapse: collapse; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                    <tbody>
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; padding: 0;">
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
+                            </td>
+                            <td style="width: 50%; vertical-align: top; padding: 0;">
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
+                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; padding: 15px 0 0 0;">
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
+                            </td>
+                            <td style="width: 50%; vertical-align: top; padding: 15px 0 0 0;">
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
+                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             `;
         }
         

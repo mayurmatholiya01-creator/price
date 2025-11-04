@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V28 - CHATGPT DYNAMIC HEIGHT FIX) ---
+        // --- (V29 - CHATGPT LOGIC + LOGO POSITION FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -541,8 +541,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // ---[YAHAN BADLAV KIYA GAYA HAI (V28)]---
-        // Aapka naya logic yahan daal diya gaya hai
+        // ---[V28 ka LOGIC - YEH BILKUL SAHI HAI]---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -550,25 +549,20 @@
             }
 
             const element = document.createElement('div');
-            // Hum V26 ka HTML layout use kar rahe hain (Absolute Footer wala)
-            // Isliye generatePDFContent() ko badla gaya hai
             element.innerHTML = generatePDFContent(); 
 
-            // ✅ Ek row ki approx height (mm me)
+            // Ek row ki approx height (mm me)
             const basePageHeight = 296.5; // A4 height
-            const baseRows = 10;          // fix 10 row tak normal height
+            const baseRows = 10;          // 10 row tak normal height
+            const extraPerRow = 10;       // Har extra row ke liye 10mm
             
-            // 24px row height = ~6.5mm
-            // Hum 10mm use kar rahe hain (aapke code se) safety buffer ke liye
-            const extraPerRow = 10;       
-
             let totalRows = items.length;
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
             
             // Height ko Math.ceil() se round up karenge (blank page bug fix)
             let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
 
-            // ✅ HTML to PDF options (dynamic page height)
+            // HTML to PDF options (dynamic page height)
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -577,23 +571,20 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // ✅ dynamic height
+                    format: [210, totalHeight] // dynamic height
                 },
-                pagebreak: { mode: ['avoid'] } // ✅ Single page force
+                pagebreak: { mode: ['avoid'] } // Single page force
             };
 
-            // ✅ Single Page Enforcement Logic
+            // Single Page Enforcement Logic
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                // Agar galti se extra page ban bhi jaaye...
                 while (pdf.internal.getNumberOfPages() > 1) {
-                    // ...toh use delete kar do
                     pdf.deletePage(pdf.internal.getNumberOfPages());
                 }
-            }).save(); // Aur fir save karo
+            }).save();
         }
 
-        // ---[YAHAN BADLAV KIYA GAYA HAI (V28)]---
-        // V26 ka "Absolute Footer" layout (bina spacer ke)
+        // ---[V29 HTML LOGIC - LOGO KO FOOTER KE ANDAR KARNA]---
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -622,24 +613,23 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // ✅ Outer div - KOI HEIGHT YA MIN-HEIGHT NAHI
+            // Outer div - KOI HEIGHT YA MIN-HEIGHT NAHI
+            // padding-bottom footer ke liye jagah banata hai
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: auto; 
                             margin: 0; background: white; 
-                            position: relative; /* Footer ke liye zaroori */
-                            overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                            position: relative; 
+                            overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;
+                            padding-bottom: 130mm; /* Footer ke liye jagah */
+                ">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-                    </div>
-
-                    <div style="padding: 20px 25px; 
+                    
+                    <div style="padding: 20px 25px 0 25px; /* bottom padding 0 hai */
                                 position: relative; z-index: 10;
-                                padding-bottom: 130mm; /* Footer ke liye zaroori jagah */
                     ">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
@@ -703,6 +693,13 @@
                                 right: 25px; /* Padding match karne ke liye */
                                 height: 120mm; /* Footer ki lagbhag height */
                     ">
+                        
+                        <div style="position: absolute; 
+                                    bottom: -20px; /* Parent ke bottom (20px) se 20px niche = 0 */
+                                    left: -25px; /* Parent ke left (25px) se 25px piche = 0 */
+                                    width: 75px; height: 90px; overflow: hidden; z-index: -1;">
+                            <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                        </div>
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>

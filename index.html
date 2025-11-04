@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* (आपका पूरा CSS... कोई बदलाव नहीं) */
+        /* Aapka poora CSS code (koi badlav nahi) */
         * {
             margin: 0;
             padding: 0;
@@ -161,45 +161,11 @@
             box-shadow: none;
         }
 
-        /* --- GRADE BUTTON STYLES --- */
-        .grade-btn-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-            margin-top: 10px; /* Space from price box */
-        }
-
-        .grade-btn {
-            flex: 1;
-            padding: 10px 5px;
-            font-size: 0.9em;
-            font-weight: 600;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: #f8f9fa;
-            color: #555;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .grade-btn:hover {
-            background: #e9ecef;
-            border-color: #ccc;
-        }
-
-        .grade-btn.active {
-            background: #ed3237;
-            color: white;
-            border-color: #ed3237;
-            box-shadow: 0 4px 12px rgba(237, 50, 55, 0.3);
-        }
-        /* --- END GRADE STYLES --- */
-
         .button-group {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
-            margin-top: 15px; /* Added margin-top to space from grade buttons */
+            margin-top: 5px;
         }
 
         .add-button,
@@ -340,23 +306,21 @@
             background: #f8f9fa;
         }
 
-        /* --- DELETE BUTTON (Icon only) --- */
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            padding: 8px; /* Adjusted padding for icon only */
-            width: 36px;  /* Fixed width */
-            height: 36px; /* Fixed height */
+            padding: 6px 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em; /* Make icon a bit larger */
+            font-size: 0.85em;
             transition: all 0.3s ease;
+            font-weight: 600;
+            white-space: nowrap;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0; /* Removed gap */
-            line-height: 1; /* Ensure proper alignment */
+            gap: 6px; /* Chhota space chote button ke liye */
         }
 
         .delete-btn:hover {
@@ -424,25 +388,17 @@
                     <div class="price-input-container">
                         <span class="price-symbol">₹</span>
                         <input
-                            type="text"  id="price"
+                            type="number"
+                            id="price"
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-                            
-                            oninput="this.value = this.value.replace(/[^0-9.]/g, '');"
+
+                            oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Grade</label>
-                    <div class="grade-btn-group">
-                        <button class="grade-btn active" data-grade="PRE" type="button">PRE</button>
-                        <button class="grade-btn" data-grade="STD" type="button">STD</button>
-                        <button class="grade-btn" data-grade="GOLD" type="button">GOLD</button>
-                        <button class="grade-btn" data-grade="ECO" type="button">ECO</button>
-                    </div>
-                </div>
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -526,13 +482,8 @@
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
-            
-            // Hum directly value le rahe hain kyonki oninput use clean rakhega
-            const price = document.getElementById('price').value;
+            const price = document.getElementById('price').value.trim();
 
-            const activeGradeBtn = document.querySelector('.grade-btn.active');
-            const grade = activeGradeBtn ? activeGradeBtn.dataset.grade : 'PRE'; 
-            
             if (!size || !surface || !price) {
                 alert('Please fill all fields');
                 return;
@@ -541,8 +492,7 @@
                 id: itemIdCounter++,
                 size: size,
                 surface: surface,
-                price: parseFloat(price), // Ab yeh hamesha safe number hoga
-                grade: grade 
+                price: parseFloat(price),
             };
             items.push(item);
             renderItems();
@@ -570,7 +520,6 @@
                         <tr>
                             <th>Size</th>
                             <th>Surface</th>
-                            <th>Grade</th>
                             <th>Price</th>
                             <th>Action</th>
                         </tr>
@@ -582,10 +531,9 @@
                     <tr>
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
-                        <td>${item.grade}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
                         
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
+                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
                 `;
             });
@@ -609,14 +557,14 @@
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { 
                     orientation: 'portrait', 
-                    unit: 'mm'
-                    // 'format: a4' ko hata diya gaya hai single long page ke liye
+                    unit: 'mm', 
+                    format: 'a4' 
                 }
             };
 
             html2pdf().set(opt).from(element).save();
         }
- 
+
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -630,24 +578,12 @@
                     ? 'background: white;' 
                     : 'background: #f8f9fa;'; 
 
-                // --- PDF TABLE ROW (widths adjusted) ---
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 8%;">
-                            ${actualIndex}
-                        </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 29%;">
-                            ${item.size}
-                        </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 23%;">
-                            ${item.surface}
-                        </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 15%;">
-                            ${item.grade}
-                        </td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 25%;">
-                            ₹ ${item.price.toFixed(2)}
-                        </td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -660,22 +596,15 @@
 
 
             pagesHTML = `
-                <style>
-                    * { 
-                        box-sizing: border-box !important; 
-                        -webkit-box-sizing: border-box !important; 
-                    }
-                </style>
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none; box-sizing: border-box !important;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
-                    <div style="position: absolute; top: 0mm; right: 0mm; width: 30mm; height: 35mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    
-                    <div style="position: absolute; bottom: 0mm; left: 0mm; width: 30mm; height: 35mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block; transform: rotate(0deg);" /> </div>
-                    
-                    <div style="padding: 20px 25px; position: relative; z-index: 10; width: 100%; box-sizing: border-box !important;">
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
+                    </div>
+                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
                             <img
@@ -721,14 +650,13 @@
                         </div>
                         
                         
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                             <thead>
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 8%;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 29%;">Size</th>
-                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 23%;">Surface Type</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 15%;">Grade</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
                             <tbody style="background: white;">
@@ -775,35 +703,41 @@
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
-
-            document.querySelectorAll('.grade-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector('.grade-btn[data-grade="PRE"]').classList.add('active');
-
             document.getElementById('size').focus();
         }
 
         // --- Baaki ka JavaScript code (koi badlav nahi) ---
 
+        /**
+         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
+         */
         function clearBasicTab() {
+            // Form inputs clear karo
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
             
-            document.querySelectorAll('.grade-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector('.grade-btn[data-grade="PRE"]').classList.add('active');
-
+            // Added items ki array clear karo aur table update karo
             items = [];
-            renderItems(); 
+            renderItems(); // Yeh table ko "No items added" state mein daal dega
         }
 
+        /**
+         * Advance tab ke content ko clear karta hai (future use).
+         */
         function clearAdvanceTab() {
+            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
+            // Jab aap advance tab mein content daalenge, 
+            // toh use clear karne ka code yahan aayega.
             console.log("Advance tab cleared (future use)");
         }
 
+
+        /**
+         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
+         * @param {Event} event - Click event
+         * @param {string} tabName - 'basic' ya 'advance'
+         */
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
@@ -812,11 +746,14 @@
             buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active'); 
+            event.target.classList.add('active'); // 'event' ko yahan pass kiya gaya hai
 
+            // --- Naya Clear Logic ---
             if (tabName === 'advance') {
+                // Agar 'Advance' par click kiya, toh 'Basic' tab clear karo
                 clearBasicTab();
             } else if (tabName === 'basic') {
+                // Agar 'Basic' par click kiya, toh 'Advance' tab clear karo
                 clearAdvanceTab();
             }
         }
@@ -827,14 +764,6 @@
                 document.getElementById('surfaceSuggestions').classList.remove('show');
                 activeSuggestionIndex = -1; 
             }
-        });
-
-        const gradeButtons = document.querySelectorAll('.grade-btn');
-        gradeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                gradeButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-            });
         });
 
         renderItems();
@@ -879,7 +808,7 @@
                 activeSuggestionIndex = -1;
             }
 
-            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+            if (activeSuggzestionIndex > -1 && items[activeSuggestionIndex]) {
                 items[activeSuggestionIndex].classList.add('suggestion-active');
                 items[activeSuggestionIndex].scrollIntoView({
                     behavior: 'smooth',

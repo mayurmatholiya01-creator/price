@@ -7,7 +7,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
-    <script src="imagedata.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -15,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Aapka poora CSS code (koi badlav nahi) */
         * {
             margin: 0;
             padding: 0;
@@ -28,7 +26,10 @@
         }
 
         body {
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* [NEW 5] - Subtle Background */
             background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
@@ -39,6 +40,8 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
+            
+            /* [NEW 5] - Subtle Shadow */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -65,6 +68,8 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', sans-serif;
         }
 
@@ -112,6 +117,7 @@
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -179,6 +185,8 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            
+            /* [NEW 3] - Icon alignment */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -317,6 +325,8 @@
             transition: all 0.3s ease;
             font-weight: 600;
             white-space: nowrap;
+            
+            /* [NEW 3] - Icon alignment */
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -347,9 +357,9 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
-            <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
-            </div>
+            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
+            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
+        </div>
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
@@ -425,7 +435,7 @@
     </div>
 
     <script>
-        // --- (V21 - FLEXBOX SINGLE PAGE FIX) ---
+        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -541,6 +551,7 @@
             container.innerHTML = tableHTML;
         }
 
+        // 🌟🌟🌟 [PDF Function - Isme koi badlav nahi] 🌟🌟🌟
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -550,7 +561,6 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
-            // [LOGIC 1] 'format: a4' abhi bhi HATA HUA HAI. Yeh sahi hai.
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -558,13 +568,18 @@
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { 
                     orientation: 'portrait', 
-                    unit: 'mm' 
+                    unit: 'mm', 
+                    format: 'a4' 
                 }
             };
 
             html2pdf().set(opt).from(element).save();
         }
 
+        /**
+         * 🌟 [GEMINI FINAL FIX v6 - PREMIUM (No Watermark)]:
+         * (Is function mein koi badlav nahi kiya gaya hai)
+         */
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -594,109 +609,108 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
 
-            // ---[YAHAN BADLAV KIYA GAYA HAI]---
-            // [LOGIC 2] Outer div se 'min-height' HATA DI GAYI HAI (taaki multi-page na bane).
+
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                        <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
-
-                    <div style="position: relative; z-index: 10; padding: 20px 25px; 
-                                display: flex; flex-direction: column; 
-                                min-height: 296.5mm; /* A4 min height */
-                                box-sizing: border-box; /* Padding ko height mai include karega */
-                    ">
+                    
+                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                         
-                        <div style="flex: 1 0 auto;">
-                            <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                                <img
-                                    src="${logoGranicer_base64}"
-                                    style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                                />
-                                ${pinPointLine}
-                            </div>
+                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
+                            <img
+                                src="GRANICER LOGO.png"
+                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
+                            />
+                            ${pinPointLine}
+                        </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                                    <div>COMET GRANITO PVT.LTD.</div>
-                                    <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                    <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
-                                    <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
-                                    <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
-                                </div>
-                            </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                    <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
-                                    <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                    <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
-                                    <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
-                                    <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                                </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
                             </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
+                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
+                            </div>
+                        </div>
 
-                            
-                            <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
-                                <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                                <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                                <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
                             </div>
-                            
-                            
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                                <thead>
-                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody style="background: white;">
-                                    ${tableRows}
-                                </tbody>
-                            </table>
-                        </div> <div style="flex-shrink: 0;">
-                            <div style="padding-top: 12px; margin-top: 30px;">
-                                <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                                <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
-                                    Terms & Conditions:
-                                </div>
-                                <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
-                                    <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-                                    <li>Prices are subject to change without prior notice depending on market conditions.</li>
-                                    <li>Delivery period will be confirmed after order placement.</li>
-                                    <li>The company is not responsible for delays due to transport or unforeseen events.</li>
-                                    <li>The company is not liable once goods leave the factory.</li>
-                                    <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-                                    <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-                                    <li>Placing an order implies acceptance of the above terms & conditions.</li>
-                                </ul>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
+                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
                             </div>
+                        </div>
 
-                            <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
-                                ${pinPointLine}
-                                <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
-                                    <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                    <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                    <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
-                                </div>
+                        
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        </div>
+                        
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+
+                        
+                        <div style="padding-top: 12px; margin-top: 30px;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
+                                Terms & Conditions:
                             </div>
-                        </div> </div> </div> `;
+                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                                <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
+                                <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                <li>Delivery period will be confirmed after order placement.</li>
+                                <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                <li>The company is not liable once goods leave the factory.</li>
+                                <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                <li>Placing an order implies acceptance of the above terms & conditions.</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                            ${pinPointLine}
+                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
+                                <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
             
             return pagesHTML;
         }
@@ -709,39 +723,7 @@
             document.getElementById('size').focus();
         }
 
-        // --- Baaki ka JavaScript code (koi badlav nahi) ---
-
-        /**
-         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
-         */
-        function clearBasicTab() {
-            // Form inputs clear karo
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            
-            // Added items ki array clear karo aur table update karo
-            items = [];
-            renderItems(); // Yeh table ko "No items added" state mein daal dega
-        }
-
-        /**
-         * Advance tab ke content ko clear karta hai (future use).
-         */
-        function clearAdvanceTab() {
-            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
-            // Jab aap advance tab mein content daalenge, 
-            // toh use clear karne ka code yahan aayega.
-            console.log("Advance tab cleared (future use)");
-        }
-
-
-        /**
-         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
-         * @param {Event} event - Click event
-         * @param {string} tabName - 'basic' ya 'advance'
-         */
-        function switchTab(event, tabName) {
+        function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
 
@@ -749,18 +731,9 @@
             buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active'); // 'event' ko yahan pass kiya gaya hai
-
-            // --- Naya Clear Logic ---
-            if (tabName === 'advance') {
-                // Agar 'Advance' par click kiya, toh 'Basic' tab clear karo
-                clearBasicTab();
-            } else if (tabName === 'basic') {
-                // Agar 'Basic' par click kiya, toh 'Advance' tab clear karo
-                clearAdvanceTab();
-            }
+            event.target.classList.add('active');
         }
-        
+
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');

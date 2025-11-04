@@ -26,7 +26,10 @@
         }
 
         body {
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* [NEW 5] - Subtle Background */
             background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
@@ -37,6 +40,8 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
+            
+            /* [NEW 5] - Subtle Shadow */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -63,6 +68,8 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', sans-serif;
         }
 
@@ -79,25 +86,14 @@
         .tab-content {
             display: none;
             padding: 20px;
+            overflow-y: auto;
+            flex: 1;
         }
 
         .tab-content.active {
             display: flex;
             flex-direction: column;
         }
-        
-        .form-area {
-             flex-shrink: 0; 
-             padding-bottom: 10px;
-        }
-        
-        #advance .form-area {
-            overflow-y: auto; 
-            flex-shrink: 1;
-            min-height: 150px; 
-            padding-right: 5px; 
-        }
-
 
         .form-group {
             margin-bottom: 15px;
@@ -121,6 +117,7 @@
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
+            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -188,10 +185,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            
+            /* [NEW 3] - Icon alignment */
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px; 
+            gap: 8px; /* Icon aur text ke beech space */
         }
 
         .add-button {
@@ -217,70 +216,6 @@
             cursor: not-allowed;
             transform: none;
         }
-        
-        
-        /* Advance Tab ke Form Styles */
-        #advanceSurfaceList {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .surface-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .surface-name {
-            flex: 1;
-            font-weight: 600;
-            font-size: 0.95em;
-            color: #555;
-            padding-left: 5px;
-        }
-        
-        .surface-price-input {
-            flex: 1.2;
-        }
-        
-        .surface-price-input .price-input-container {
-            border-radius: 6px; 
-        }
-        
-        .surface-price-input input {
-            padding: 10px;
-            font-size: 0.95em;
-        }
-        
-        .surface-price-input .price-symbol {
-            padding: 10px 12px;
-            font-size: 1em;
-            border-radius: 6px 0 0 6px;
-        }
-        
-        .advance-add-btn {
-            flex-shrink: 0;
-            width: 44px;
-            height: 44px;
-            padding: 0;
-            border: none;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            font-size: 1.2em;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .advance-add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-        
 
         .suggestions {
             position: absolute;
@@ -320,17 +255,18 @@
         }
 
         .items-table {
-            padding: 0 20px 20px 20px; 
-            flex: 1; 
-            overflow-y: auto; 
+            margin-top: 20px;
+            flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            border-top: 2px solid #f0f0f0;
+            border-collapse: collapse;
+            border-spacing: 0;
+            table-layout: fixed;
         }
 
         .items-table h3 {
             color: #333;
-            margin-top: 20px; 
             margin-bottom: 10px;
             font-size: 1em;
             flex-shrink: 0;
@@ -389,10 +325,12 @@
             transition: all 0.3s ease;
             font-weight: 600;
             white-space: nowrap;
+            
+            /* [NEW 3] - Icon alignment */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px; 
+            gap: 6px; /* Chhota space chote button ke liye */
         }
 
         .delete-btn:hover {
@@ -412,13 +350,11 @@
 
         .table-wrapper {
             overflow-x: auto;
-            flex: 1; 
+            flex: 1;
         }
-        
     </style>
 </head>
 <body>
-    
     <div class="container">
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('basic', event)">Basic</button>
@@ -426,7 +362,7 @@
         </div>
 
         <div id="basic" class="tab-content active">
-            <div class="form-area">
+            <div style="flex: 0 0 auto;">
                 <div class="form-group">
                     <label for="size">Size</label>
                     <div class="input-wrapper">
@@ -440,6 +376,7 @@
                         <div class="suggestions" id="sizeSuggestions"></div>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label for="surface">Surface</label>
                     <div class="input-wrapper">
@@ -447,12 +384,15 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
+                            
                             oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
+                            
                             title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label for="price">Price</label>
                     <div class="price-input-container">
@@ -463,10 +403,12 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
+
                             oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
                 </div>
+
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -476,39 +418,25 @@
                     </button>
                 </div>
             </div>
+
+            <div class="items-table">
+                <h3>Added Items</h3>
+                <div class="table-wrapper">
+                    <div id="itemsContainer"></div>
+                </div>
+            </div>
         </div>
-        
+
         <div id="advance" class="tab-content">
-            <div class="form-area">
-                <div class="form-group">
-                    <label for="advanceSizeSelect">Select Size</label>
-                    <select id="advanceSizeSelect" onchange="generateSurfaceRows(this)">
-                        </select>
-                </div>
-                <div id="advanceSurfaceList">
-                    <p style="text-align: center; color: #999; padding: 20px 0;">Please select a size to see surfaces.</p>
-                </div>
-            </div>
-            
-            <div class="button-group" style="margin-top: auto; border-top: 2px solid #f0f0f0; padding-top: 15px;">
-                <button class="pdf-button" onclick="generatePDF()" id="pdfBtnAdvance" disabled>
-                    <i class="fas fa-file-pdf"></i> Generate PDF
-                </button>
-            </div>
+            <p style="text-align: center; color: #999; padding: 40px;">
+                Advance features coming soon...
+            </p>
         </div>
-        
-        <div class="items-table">
-            <h3>Added Items</h3>
-            <div class="table-wrapper">
-                <div id="itemsContainer">
-                    </div>
-            </div>
-        </div>
-        
     </div>
 
     <script>
-        // --- Data ---
+        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
+
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
             '1200x2800x6MM', '1200x3180x15MM', '1200x3200x15MM', '1600x1600x9MM',
@@ -526,9 +454,6 @@
         let items = [];
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let currentActiveTab = 'basic'; 
-
-        // ######## BASIC TAB FUNCTIONS ########
 
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
@@ -584,27 +509,33 @@
             clearForm();
         }
 
-        // ######## COMMON FUNCTIONS (Render, Delete, Switch) ########
-
         function deleteItem(id) {
             items = items.filter((item) => item.id !== id);
             renderItems();
         }
 
+        // -----------------------------------------------------------------
+        // [CHANGE 2] renderItems() ko update kiya
+        // -----------------------------------------------------------------
+        // Isse error nahi aayega jab aap 'Advance' tab par honge
         function renderItems() {
-            const pdfBtnBasic = document.getElementById('pdfBtn');
-            const pdfBtnAdvance = document.getElementById('pdfBtnAdvance');
-            const container = document.getElementById('itemsContainer'); 
+            const container = document.getElementById('itemsContainer');
+            const pdfBtn = document.getElementById('pdfBtn');
+
+            // [NEW] Check karo ki container (table) screen par hai ya nahi
+            // Agar aap Advance tab par hain, to 'container' null hoga (nahi milega)
+            if (!container) {
+                return; 
+            }
 
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                if(pdfBtnBasic) pdfBtnBasic.disabled = true;
-                if(pdfBtnAdvance) pdfBtnAdvance.disabled = true;
+                // [NEW] Check karo ki pdfBtn screen par hai ya nahi
+                if (pdfBtn) pdfBtn.disabled = true;
                 return;
             }
             
-            if(pdfBtnBasic) pdfBtnBasic.disabled = false;
-            if(pdfBtnAdvance) pdfBtnAdvance.disabled = false;
+            if (pdfBtn) pdfBtn.disabled = false;
             
             let tableHTML = `
                 <table>
@@ -624,6 +555,7 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
+                        
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
                 `;
@@ -632,115 +564,8 @@
             container.innerHTML = tableHTML;
         }
 
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('size').focus();
-        }
-        
-        function clearAdvanceForm() {
-            document.getElementById('advanceSizeSelect').value = '';
-            document.getElementById('advanceSurfaceList').innerHTML = '<p style="text-align: center; color: #999; padding: 20px 0;">Please select a size to see surfaces.</p>';
-        }
-
-        function switchTab(tabName, event) {
-            currentActiveTab = tabName; 
-            
-            const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach((tab) => tab.classList.remove('active'));
-            buttons.forEach((btn) => btn.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-
-            items = [];
-            renderItems(); 
-            
-            if (tabName === 'basic') {
-                clearAdvanceForm();
-            } else {
-                clearForm();
-            }
-        }
-        
-        
-        // ######## ADVANCE TAB FUNCTIONS ########
-
-        function generateSurfaceRows(sizeSelectElement) {
-            const surfaceListContainer = document.getElementById('advanceSurfaceList');
-            
-            if (!sizeSelectElement.value) {
-                surfaceListContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 20px 0;">Please select a size to see surfaces.</p>';
-                return;
-            }
-            
-            surfaceListContainer.innerHTML = '';
-            
-            surfaces.forEach(surface => {
-                const rowId = `adv_row_${surface.replace(/\s+/g, '_')}`;
-                const rowHTML = `
-                    <div class="surface-row" id="${rowId}">
-                        <span class="surface-name">${surface}</span>
-                        <div class="surface-price-input">
-                            <div class="price-input-container">
-                                <span class="price-symbol">₹</span>
-                                <input
-                                    type="number"
-                                    class="advance-price-input"
-                                    placeholder="0.00"
-                                    min="0"
-                                    step="0.01"
-                                    oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
-                                    data-surface="${surface}"
-                                />
-                            </div>
-                        </div>
-                        <button class="advance-add-btn" onclick="addAdvanceItem(this)">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                `;
-                surfaceListContainer.insertAdjacentHTML('beforeend', rowHTML);
-            });
-        }
-        
-        function addAdvanceItem(buttonEl) {
-            const parentRow = buttonEl.closest('.surface-row');
-            const priceInput = parentRow.querySelector('.advance-price-input');
-            const sizeSelect = document.getElementById('advanceSizeSelect');
-            
-            const size = sizeSelect.value;
-            const surface = priceInput.getAttribute('data-surface');
-            const price = priceInput.value.trim();
-            
-            if (!size) {
-                alert('Please select a size first.');
-                return;
-            }
-            
-            if (!price || parseFloat(price) <= 0) {
-                alert('Please enter a valid price for ' + surface);
-                return;
-            }
-            
-            const item = {
-                id: itemIdCounter++,
-                size: size,
-                surface: surface,
-                price: parseFloat(price),
-            };
-            
-            items.push(item);
-            renderItems(); 
-            
-            priceInput.value = '';
-        }
-
-        // ######## PDF GENERATION (Dono modes ke saath) ########
-
+        // (generatePDF aur generatePDFContent functions waise hi hain jaise aapne diye the)
+        // ... (PDF Generation logic - Original)
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -748,12 +573,7 @@
             }
 
             const element = document.createElement('div');
-            
-            if (currentActiveTab === 'advance') {
-                element.innerHTML = generatePDFContent_Advance();
-            } else {
-                element.innerHTML = generatePDFContent_Basic();
-            }
+            element.innerHTML = generatePDFContent();
 
             const opt = {
                 margin: 0,
@@ -767,22 +587,26 @@
                 }
             };
 
-            // [FIXED] Loader nikal diya hai, .catch() rakha hai
+            // [FIXED] Error handling daal diya hai
             html2pdf().set(opt).from(element).save().catch(function(err) {
                 alert('Sorry, an error occurred while generating the PDF: ' + err); 
                 console.error(err);
             });
         }
 
-        /**
-         * Basic tab ka original PDF function (Single Table)
-         */
-        function generatePDFContent_Basic() {
+        function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
+            let pagesHTML = '';
+            
+            let currentItemIndex = 1;
             let tableRows = '';
+
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
-                const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;'; 
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; 
+
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
                         <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
@@ -793,134 +617,14 @@
                 `;
             });
 
+
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            return `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
-                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; z-index: 1;"><img src="images/A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" /></div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; z-index: 1;"><img src="images/A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" /></div>
-                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
-                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                            <img src="images/GRANICER LOGO.png" style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;" />
-                            ${pinPointLine}
-                        </div>
-                        ${getPDFCompanyDetailsHTML()} 
-                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
-                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
-                        </div>
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                            ${getPDFTableHeaderHTML()}
-                            <tbody style="background: white;">
-                                ${tableRows}
-                            </tbody>
-                        </table>
-                        ${getPDFFooterHTML(pinPointLine, currentDate)}
-                    </div>
-                </div>
-            `;
-        }
-
-        /**
-         * Advance tab ka naya PDF function (Grouped Tables)
-         */
-        function generatePDFContent_Advance() {
-            const currentDate = new Date().toLocaleDateString('en-GB');
-            const pinPointLine = `
-                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
-                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
-            `;
-            
-            const groupedItems = items.reduce((acc, item) => {
-                acc[item.size] = (acc[item.size] || []).concat(item);
-                return acc;
-            }, {}); 
-            
-            
-            let allTablesHTML = '';
-            Object.keys(groupedItems).forEach(size => {
-                const itemsInGroup = groupedItems[size];
-                let tableRows = '';
-                
-                itemsInGroup.forEach((item, idx) => {
-                    const actualIndex = idx + 1;
-                    const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
-                    
-                    tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: left; padding-left: 10px; height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-                
-                // [FIXED] 'page-break-inside: avoid;' hata diya
-                allTablesHTML += `
-                    <div style="margin-bottom: 15px;">
-                        <h3 style="font-size: 11pt; color: #333; margin-bottom: 8px; padding-left: 5px;">
-                            Size: ${size}
-                        </h3>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 15%;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: left; padding-left: 10px; font-size: 9pt !important; font-weight: 600; height: 30px; width: 55%;">Surface Type</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 30%;">Price <span style="font-size: 6pt; display: block;">(/sq feet)</span></th>
-                                </tr>
-                            </thead>
-                            <tbody style="background: white;">
-                                ${tableRows}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            });
-
-            return `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
-                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; z-index: 1;"><img src="images/A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" /></div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; z-index: 1;"><img src="images/A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" /></div>
-                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
-                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                            <img src="images/GRANICER LOGO.png" style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;" />
-                            ${pinPointLine}
-                        </div>
-                        ${getPDFCompanyDetailsHTML()} 
-                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
-                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
-                        </div>
-                        ${allTablesHTML}
-                        ${getPDFFooterHTML(pinPointLine, currentDate)}
-                    </div>
-                </div>
-            `;
-        }
-        
-        // ######## PDF Helper Functions (Code saaf rakhne ke liye) ########
-        
-        function getPDFTableHeaderHTML() {
-             return `
-                <thead>
-                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 15%;">Sr. No.</th>
-                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                         <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 30%;">Surface Type</th>
-                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt; display: block;">(/sq feet)</span></th>
-                    </tr>
-                </thead>
-             `;
-        }
-        
-        function getPDFCompanyDetailsHTML() {
-            // [FIXED] display: grid ko table se replace kar diya
-            return `
+            // [FIXED] Error waala 'display: grid' nikaal kar 'table' layout use kiya
+            const companyDetailsHTML = `
                 <table style="width: 100%; border-collapse: collapse; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
                     <tbody>
                         <tr>
@@ -952,66 +656,143 @@
                     </tbody>
                 </table>
             `;
-        }
-        
-        function getPDFFooterHTML(pinPointLine, currentDate) {
-             // [FIXED] 'page-break-inside: avoid;' hata diya
-             return `
-                <div style="padding-top: 12px; margin-top: 30px;">
-                    <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                    <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
-                        Terms & Conditions:
-                    </div>
-                    <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
-                        <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-                        <li>Prices are subject to change without prior notice depending on market conditions.</li>
-                        <li>Delivery period will be confirmed after order placement.</li>
-                        <li>The company is not responsible for delays due to transport or unforeseen events.</li>
-                        <li>The company is not liable once goods leave the factory.</li>
-                        <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-                        <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-                        <li>Placing an order implies acceptance of the above terms & conditions.</li>
-                    </ul>
-                </div>
-                <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
-                    ${pinPointLine}
-                    <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
-                        <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                        <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                        <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
-                    </div>
-                </div>
-             `;
-        }
 
+            pagesHTML = `
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                    
+                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="A LOGO.png" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
+                    </div>
+                    
+                    <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
+                        
+                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
+                            <img
+                                src="GRANICER LOGO.png"
+                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
+                            />
+                            ${pinPointLine}
+                        </div>
 
-        // ######## INITIALIZATION (Page Load) ########
-        
-        function initApp() {
-            // Advance Tab ke Size Dropdown ko bharo
-            const sizeSelect = document.getElementById('advanceSizeSelect');
-            let sizeOptions = '<option value="">-- Select a Size --</option>';
-            sizes.forEach(size => {
-                sizeOptions += `<option value="${size}">${size}</option>`;
-            });
-            sizeSelect.innerHTML = sizeOptions;
+                        ${companyDetailsHTML} <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        </div>
+                        
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+
+                        
+                        <div style="padding-top: 12px; margin-top: 30px;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
+                                Terms & Conditions:
+                            </div>
+                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                                <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
+                                <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                <li>Delivery period will be confirmed after order placement.</li>
+                                <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                <li>The company is not liable once goods leave the factory.</li>
+                                <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                <li>Placing an order implies acceptance of the above terms & conditions.</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                            ${pinPointLine}
+                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
+                                <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
             
-            // Basic Tab ki table render karo
-            renderItems();
+            return pagesHTML;
         }
-        
-        // App chalu karo
-        initApp();
-        
+
+
+        function clearForm() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('size').focus();
+        }
+
+        // -----------------------------------------------------------------
+        // [CHANGE 3] Naya function (khaali) add kiya
+        // -----------------------------------------------------------------
+        function clearAdvanceForm() {
+            // Abhi 'Advance' tab mein sirf text hai.
+            // Jab hum form banayenge, to uska clear logic yaha aayega.
+        }
+
+        // -----------------------------------------------------------------
+        // [CHANGE 4] switchTab() ko poori tarah badal diya
+        // -----------------------------------------------------------------
+        function switchTab(tabName, event) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach((tab) => tab.classList.remove('active'));
+            buttons.forEach((btn) => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            
+            // event.target se 'active' class add karna
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            // --- [NEW LOGIC START] ---
+            // 1. Puraane data ko clear karo
+            items = []; 
+            itemIdCounter = 0;
+            
+            // 2. Table UI ko clear karo (ye pdfBtn ko bhi disable kar dega)
+            renderItems(); 
+            
+            // 3. Dono forms ko unki zaroorat ke hisaab se clear karo
+            if (tabName === 'basic') {
+                // 'Basic' tab par ja rahe hain, to 'Advance' ko clear karo
+                clearAdvanceForm(); 
+            } else {
+                // 'Advance' tab par ja rahe hain, to 'Basic' ko clear karo
+                clearForm(); 
+            }
+            // --- [NEW LOGIC END] ---
+        }
 
         document.addEventListener('click', function (event) {
-            if (event.target.closest('.input-wrapper')) return; 
-            
-            const allSuggestions = document.querySelectorAll('.suggestions');
-            allSuggestions.forEach(box => box.classList.remove('show'));
-            activeSuggestionIndex = -1;
+            if (!event.target.closest('.input-wrapper')) {
+                document.getElementById('sizeSuggestions').classList.remove('show');
+                document.getElementById('surfaceSuggestions').classList.remove('show');
+                activeSuggestionIndex = -1; 
+            }
         });
 
+        renderItems();
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';

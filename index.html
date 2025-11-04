@@ -378,7 +378,7 @@
             flex: 1;
         }
 
-        /* --- [CSS BADLAV] Advance Tab ke liye styles --- */
+        /* --- Advance Tab ke liye styles --- */
         #advance-form-container {
             flex-shrink: 0; /* Form ko shrink hone se roko */
         }
@@ -399,7 +399,6 @@
             display: contents; /* Grid layout ko follow karega */
         }
         
-        /* Surface name ka label */
         .surface-price-item label {
             font-weight: 600;
             color: #333;
@@ -414,12 +413,10 @@
             justify-content: flex-end;
         }
 
-        /* Price input ka container */
         .surface-price-item .price-input-container {
             border-radius: 0 8px 8px 0;
             border-left: none;
         }
-        /* --- [CSS BADLAV KHATAM] --- */
     </style>
 </head>
 <body>
@@ -554,7 +551,7 @@
         </div>
 
     <script>
-        // --- (V34 - ADVANCE TAB LOGIC) ---
+        // --- (V35 - ADVANCE TAB FIX) ---
 
         // Global Data (Dono tabs use karte hain)
         const sizes = [
@@ -662,7 +659,8 @@
          */
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
-            if (listDiv.innerHTML !== '') return; // Pehle se bhara hai
+            // --- [YAHAN FIX KIYA GAYA] ---
+            if (listDiv.children.length > 0) return; // Check for actual elements
 
             let html = '';
             surfaces.forEach(surface => {
@@ -776,7 +774,7 @@
             const container = document.getElementById(containerId);
             const pdfBtn = document.getElementById(pdfBtnId);
 
-            if (!container || !pdfBtn) return; // Agar tab abhi load nahi hua hai
+            if (!container || !pdfBtn) return; 
 
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';

@@ -26,10 +26,7 @@
         }
 
         body {
-            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            
-            /* [NEW 5] - Subtle Background */
             background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
@@ -40,8 +37,6 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            
-            /* [NEW 5] - Subtle Shadow */
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -68,8 +63,6 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            
-            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', sans-serif;
         }
 
@@ -117,7 +110,6 @@
             border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s;
-            /* [NEW 4] - Font Family Updated */
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -185,8 +177,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            
-            /* [NEW 3] - Icon alignment */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -216,6 +206,85 @@
             cursor: not-allowed;
             transform: none;
         }
+        
+        /* [NEW] Advance Tab ke Buttons */
+        .advance-button-group {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .add-more-button {
+            flex: 1;
+            padding: 12px;
+            color: #333;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #f8f9fa;
+        }
+        .add-more-button:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+        
+        /* [NEW] Advance Tab ke Form Styles */
+        #advanceFormContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .advance-size-block {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .surface-list {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .surface-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .surface-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.9em;
+            color: #555;
+            padding-left: 5px;
+        }
+        .surface-price-input {
+            flex: 1;
+        }
+        .surface-price-input .price-input-container {
+            border-radius: 6px; /* Chhote radius */
+        }
+        .surface-price-input input {
+            padding: 10px;
+            font-size: 0.95em;
+        }
+        .surface-price-input .price-symbol {
+            padding: 10px 12px;
+            font-size: 1em;
+            border-radius: 6px 0 0 6px;
+        }
+        
 
         .suggestions {
             position: absolute;
@@ -325,12 +394,10 @@
             transition: all 0.3s ease;
             font-weight: 600;
             white-space: nowrap;
-            
-            /* [NEW 3] - Icon alignment */
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px; /* Chhota space chote button ke liye */
+            gap: 6px; 
         }
 
         .delete-btn:hover {
@@ -357,8 +424,8 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('basic')">Basic</button>
-            <button class="tab-btn" onclick="switchTab('advance')">Advance</button>
+            <button class="tab-btn active" onclick="switchTab('basic', event)">Basic</button>
+            <button class="tab-btn" onclick="switchTab('advance', event)">Advance</button>
         </div>
 
         <div id="basic" class="tab-content active">
@@ -384,9 +451,7 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
-                            
                             oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
-                            
                             title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
@@ -403,7 +468,6 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-
                             oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
@@ -418,7 +482,7 @@
                     </button>
                 </div>
             </div>
-
+            
             <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
@@ -427,11 +491,27 @@
             </div>
         </div>
 
+        
         <div id="advance" class="tab-content">
-            <p style="text-align: center; color: #999; padding: 40px;">
-                Advance features coming soon...
-            </p>
+            <div style="flex: 1; overflow-y: auto; padding-bottom: 20px;">
+                <div id="advanceFormContainer">
+                    </div>
+            </div>
+            
+            <div class="advance-button-group">
+                <button class="add-button" onclick="addAllAdvanceItems()">
+                    <i class="fas fa-plus-circle"></i> Add All to List
+                </button>
+                <button class="pdf-button" onclick="generatePDF()" id="pdfBtnAdvance" disabled>
+                    <i class="fas fa-file-pdf"></i> Generate PDF
+                </button>
+                <button class="add-more-button" onclick="addSizeBlock()">
+                    <i class="fas fa-plus"></i> Add More Size
+                </button>
+            </div>
         </div>
+        
+        
     </div>
 
     <script>
@@ -454,6 +534,11 @@
         let items = [];
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
+        
+        // [NEW] Taaki PDF generation ko pata chale konsa mode on hai
+        let currentActiveTab = 'basic'; 
+
+        // ######## BASIC TAB FUNCTIONS (No Change) ########
 
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
@@ -515,15 +600,23 @@
         }
 
         function renderItems() {
+            // Dono tabs ke buttons ko target karna
+            const pdfBtnBasic = document.getElementById('pdfBtn');
+            const pdfBtnAdvance = document.getElementById('pdfBtnAdvance');
+            
+            // Common table container
             const container = document.getElementById('itemsContainer');
-            const pdfBtn = document.getElementById('pdfBtn');
 
             if (items.length === 0) {
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                pdfBtn.disabled = true;
+                if(pdfBtnBasic) pdfBtnBasic.disabled = true;
+                if(pdfBtnAdvance) pdfBtnAdvance.disabled = true;
                 return;
             }
-            pdfBtn.disabled = false;
+            
+            if(pdfBtnBasic) pdfBtnBasic.disabled = false;
+            if(pdfBtnAdvance) pdfBtnAdvance.disabled = false;
+            
             let tableHTML = `
                 <table>
                     <thead>
@@ -542,7 +635,6 @@
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
-                        
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
                     </tr>
                 `;
@@ -551,7 +643,161 @@
             container.innerHTML = tableHTML;
         }
 
-        // 🌟🌟🌟 [PDF Function - Isme koi badlav nahi] 🌟🌟🌟
+        // ######## [MODIFIED] CORE FUNCTIONS ########
+
+        function clearForm() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('size').focus();
+        }
+        
+        function clearAdvanceForm() {
+            document.getElementById('advanceFormContainer').innerHTML = '';
+            // Pehla block add kar dete hain taaki shuruaat kar sakein
+            addSizeBlock(); 
+        }
+
+        /**
+         * [MODIFIED] Ab ye function data aur forms clear karega
+         */
+        function switchTab(tabName, event) {
+            currentActiveTab = tabName; // Global variable set kiya
+            
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+
+            tabs.forEach((tab) => tab.classList.remove('active'));
+            buttons.forEach((btn) => btn.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // --- [NEW] Sabse Important Logic ---
+            // Data clear karna taaki mix na ho
+            items = [];
+            renderItems(); // Table ko "empty" state par reset karna
+            
+            if (tabName === 'basic') {
+                // Agar basic par aaye hain, advance ko clear karo
+                clearAdvanceForm();
+            } else {
+                // Agar advance par aaye hain, basic ko clear karo
+                clearForm();
+            }
+        }
+        
+        
+        // ######## [NEW] ADVANCE TAB FUNCTIONS ########
+
+        let sizeBlockCounter = 0;
+
+        /**
+         * Naya "Size Select" block banata hai
+         */
+        function addSizeBlock() {
+            const container = document.getElementById('advanceFormContainer');
+            const blockId = `sizeBlock_${sizeBlockCounter++}`;
+            
+            let sizeOptions = '<option value="">-- Select a Size --</option>';
+            sizes.forEach(size => {
+                sizeOptions += `<option value="${size}">${size}</option>`;
+            });
+            
+            const blockHTML = `
+                <div class="advance-size-block" id="${blockId}">
+                    <div class="form-group">
+                        <label for="size_select_${blockId}">Select Size</label>
+                        <select id="size_select_${blockId}" onchange="generateSurfaceRows(this)">
+                            ${sizeOptions}
+                        </select>
+                    </div>
+                    <div class="surface-list" id="surface_list_${blockId}">
+                        </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', blockHTML);
+        }
+
+        /**
+         * Size select hone par surface list banata hai
+         */
+        function generateSurfaceRows(sizeSelectElement) {
+            // Parent block ko dhundho
+            const parentBlock = sizeSelectElement.closest('.advance-size-block');
+            const surfaceListContainer = parentBlock.querySelector('.surface-list');
+            
+            // Purani list clear karo
+            surfaceListContainer.innerHTML = '';
+            
+            // Nayi list banao
+            surfaces.forEach(surface => {
+                const rowHTML = `
+                    <div class="surface-row">
+                        <span class="surface-name">${surface}</span>
+                        <div class="surface-price-input">
+                            <div class="price-input-container">
+                                <span class="price-symbol">₹</span>
+                                <input
+                                    type="number"
+                                    class="advance-price-input"
+                                    placeholder="0.00"
+                                    min="0"
+                                    step="0.01"
+                                    oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
+                                    data-surface="${surface}"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                `;
+                surfaceListContainer.insertAdjacentHTML('beforeend', rowHTML);
+            });
+        }
+        
+        /**
+         * Advance tab ke sabhi items ko 'items' array mein add karta hai
+         */
+        function addAllAdvanceItems() {
+            const sizeBlocks = document.querySelectorAll('.advance-size-block');
+            let itemsAdded = 0;
+            
+            sizeBlocks.forEach(block => {
+                const selectedSize = block.querySelector('select').value;
+                if (!selectedSize) return; // Agar size select nahi kiya to skip
+                
+                const priceInputs = block.querySelectorAll('.advance-price-input');
+                
+                priceInputs.forEach(input => {
+                    const price = input.value.trim();
+                    const surface = input.getAttribute('data-surface');
+                    
+                    // Sirf bhare hue price ko hi add karo
+                    if (price && parseFloat(price) > 0) {
+                        const item = {
+                            id: itemIdCounter++,
+                            size: selectedSize,
+                            surface: surface,
+                            price: parseFloat(price),
+                        };
+                        items.push(item);
+                        itemsAdded++;
+                    }
+                });
+            });
+            
+            if (itemsAdded > 0) {
+                renderItems(); // Table ko update karo
+                alert(`${itemsAdded} items added to the list!`);
+            } else {
+                alert('No prices entered. Please enter prices to add items.');
+            }
+        }
+
+
+        // ######## PDF GENERATION (Abhi Basic wala hi use karega) ########
+
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -559,7 +805,12 @@
             }
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent();
+            
+            // [TODO] - Agle step mein hum yaha logic daalenge
+            // if (currentActiveTab === 'basic') { ... } else { ... }
+            
+            // Abhi ke liye, dono tabs Basic PDF hi banayenge
+            element.innerHTML = generatePDFContent_Basic();
 
             const opt = {
                 margin: 0,
@@ -577,21 +828,16 @@
         }
 
         /**
-         * 🌟 [GEMINI FINAL FIX v6 - PREMIUM (No Watermark)]:
-         * (Is function mein koi badlav nahi kiya gaya hai)
+         * [RENAMED] Ye Basic tab ka original PDF function hai
          */
-        function generatePDFContent() {
+        function generatePDFContent_Basic() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
-            let currentItemIndex = 1;
             let tableRows = '';
-
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
-                const rowStyle = (idx % 2 === 0) 
-                    ? 'background: white;' 
-                    : 'background: #f8f9fa;'; 
+                const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;'; 
 
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
@@ -630,7 +876,6 @@
                             ${pinPointLine}
                         </div>
 
-
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
@@ -658,14 +903,12 @@
                                 <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
                             </div>
                         </div>
-
                         
                         <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
                             <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
                         </div>
-                        
                         
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                             <thead>
@@ -680,7 +923,6 @@
                                 ${tableRows}
                             </tbody>
                         </table>
-
                         
                         <div style="padding-top: 12px; margin-top: 30px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
@@ -716,24 +958,15 @@
         }
 
 
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('size').focus();
+        // ######## [NEW] Ye Advance PDF ke liye hai, abhi khaali hai ########
+        function generatePDFContent_Advance() {
+            // [TODO] - Agle step mein hum is function ko banayenge
+            // Abhi ke liye ye Basic wala hi call karega taaki error na aaye
+            return generatePDFContent_Basic();
         }
 
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-btn');
-
-            tabs.forEach((tab) => tab.classList.remove('active'));
-            buttons.forEach((btn) => btn.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
+        // ######## INITIALIZATION ########
+        
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');
@@ -742,7 +975,10 @@
             }
         });
 
+        // Page load par Basic tab ki table render karna
         renderItems();
+        // Page load par Advance tab ka pehla block banana
+        addSizeBlock();
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';

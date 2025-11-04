@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -426,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V26 - SPACER + ABSOLUTE FOOTER FIX) ---
+        // --- (V28 - CHATGPT DYNAMIC HEIGHT FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -542,59 +541,240 @@
             container.innerHTML = tableHTML;
         }
 
-        function generatePDF(){
-if(items.length===0)return alert("Please add items");
-const ROW_HEIGHT_MM=6.5,A4_HEIGHT_MM=297,A4_WIDTH_MM=210;
-const rows=items.length;
-const totalHeight=rows<=10?A4_HEIGHT_MM:Math.ceil(A4_HEIGHT_MM+(rows-10)*ROW_HEIGHT_MM);
-const element=document.createElement("div");
-element.style.width="210mm";
-element.style.margin="0 auto";
-element.style.minHeight=totalHeight+"mm";
-element.style.background="white";
-element.style.padding="20px";
-element.style.boxSizing="border-box";
-element.style.position="relative";
-element.innerHTML=generatePDFContent(totalHeight);
-const opt={margin:0,filename:"Granicer_PriceList.pdf",image:{type:"jpeg",quality:0.98},
-html2canvas:{scale:2,useCORS:true,scrollX:0,scrollY:0,backgroundColor:"#ffffff"},
-jsPDF:{unit:"mm",format:[A4_WIDTH_MM,totalHeight],orientation:"portrait"},
-pagebreak:{mode:["avoid"]}};
-html2pdf().set(opt).from(element).toPdf().get("pdf").then(pdf=>{
-while(pdf.internal.getNumberOfPages()>1)pdf.deletePage(pdf.internal.getNumberOfPages());
-}).save();
-}
+        // ---[YAHAN BADLAV KIYA GAYA HAI (V28)]---
+        // Aapka naya logic yahan daal diya gaya hai
+        function generatePDF() {
+            if (items.length === 0) {
+                alert('Please add items first');
+                return;
+            }
 
-function generatePDFContent(totalHeight){
-const currentDate=new Date().toLocaleDateString("en-GB");
-let rowsHTML=items.map((i,idx)=>`
-<tr style="background:${idx%2==0?'white':'#f8f9fa'};">
-<td style="border:1px solid #ddd;padding:4px;text-align:center;">${idx+1}</td>
-<td style="border:1px solid #ddd;padding:4px;text-align:center;">${i.size}</td>
-<td style="border:1px solid #ddd;padding:4px;text-align:center;">${i.surface}</td>
-<td style="border:1px solid #ddd;padding:4px;text-align:center;">₹ ${i.price.toFixed(2)}</td></tr>`).join('');
-return `
-<div style="position:relative;width:210mm;margin:0 auto;background:white;">
-<div style="position:fixed;top:0;right:0;width:70px;height:80px;z-index:5;">
-<img src="${logoA_base64}" style="width:100%;height:100%;object-fit:contain;transform:rotate(180deg);" />
-</div>
-<div style="position:fixed;bottom:0;left:0;width:70px;height:80px;z-index:5;">
-<img src="${logoA_base64}" style="width:100%;height:100%;object-fit:contain;" />
-</div>
-<div style="padding:20px 25px;">
-<h2 style="text-align:center;color:#ed3237;margin-bottom:10px;">PRICE LIST</h2>
-<table style="width:100%;border-collapse:collapse;">
-<thead><tr style="background:linear-gradient(135deg,#ed3237,#b82329);color:white;">
-<th style="border:1px solid #ed3237;padding:5px;">Sr.No.</th>
-<th style="border:1px solid #ed3237;padding:5px;">Size</th>
-<th style="border:1px solid #ed3237;padding:5px;">Surface Type</th>
-<th style="border:1px solid #ed3237;padding:5px;">Price</th></tr></thead><tbody>${rowsHTML}</tbody></table>
-<p style="font-size:7pt;color:#999;text-align:center;margin-top:15px;">
-Generated on: ${currentDate}<br>Granicer Ceramica India
-</p></div></div>`;
-}
+            const element = document.createElement('div');
+            // Hum V26 ka HTML layout use kar rahe hain (Absolute Footer wala)
+            // Isliye generatePDFContent() ko badla gaya hai
+            element.innerHTML = generatePDFContent(); 
 
-function switchTab(event, tabName) {
+            // ✅ Ek row ki approx height (mm me)
+            const basePageHeight = 296.5; // A4 height
+            const baseRows = 10;          // fix 10 row tak normal height
+            
+            // 24px row height = ~6.5mm
+            // Hum 10mm use kar rahe hain (aapke code se) safety buffer ke liye
+            const extraPerRow = 10;       
+
+            let totalRows = items.length;
+            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+            
+            // Height ko Math.ceil() se round up karenge (blank page bug fix)
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
+
+            // ✅ HTML to PDF options (dynamic page height)
+            const opt = {
+                margin: 0,
+                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
+                jsPDF: {
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [210, totalHeight] // ✅ dynamic height
+                },
+                pagebreak: { mode: ['avoid'] } // ✅ Single page force
+            };
+
+            // ✅ Single Page Enforcement Logic
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                // Agar galti se extra page ban bhi jaaye...
+                while (pdf.internal.getNumberOfPages() > 1) {
+                    // ...toh use delete kar do
+                    pdf.deletePage(pdf.internal.getNumberOfPages());
+                }
+            }).save(); // Aur fir save karo
+        }
+
+        // ---[YAHAN BADLAV KIYA GAYA HAI (V28)]---
+        // V26 ka "Absolute Footer" layout (bina spacer ke)
+        function generatePDFContent() {
+            const currentDate = new Date().toLocaleDateString('en-GB');
+            let pagesHTML = '';
+            
+            let tableRows = '';
+
+            items.forEach((item, idx) => {
+                const actualIndex = idx + 1;
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; 
+
+                tableRows += `
+                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+
+            const pinPointLine = `
+                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
+                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
+            `;
+            
+            // ✅ Outer div - KOI HEIGHT YA MIN-HEIGHT NAHI
+            pagesHTML = `
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; 
+                            height: auto; 
+                            margin: 0; background: white; 
+                            position: relative; /* Footer ke liye zaroori */
+                            overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                    
+                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                    </div>
+
+                    <div style="padding: 20px 25px; 
+                                position: relative; z-index: 10;
+                                padding-bottom: 130mm; /* Footer ke liye zaroori jagah */
+                    ">
+                        
+                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
+                            <img
+                                src="${logoGranicer_base64}"
+                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
+                            />
+                            ${pinPointLine}
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
+                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
+                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        </div>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div> <div style="position: absolute; 
+                                z-index: 10;
+                                bottom: 20px; /* Niche se 20px ki doori */
+                                left: 25px; /* Padding match karne ke liye */
+                                right: 25px; /* Padding match karne ke liye */
+                                height: 120mm; /* Footer ki lagbhag height */
+                    ">
+                        
+                        <div style="padding-top: 12px; margin-top: 0px;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
+                                Terms & Conditions:
+                            </div>
+                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                                <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
+                                <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                <li>Delivery period will be confirmed after order placement.</li>
+                                <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                <li>The company is not liable once goods leave the factory.</li>
+                                <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                <li>Placing an order implies acceptance of the above terms & conditions.</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                            ${pinPointLine}
+                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
+                                <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                            </div>
+                        </div>
+                    </div> </div> `;
+            
+            return pagesHTML;
+        }
+
+
+        function clearForm() {
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('size').focus();
+        }
+
+        // --- Baaki ka JavaScript code (koi badlav nahi) ---
+
+        /**
+         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
+         */
+        function clearBasicTab() {
+            // Form inputs clear karo
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            
+            // Added items ki array clear karo aur table update karo
+            items = [];
+            renderItems(); // Yeh table ko "No items added" state mein daal dega
+        }
+
+        /**
+         * Advance tab ke content ko clear karta hai (future use).
+         */
+        function clearAdvanceTab() {
+            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
+            // Jab aap advance tab mein content daalenge, 
+            // toh use clear karne ka code yahan aayega.
+            console.log("Advance tab cleared (future use)");
+        }
+
+
+        /**
+         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
+         * @param {Event} event - Click event
+         * @param {string} tabName - 'basic' ya 'advance'
+         */
+        function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
 

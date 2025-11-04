@@ -1,135 +1,200 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Granicer Ceramica - Price List Generator</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="imagedata.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Granicer Ceramica - Dynamic PDF</title>
 
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Poppins',sans-serif;background:#f4f7f6;padding:10px;}
-        .container{max-width:1200px;margin:auto;background:white;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.1);overflow:hidden;display:flex;flex-direction:column;height:100dvh;}
-        .tabs{display:flex;background:#f8f9fa;border-bottom:2px solid #ddd;}
-        .tab-btn{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-weight:600;color:#666;border-bottom:3px solid transparent;transition:0.3s;}
-        .tab-btn.active{color:#ed3237;background:white;border-bottom-color:#ed3237;}
-        .tab-content{display:none;padding:20px;overflow-y:auto;flex:1;}
-        .tab-content.active{display:flex;flex-direction:column;}
-        .form-group{margin-bottom:15px;}
-        label{display:block;margin-bottom:8px;font-weight:600;}
-        input{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:1em;}
-        input:focus{outline:none;border-color:#ed3237;box-shadow:0 0 0 3px rgba(237,50,55,0.1);}
-        .price-input-container{display:flex;align-items:center;border:2px solid #ddd;border-radius:8px;}
-        .price-symbol{padding:12px;background:#f8f9fa;border-right:2px solid #ddd;}
-        .price-input-container input{border:none;flex:1;padding:12px;}
-        .button-group{display:flex;gap:10px;margin-top:10px;}
-        .add-button,.pdf-button{flex:1;padding:12px;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.3s;}
-        .add-button{background:linear-gradient(135deg,#28a745,#20c997);}
-        .pdf-button{background:linear-gradient(135deg,#ed3237,#b82329);}
-        .add-button:hover,.pdf-button:hover{transform:translateY(-2px);}
-        table{width:100%;border-collapse:collapse;margin-top:20px;}
-        th,td{border:1px solid #ddd;padding:6px;text-align:center;font-size:0.9em;}
-        thead{background:linear-gradient(135deg,#ed3237,#b82329);color:white;}
-        .delete-btn{background:#ff6b6b;border:none;color:white;padding:6px 10px;border-radius:5px;cursor:pointer;transition:0.3s;}
-        .delete-btn:hover{background:#ff5252;transform:scale(1.05);}
-    </style>
+  <!-- Required Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: #f4f7f6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+      outline: 2px solid #ed3237;
+    }
+    .btn:hover {
+      transform: scale(1.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    thead {
+      background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
+      color: white;
+    }
+    .delete-btn {
+      background: #ff6b6b;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .delete-btn:hover {
+      background: #ff5252;
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab(event,'basic')">Basic</button>
-    <button class="tab-btn" onclick="switchTab(event,'advance')">Advance</button>
-  </div>
+  <div class="container">
+    <h2 style="text-align:center; color:#ed3237;">Granicer Ceramica - Price List</h2>
+    <input type="text" id="size" placeholder="Enter Size" />
+    <input type="text" id="surface" placeholder="Enter Surface" />
+    <input type="number" id="price" placeholder="Enter Price" />
+    <button class="btn" onclick="addItem()">Add</button>
+    <button class="btn" onclick="generatePDF()">Generate PDF</button>
 
-  <div id="basic" class="tab-content active">
-    <div>
-      <div class="form-group"><label>Size</label><input type="text" id="size" placeholder="Enter Size"></div>
-      <div class="form-group"><label>Surface</label><input type="text" id="surface" placeholder="Enter Surface"></div>
-      <div class="form-group"><label>Price</label><div class="price-input-container"><span class="price-symbol">₹</span><input type="number" id="price" placeholder="Enter Price"></div></div>
-      <div class="button-group">
-        <button class="add-button" onclick="addItem()">Add</button>
-        <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>Generate PDF</button>
-      </div>
-    </div>
     <div id="itemsContainer"></div>
   </div>
 
-  <div id="advance" class="tab-content"><p style="text-align:center;color:#999;padding:40px;">Advance features coming soon...</p></div>
-</div>
+  <script>
+    const { jsPDF } = window.jspdf;
+    let items = [];
 
-<script>
-let items=[];
-let itemIdCounter=0;
-function addItem(){
- const s=document.getElementById('size').value.trim();
- const su=document.getElementById('surface').value.trim();
- const p=document.getElementById('price').value.trim();
- if(!s||!su||!p)return alert('Please fill all fields');
- items.push({id:itemIdCounter++,size:s,surface:su,price:parseFloat(p)});
- renderItems();
- document.getElementById('size').value='';
- document.getElementById('surface').value='';
- document.getElementById('price').value='';
-}
-function deleteItem(id){items=items.filter(i=>i.id!==id);renderItems();}
-function renderItems(){
- const c=document.getElementById('itemsContainer');
- const pdfBtn=document.getElementById('pdfBtn');
- if(items.length===0){c.innerHTML="<p style='color:#999;text-align:center;'>No items added yet</p>";pdfBtn.disabled=true;return;}
- pdfBtn.disabled=false;
- let h=`<table><thead><tr><th>Sr</th><th>Size</th><th>Surface</th><th>Price</th><th>Action</th></tr></thead><tbody>`;
- items.forEach((i,idx)=>{h+=`<tr><td>${idx+1}</td><td>${i.size}</td><td>${i.surface}</td><td>₹ ${i.price.toFixed(2)}</td><td><button class='delete-btn' onclick='deleteItem(${i.id})'>Delete</button></td></tr>`;});
- h+='</tbody></table>';
- c.innerHTML=h;
-}
+    function addItem() {
+      const size = document.getElementById("size").value.trim();
+      const surface = document.getElementById("surface").value.trim();
+      const price = document.getElementById("price").value.trim();
 
-function generatePDF(){
- if(items.length===0){alert('Please add items first');return;}
- const element=document.createElement('div');
- element.innerHTML=generatePDFContent();
+      if (!size || !surface || !price) {
+        alert("Please fill all fields");
+        return;
+      }
+      items.push({ size, surface, price: parseFloat(price) });
+      renderItems();
+      document.getElementById("size").value = "";
+      document.getElementById("surface").value = "";
+      document.getElementById("price").value = "";
+    }
 
- const basePageHeight=296.5; // A4 height
- const baseRows=10;
- const rowHeightMM=12.7;
- const totalRows=items.length;
- const extraRows=totalRows>baseRows?totalRows-baseRows:0;
- const totalHeight=basePageHeight+(extraRows*rowHeightMM);
+    function deleteItem(idx) {
+      items.splice(idx, 1);
+      renderItems();
+    }
 
- const opt={
-   margin:0,
-   filename:'Granicer_PriceList_'+new Date().toISOString().slice(0,10)+'.pdf',
-   image:{type:'jpeg',quality:0.98},
-   html2canvas:{scale:2,useCORS:true,allowTaint:true},
-   jsPDF:{orientation:'portrait',unit:'mm',format:[210,totalHeight]},
-   pagebreak:{mode:['avoid-all']}
- };
- html2pdf().set(opt).from(element).save();
-}
+    function renderItems() {
+      const container = document.getElementById("itemsContainer");
+      if (items.length === 0) {
+        container.innerHTML =
+          "<p style='color:#999;text-align:center;'>No items added yet</p>";
+        return;
+      }
+      let html = `
+        <table>
+          <thead>
+            <tr><th>Sr</th><th>Size</th><th>Surface</th><th>Price</th><th>Action</th></tr>
+          </thead>
+          <tbody>`;
+      items.forEach(
+        (i, idx) =>
+          (html += `<tr><td>${idx + 1}</td><td>${i.size}</td><td>${i.surface}</td><td>₹ ${i.price.toFixed(
+            2
+          )}</td><td><button class="delete-btn" onclick="deleteItem(${idx})">Delete</button></td></tr>`)
+      );
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
 
-function generatePDFContent(){
- let rows=items.map((i,idx)=>`<tr><td>${idx+1}</td><td>${i.size}</td><td>${i.surface}</td><td>₹ ${i.price.toFixed(2)}</td></tr>`).join('');
- return `
- <div style="width:210mm;background:white;padding:20px;font-family:'Poppins',sans-serif;">
- <h2 style="text-align:center;color:#ed3237;">Granicer Ceramica - Price List</h2>
- <table style="width:100%;border-collapse:collapse;margin-top:10px;">
- <thead style="background:#ed3237;color:white;"><tr><th>Sr</th><th>Size</th><th>Surface</th><th>Price</th></tr></thead>
- <tbody>${rows}</tbody></table>
- <div style="margin-top:15px;text-align:center;font-size:10pt;color:#999;">Generated on: ${new Date().toLocaleDateString('en-GB')}</div>
- </div>`;
-}
+    async function generatePDF() {
+      if (items.length === 0) {
+        alert("Please add items first");
+        return;
+      }
 
-function switchTab(e,tab){
- document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
- document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
- document.getElementById(tab).classList.add('active');
- e.target.classList.add('active');
-}
-</script>
+      const element = document.createElement("div");
+      element.innerHTML = generatePDFContent();
+      document.body.appendChild(element);
+
+      // Calculate dynamic height
+      const baseHeight = 296.5; // A4 base
+      const baseRows = 10;
+      const rowHeightMM = 12.7;
+      const totalRows = items.length;
+      const extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+      const totalHeight = baseHeight + extraRows * rowHeightMM;
+
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: [210, totalHeight],
+      });
+
+      const pdfWidth = 210;
+      const pdfHeight = totalHeight;
+
+      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save("Granicer_PriceList.pdf");
+      element.remove();
+    }
+
+    function generatePDFContent() {
+      let rows = items
+        .map(
+          (i, idx) =>
+            `<tr><td>${idx + 1}</td><td>${i.size}</td><td>${i.surface}</td><td>₹ ${i.price.toFixed(
+              2
+            )}</td></tr>`
+        )
+        .join("");
+
+      return `
+        <div style="width:210mm; background:white; padding:20px; font-family:'Poppins',sans-serif;">
+          <h2 style="text-align:center; color:#ed3237;">Granicer Ceramica - Price List</h2>
+          <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <thead style="background:#ed3237; color:white;">
+              <tr><th>Sr</th><th>Size</th><th>Surface</th><th>Price</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+          <div style="margin-top:15px; text-align:center; font-size:10pt; color:#999;">
+            Generated on: ${new Date().toLocaleDateString("en-GB")}
+          </div>
+        </div>`;
+    }
+  </script>
 </body>
 </html>

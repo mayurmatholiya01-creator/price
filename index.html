@@ -542,25 +542,33 @@
         }
 
         function generatePDF() {
-            if (items.length === 0) {
-                alert('Please add items first');
-                return;
-            }
+    if (items.length === 0) {
+        alert('Please add items first');
+        return;
+    }
 
-            const element = document.createElement('div');
-            element.innerHTML = generatePDFContent();
+    const element = document.createElement('div');
+    element.innerHTML = generatePDFContent();
 
-            // [LOGIC 1] 'format: a4' HATA HUA HAI. Yeh page ko lamba hone dega.
-            const opt = {
-                margin: 0,
-                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-                jsPDF: { 
-                    orientation: 'portrait', 
-                    unit: 'mm' 
-                }
-            };
+    // ✅ Dynamic PDF height calculation
+    const basePageHeight = 296.5; // A4 height in mm
+    const baseRows = 10; // up to 10 entries fixed height
+    const extraPerRow = 10; // each extra row adds 10mm height
+
+    let totalRows = items.length;
+    let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+    let totalHeight = basePageHeight + (extraRows * extraPerRow);
+
+    const opt = {
+        margin: 0,
+        filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: [210, totalHeight] }
+    };
+
+    html2pdf().set(opt).from(element).save();
+};
 
             html2pdf().set(opt).from(element).save();
         }

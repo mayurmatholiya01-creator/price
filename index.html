@@ -377,7 +377,7 @@
             flex: 1;
         }
 
-        /* --- [CSS BADLAV V36] Advance Tab ka naya layout --- */
+        /* --- [CSS BADLAV V37] Advance Tab ka naya layout --- */
         #advance-form-container {
             flex-shrink: 0;
         }
@@ -392,8 +392,9 @@
 
         /* Chhote grade buttons */
         #advance-options-container .grade-buttons label {
-            padding: 6px 8px;
-            font-size: 0.85em;
+            padding: 6px 8px; /* Padding kam ki */
+            font-size: 0.8em;  /* Font size chhota kiya */
+            gap: 8px;          /* Gap kam kiya */
         }
 
         /* Naya container jo hide/show hoga */
@@ -404,7 +405,7 @@
         /* Naya Surface Grid Layout */
         #surfacePriceList {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 column layout */
+            grid-template-columns: 1fr 1fr 1fr; /* 3 column layout */
             gap: 0; /* Gap 0 for borders */
             border: 1px solid #eee; /* Light grey border */
             border-radius: 8px;
@@ -415,40 +416,41 @@
             display: flex;
             flex-direction: column; 
             gap: 5px;
-            padding: 12px; /* Padding inside the cell */
+            padding: 10px; /* Padding kam ki */
             border-bottom: 1px solid #eee; /* Light grey line */
         }
         
         /* Vertical line */
-        .surface-item-wrapper:nth-child(odd) {
-            border-right: 1px solid #eee; 
+        /* Har 3rd item ke baad border na ho */
+        .surface-item-wrapper:not(:nth-child(3n)) {
+             border-right: 1px solid #eee;
         }
 
         /* Last row se bottom border hatao */
-        .surface-item-wrapper:last-child { border-bottom: none; }
-        /* Agar last item odd hai, to second last se border hatao */
-        .surface-item-wrapper:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+        .surface-item-wrapper:nth-last-child(-n+3) {
+            border-bottom: none;
+        }
         
         .surface-item-wrapper label {
             font-weight: 600;
             color: #333;
-            font-size: 0.9em;
+            font-size: 0.85em; /* Font chhota kiya */
             margin-bottom: 0;
         }
 
         .surface-item-wrapper .price-input-container {
-            border-radius: 8px; 
+            border-radius: 6px; 
             border-left: 2px solid #ddd;
         }
 
-        /* Chhota Price Box */
+        /* Chhota Price Box (Symbol hata diya) */
         .surface-item-wrapper .price-symbol {
-            padding: 10px;
-            font-size: 0.95em;
+             display: none; /* Symbol hide kiya */
         }
         .surface-item-wrapper .price-input-container input {
-            padding: 10px;
-            font-size: 0.95em;
+            padding: 8px 10px; /* Padding kam ki */
+            font-size: 0.9em;  /* Font chhota kiya */
+            text-align: center; /* Text center kiya */
         }
         /* --- [CSS BADLAV KHATAM] --- */
     </style>
@@ -475,7 +477,6 @@
                         <div class="suggestions" id="sizeSuggestions"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="surface">Surface</label>
                     <div class="input-wrapper">
@@ -489,7 +490,6 @@
                         <div class="suggestions" id="surfaceSuggestions"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="price">Price</label>
                     <div class="price-input-container">
@@ -504,7 +504,6 @@
                         />
                     </div>
                 </div>
-                
                 <div class="form-group">
                     <label>Grade</label>
                     <div class="grade-buttons">
@@ -518,7 +517,6 @@
                         <label for="grade_eco">ECO</label>
                     </div>
                 </div>
-
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -528,7 +526,6 @@
                     </button>
                 </div>
             </div>
-
             <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
@@ -542,7 +539,7 @@
                 <div class="form-group">
                     <label for="advanceSizeSelect">1. Select Size</label>
                     <select id="advanceSizeSelect" onchange="handleAdvanceSizeChange(this)">
-                        </select>
+                    </select>
                 </div>
 
                 <div id="advance-options-container" style="display: none;">
@@ -558,10 +555,9 @@
                             <label for="adv_grade_eco">ECO</label>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <div id="surfacePriceList">
-                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -585,7 +581,7 @@
         </div>
 
     <script>
-        // --- (V36 - ADVANCE TAB CSS TWEAKS) ---
+        // --- (V37 - ADVANCE TAB CSS TWEAKS) ---
 
         // Global Data
         const sizes = [
@@ -701,6 +697,7 @@
             }
         }
 
+        // --- [JS BADLAV V37] Price box se ₹ hataya ---
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
             if (listDiv.children.length > 0) return; 
@@ -712,15 +709,15 @@
                     <div class="surface-item-wrapper"> 
                         <label for="${inputId}">${surface}</label>
                         <div class="price-input-container">
-                            <span class="price-symbol">₹</span>
                             <input
                                 type="number"
                                 id="${inputId}"
                                 data-surface-name="${surface}"
-                                placeholder="Enter price"
+                                placeholder="Price" 
                                 min="0"
                                 step="0.01"
                                 oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
+                                style="text-align: center; border-radius: 6px;" 
                             />
                         </div>
                     </div>
@@ -1046,7 +1043,6 @@
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active'); 
 
-            // --- Naya Clear Logic ---
             if (tabName === 'advance') {
                 clearBasicTab();
                 populateSizeDropdown();

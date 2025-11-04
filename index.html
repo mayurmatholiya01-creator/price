@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* ... (Aapka poora CSS code yahan hai) ... */
+        /* ... (Poora CSS waise hi hai) ... */
         * {
             margin: 0;
             padding: 0;
@@ -249,22 +249,27 @@
         }
         tbody tr:hover { background: #f8f9fa; }
         tbody tr:nth-child(even) { background: #f8f9fa; }
+        
+        /* ========== [ CSS CHANGE START ] ========== */
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            padding: 6px 10px;
+            padding: 0; /* Padding hata diya */
+            width: 30px;  /* Fixed width */
+            height: 30px; /* Fixed height */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.85em;
+            font-size: 0.9em; /* Icon size */
             transition: all 0.3s ease;
-            font-weight: 600;
-            white-space: nowrap;
+            
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            /* gap: 6px; */ /* Gap hata diya */
         }
+        /* ========== [ CSS CHANGE END ] ========== */
+
         .delete-btn:hover {
             background: #ff5252;
             transform: scale(1.05);
@@ -283,7 +288,6 @@
             flex: 1;
         }
         
-        /* ========== [ NEW CSS START ] ========== */
         .grade-buttons {
             display: flex;
             gap: 10px;
@@ -309,7 +313,6 @@
             border-color: #ed3237;
             box-shadow: 0 2px 10px rgba(237, 50, 55, 0.3);
         }
-        /* ========== [ NEW CSS END ] ========== */
     </style>
 </head>
 <body>
@@ -373,6 +376,7 @@
                         <button class="grade-btn" onclick="selectGrade(event, 'ECO')">ECO</button>
                     </div>
                 </div>
+
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -415,10 +419,7 @@
         let items = [];
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1;
-        
-        // ========== [ NEW JS START ] ==========
         let currentGrade = 'PRE'; // Default grade
-        // ========== [ NEW JS END ] ==========
 
         function filterSuggestions(type) {
             // ... (Yeh function waise hi hai) ...
@@ -456,20 +457,12 @@
                 .classList.remove('show');
         }
         
-        // ========== [ NEW JS FUNCTION START ] ==========
-        /**
-         * Grade buttons (PRE, STD, etc.) ke click ko handle karta hai.
-         */
         function selectGrade(event, grade) {
-            // Global variable update karo
             currentGrade = grade;
-            
-            // Active class ko update karo
             const buttons = document.querySelectorAll('#gradeButtons .grade-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
-        // ========== [ NEW JS FUNCTION END ] ==========
 
 
         function addItem() {
@@ -482,16 +475,13 @@
                 return;
             }
             
-            // ========== [ JS CHANGE START ] ==========
-            // Ab item object mein 'grade' bhi save hoga
             const item = {
                 id: itemIdCounter++,
                 size: size,
                 surface: surface,
                 price: parseFloat(price),
-                grade: currentGrade // Grade ko yahan add kiya
+                grade: currentGrade 
             };
-            // ========== [ JS CHANGE END ] ==========
             
             items.push(item);
             renderItems();
@@ -514,8 +504,6 @@
             }
             pdfBtn.disabled = false;
             
-            // ========== [ JS CHANGE START ] ==========
-            // Table header mein 'Grade' add kiya
             let tableHTML = `
                 <table>
                     <thead>
@@ -529,7 +517,9 @@
                     </thead>
                     <tbody>
             `;
-            // Table body mein 'item.grade' add kiya
+            
+            // ========== [ JS CHANGE START ] ==========
+            // Button se "Delete" text hata diya
             items.forEach((item) => {
                 tableHTML += `
                     <tr>
@@ -537,7 +527,7 @@
                         <td>${item.surface}</td>
                         <td>${item.grade}</td>
                         <td>₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i> Delete</button></td>
+                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `;
             });
@@ -570,8 +560,6 @@
             let pagesHTML = '';
             let tableRows = '';
 
-            // ========== [ JS CHANGE START ] ==========
-            // PDF table rows mein 'item.grade' add kiya
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
                 const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;'; 
@@ -586,7 +574,6 @@
                     </tr>
                 `;
             });
-            // ========== [ JS CHANGE END ] ==========
 
 
             const pinPointLine = `
@@ -658,7 +645,7 @@
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Grade</th>
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
-                                </thead>
+                            </thead>
                             <tbody style="background: white;">
                                 ${tableRows}
                             </tbody>
@@ -678,7 +665,7 @@
                                 <li>The company is not liable once goods leave the factory.</li>
                                 <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
                                 <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-                                <li>Placing an order implies acceptance of the above terms & conditions.</li>
+<li>Placing an order implies acceptance of the above terms & conditions.</li>
                             </ul>
                         </div>
                         <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
@@ -699,28 +686,20 @@
 
 
         function clearForm() {
-            // Form inputs clear karo, lekin grade ko reset mat karo
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
             document.getElementById('size').focus();
         }
 
-        /**
-         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
-         */
         function clearBasicTab() {
-            // Form inputs clear karo
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
             
-            // Added items ki array clear karo aur table update karo
             items = [];
             renderItems(); 
             
-            // ========== [ JS CHANGE START ] ==========
-            // Grade ko 'PRE' par reset karo
             currentGrade = 'PRE';
             const buttons = document.querySelectorAll('#gradeButtons .grade-btn');
             buttons.forEach(btn => {
@@ -730,23 +709,13 @@
                     btn.classList.remove('active');
                 }
             });
-            // ========== [ JS CHANGE END ] ==========
         }
 
-        /**
-         * Advance tab ke content ko clear karta hai (future use).
-         */
         function clearAdvanceTab() {
-            // ... (Yeh function waise hi hai) ...
             console.log("Advance tab cleared (future use)");
         }
 
-
-        /**
-         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
-         */
         function switchTab(event, tabName) {
-            // ... (Yeh function waise hi hai) ...
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
             tabs.forEach((tab) => tab.classList.remove('active'));
@@ -762,7 +731,6 @@
         }
         
         document.addEventListener('click', function (event) {
-            // ... (Yeh function waise hi hai) ...
             if (!event.target.closest('.input-wrapper')) {
                 document.getElementById('sizeSuggestions').classList.remove('show');
                 document.getElementById('surfaceSuggestions').classList.remove('show');

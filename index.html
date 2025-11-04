@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V18 - SINGLE LONG PAGE LOGIC) ---
+        // --- (V19 - SINGLE LONG PAGE + LOGO FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -550,8 +550,6 @@
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
 
-            // ---[BADLAV 1]---
-            // 'jsPDF' object se 'format: a4' hata diya gaya hai.
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -595,17 +593,19 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
 
-            // ---[BADLAV 2]---
-            // Mukhya div se 'min-height: 296.5mm;' hata diya gaya hai.
+            // ---[YAHAN BADLAV KIYA GAYA HAI]---
+            // 'min-height: 90px;' ko wapas joda gaya hai, taaki page hamesha logo se bada rahe.
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; min-height: 90px; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
+                    
+                    <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
+
                     <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
@@ -768,6 +768,8 @@
             }
         });
 
+
+
         renderItems();
 
         function handleSuggestionKeydown(e, type) {
@@ -810,7 +812,7 @@
                 activeSuggestionIndex = -1;
             }
 
-            if (activeSuggzestionIndex > -1 && items[activeSuggestionIndex]) {
+            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
                 items[activeSuggestionIndex].classList.add('suggestion-active');
                 items[activeSuggestionIndex].scrollIntoView({
                     behavior: 'smooth',

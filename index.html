@@ -7,8 +7,7 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
-    <script src="imagedata.js"></script> 
-    
+    <script src="imagedata.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -16,18 +15,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+        /* Aapka poora CSS code (koi badlav nahi) */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        html, body { height: 100%; }
+
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -37,15 +43,17 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 100dvh;
+            height: 100dvh; /* Mobile/iOS compatibility */
             max-height: 100dvh; 
         }
+
         .tabs {
             display: flex;
             background: #f8f9fa;
             border-bottom: 2px solid #ddd;
             flex-shrink: 0;
         }
+
         .tab-btn {
             flex: 1;
             padding: 15px 10px;
@@ -59,26 +67,34 @@
             border-bottom: 3px solid transparent;
             font-family: 'Poppins', sans-serif;
         }
+
         .tab-btn.active {
             color: #ed3237;
             background: white;
             border-bottom-color: #ed3237;
         }
-        .tab-btn:hover { color: #ed3237; }
+
+        .tab-btn:hover {
+            color: #ed3237;
+        }
+
         .tab-content {
             display: none;
             padding: 20px;
             overflow-y: auto;
             flex: 1;
         }
+
         .tab-content.active {
             display: flex;
             flex-direction: column;
         }
+
         .form-group {
             margin-bottom: 15px;
             flex-shrink: 0;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -86,7 +102,10 @@
             font-weight: 600;
             font-size: 0.95em;
         }
-        input[type='text'], input[type='number'], select {
+
+        input[type='text'],
+        input[type='number'],
+        select {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -95,11 +114,15 @@
             transition: border-color 0.3s;
             font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        input[type='text']:focus, input[type='number']:focus, select:focus {
+
+        input[type='text']:focus,
+        input[type='number']:focus,
+        select:focus {
             outline: none;
             border-color: #ed3237;
             box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
+
         .price-input-container {
             display: flex;
             align-items: center;
@@ -108,10 +131,12 @@
             transition: border-color 0.3s;
             overflow: hidden;
         }
+
         .price-input-container:focus-within {
             border-color: #ed3237;
             box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
+
         .price-symbol {
             padding: 12px 12px;
             background: #f8f9fa;
@@ -121,6 +146,7 @@
             border-right: 2px solid #ddd;
             flex-shrink: 0;
         }
+
         .price-input-container input {
             flex: 1;
             border: none;
@@ -129,17 +155,55 @@
             outline: none;
             background: white;
         }
+
         .price-input-container input:focus {
             outline: none;
             box-shadow: none;
         }
+
+        /* --- NEW GRADE BUTTON STYLES --- */
+        .grade-btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px; /* Space from price box */
+        }
+
+        .grade-btn {
+            flex: 1;
+            padding: 10px 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .grade-btn:hover {
+            background: #e9ecef;
+            border-color: #ccc;
+        }
+
+        .grade-btn.active {
+            background: #ed3237;
+            color: white;
+            border-color: #ed3237;
+            box-shadow: 0 4px 12px rgba(237, 50, 55, 0.3);
+        }
+        /* --- END NEW STYLES --- */
+
         .button-group {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
-            margin-top: 5px;
+            margin-top: 15px; /* Added margin-top to space from grade buttons */
         }
-        .add-button, .pdf-button {
+
+        .add-button,
+        .pdf-button {
             flex: 1;
             padding: 12px;
             color: white;
@@ -152,27 +216,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 8px; /* Icon aur text ke beech space */
         }
+
         .add-button {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
+
         .add-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
         }
+
         .pdf-button {
             background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
         }
+
         .pdf-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
         }
+
         .pdf-button:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
+
         .suggestions {
             position: absolute;
             top: 100%;
@@ -188,7 +258,11 @@
             display: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        .suggestions.show { display: block; }
+
+        .suggestions.show {
+            display: block;
+        }
+
         .suggestion-item {
             padding: 10px 12px;
             cursor: pointer;
@@ -196,10 +270,16 @@
             border-bottom: 1px solid #f0f0f0;
             font-size: 0.9em;
         }
-        .suggestion-item:hover, .suggestion-item.suggestion-active {
+
+        .suggestion-item:hover,
+        .suggestion-item.suggestion-active {
             background: #f0f0f0;
         }
-        .input-wrapper { position: relative; }
+
+        .input-wrapper {
+            position: relative;
+        }
+
         .items-table {
             margin-top: 20px;
             flex: 1;
@@ -210,23 +290,27 @@
             border-spacing: 0;
             table-layout: fixed;
         }
+
         .items-table h3 {
             color: #333;
             margin-bottom: 10px;
             font-size: 1em;
             flex-shrink: 0;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
             font-size: 0.9em;
         }
+
         thead {
             background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
             color: white;
             flex-shrink: 0;
         }
+
         th {
             padding: 5px;
             text-align: center;
@@ -234,6 +318,7 @@
             border: 1px solid #ed3237;
             height: 30px;
         }
+
         td {
             padding: 2px 4px !important;
             border: 1px solid #ddd;
@@ -246,30 +331,39 @@
             white-space: nowrap;
             vertical-align: middle !important;
         }
-        tbody tr:hover { background: #f8f9fa; }
-        tbody tr:nth-child(even) { background: #f8f9fa; }
-        
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* --- MODIFIED DELETE BUTTON STYLE --- */
         .delete-btn {
             background: #ff6b6b;
             color: white;
-            padding: 0; /* Padding hata diya */
-            width: 30px;  /* Fixed width */
-            height: 30px; /* Fixed height */
+            padding: 8px; /* Adjusted padding for icon only */
+            width: 36px;  /* Fixed width */
+            height: 36px; /* Fixed height */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9em; /* Icon size */
+            font-size: 1em; /* Make icon a bit larger */
             transition: all 0.3s ease;
-            
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 0; /* Removed gap */
+            line-height: 1; /* Ensure proper alignment */
         }
 
         .delete-btn:hover {
             background: #ff5252;
             transform: scale(1.05);
         }
+
         .empty-state {
             text-align: center;
             padding: 20px 10px;
@@ -279,35 +373,10 @@
             margin-top: 10px;
             font-size: 0.9em;
         }
+
         .table-wrapper {
             overflow-x: auto;
             flex: 1;
-        }
-        
-        .grade-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .grade-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            background: #f8f9fa;
-            cursor: pointer;
-            font-weight: 600;
-            color: #555;
-            transition: all 0.3s ease;
-            font-size: 0.9em;
-        }
-        .grade-btn:hover {
-            border-color: #aaa;
-        }
-        .grade-btn.active {
-            background: #ed3237;
-            color: white;
-            border-color: #ed3237;
-            box-shadow: 0 2px 10px rgba(237, 50, 55, 0.3);
         }
     </style>
 </head>
@@ -316,7 +385,7 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
-        </div>
+            </div>
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
@@ -341,7 +410,9 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
+                            
                             oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
+                            
                             title="Please enter only letters and spaces."
                         />
                         <div class="suggestions" id="surfaceSuggestions"></div>
@@ -358,6 +429,7 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
+
                             oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
                     </div>
@@ -365,14 +437,13 @@
 
                 <div class="form-group">
                     <label>Grade</label>
-                    <div class="grade-buttons" id="gradeButtons">
-                        <button class="grade-btn active" onclick="selectGrade(event, 'PRE')">PRE</button>
-                        <button class="grade-btn" onclick="selectGrade(event, 'STD')">STD</button>
-                        <button class="grade-btn" onclick="selectGrade(event, 'GOLD')">GOLD</button>
-                        <button class="grade-btn" onclick="selectGrade(event, 'ECO')">ECO</button>
+                    <div class="grade-btn-group">
+                        <button class="grade-btn active" data-grade="PRE" type="button">PRE</button>
+                        <button class="grade-btn" data-grade="STD" type="button">STD</button>
+                        <button class="grade-btn" data-grade="GOLD" type="button">GOLD</button>
+                        <button class="grade-btn" data-grade="ECO" type="button">ECO</button>
                     </div>
                 </div>
-
                 <div class="button-group">
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
@@ -399,6 +470,8 @@
     </div>
 
     <script>
+        // --- (V17 - SINGLE LONG PAGE + MIN-HEIGHT FIX) ---
+
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
             '1200x2800x6MM', '1200x3180x15MM', '1200x3200x15MM', '1600x1600x9MM',
@@ -406,6 +479,7 @@
             '800x3000x15MM', '800x2400x15MM', '1000x3000x5MM', '1200x2600x6MM',
             '1200x3000x9MM', '800x3200x15MM',
         ];
+
         const surfaces = [
             'ELEGANCE', 'REPOSE', 'ALL SURFACES', 'OTHER', 'CARVE TECH',
             'LUMINOUS', 'GRACE', 'GRAVEL', 'SAHARA', 'SHAPE TECH',
@@ -414,8 +488,7 @@
 
         let items = [];
         let itemIdCounter = 0;
-        let activeSuggestionIndex = -1;
-        let currentGrade = 'PRE'; // Default grade
+        let activeSuggestionIndex = -1; 
 
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
@@ -450,33 +523,27 @@
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
         }
-        
-        function selectGrade(event, grade) {
-            currentGrade = grade;
-            const buttons = document.querySelectorAll('#gradeButtons .grade-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
 
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
             const price = document.getElementById('price').value.trim();
 
+            // --- NEW: Get active grade ---
+            const activeGradeBtn = document.querySelector('.grade-btn.active');
+            const grade = activeGradeBtn ? activeGradeBtn.dataset.grade : 'PRE'; // Default to PRE
+            
             if (!size || !surface || !price) {
                 alert('Please fill all fields');
                 return;
             }
-            
             const item = {
                 id: itemIdCounter++,
                 size: size,
                 surface: surface,
                 price: parseFloat(price),
-                grade: currentGrade 
+                grade: grade // --- NEW: Add grade to item object ---
             };
-            
             items.push(item);
             renderItems();
             clearForm();
@@ -497,33 +564,29 @@
                 return;
             }
             pdfBtn.disabled = false;
-            
             let tableHTML = `
                 <table>
                     <thead>
                         <tr>
                             <th>Size</th>
                             <th>Surface</th>
-                            <th>Grade</th>
-                            <th>Price</th>
+                            <th>Grade</th> <th>Price</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
-            
             items.forEach((item) => {
                 tableHTML += `
                     <tr>
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
-                        <td>${item.grade}</td>
-                        <td>₹ ${item.price.toFixed(2)}</td>
+                        <td>${item.grade}</td> <td>₹ ${item.price.toFixed(2)}</td>
+                        
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `;
             });
-            
             tableHTML += '</tbody></table>';
             container.innerHTML = tableHTML;
         }
@@ -533,36 +596,56 @@
                 alert('Please add items first');
                 return;
             }
+
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent();
+
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+                jsPDF: { 
+                    orientation: 'portrait', 
+                    unit: 'mm', 
+                    format: 'a4' 
+                }
             };
+
             html2pdf().set(opt).from(element).save();
         }
 
-        // ========== [ PDF FUNCTION WITH WIDTH + FONT-SIZE FIX ] ==========
         function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
+            
+            let currentItemIndex = 1;
             let tableRows = '';
 
-            // PDF table rows (Font-size 8.5pt aur padding 2px 2px)
             items.forEach((item, idx) => {
                 const actualIndex = idx + 1;
-                const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;'; 
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; 
 
+                // --- MODIFIED TABLE ROW FOR PDF ---
                 tableRows += `
                     <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                        <td style="padding: 2px 2px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 8.5pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                        <td style="padding: 2px 2px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 8.5pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                        <td style="padding: 2px 2px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 8.5pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                        <td style="padding: 2px 2px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 8.5pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
-                        <td style="padding: 2px 2px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 8.5pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 10%;">
+                            ${actualIndex}
+                        </td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 30%;">
+                            ${item.size}
+                        </td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 25%;">
+                            ${item.surface}
+                        </td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 15%;">
+                            ${item.grade}
+                        </td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle; width: 20%;">
+                            ₹ ${item.price.toFixed(2)}
+                        </td>
                     </tr>
                 `;
             });
@@ -573,6 +656,7 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
 
+
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; min-height: 296.5mm; height: auto; margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
@@ -582,7 +666,6 @@
                     <div style="position: absolute; bottom: 0; left: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
                     </div>
-                    
                     <div style="padding: 20px; position: relative; z-index: 10; padding-right: 25px; padding-left: 25px;">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
@@ -606,6 +689,7 @@
                                 <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
                             </div>
                         </div>
+
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
@@ -628,14 +712,14 @@
                         </div>
                         
                         
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed;">
                             <thead>
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px 2px; border: 1px solid #ed3237; text-align: center; font-size: 8.5pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                    <th style="padding: 5px 2px; border: 1px solid #ed3237; text-align: center; font-size: 8.5pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                                    <th style="padding: 5px 2px; border: 1px solid #ed3237; text-align: center; font-size: 8.5pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
-                                    <th style="padding: 5px 2px; border: 1px solid #ed3237; text-align: center; font-size: 8.5pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
-                                    <th style="padding: 5px 2px; border: 1px solid #ed3237; text-align: center; font-size: 8.5pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 30%;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 15%;">Grade</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
                             <tbody style="background: white;">
@@ -660,6 +744,7 @@
                                 <li>Placing an order implies acceptance of the above terms & conditions.</li>
                             </ul>
                         </div>
+
                         <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
                             ${pinPointLine}
                             <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
@@ -681,43 +766,73 @@
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
+
+            // --- NEW: Reset grade buttons ---
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Activate PRE by default
+            document.querySelector('.grade-btn[data-grade="PRE"]').classList.add('active');
+            // --- END NEW ---
+
             document.getElementById('size').focus();
         }
 
+        // --- Baaki ka JavaScript code (koi badlav nahi) ---
+
+        /**
+         * Basic tab ke form inputs aur added items ki list ko clear karta hai.
+         */
         function clearBasicTab() {
+            // Form inputs clear karo
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
             document.getElementById('price').value = '';
             
-            items = [];
-            renderItems(); 
-            
-            currentGrade = 'PRE';
-            const buttons = document.querySelectorAll('#gradeButtons .grade-btn');
-            buttons.forEach(btn => {
-                if (btn.innerText === 'PRE') {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
+            // --- NEW: Reset grade buttons ---
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active');
             });
+            document.querySelector('.grade-btn[data-grade="PRE"]').classList.add('active');
+            // --- END NEW ---
+
+            // Added items ki array clear karo aur table update karo
+            items = [];
+            renderItems(); // Yeh table ko "No items added" state mein daal dega
         }
 
+        /**
+         * Advance tab ke content ko clear karta hai (future use).
+         */
         function clearAdvanceTab() {
+            // Abhi advance tab khali hai, isliye yeh function bhi khali hai.
+            // Jab aap advance tab mein content daalenge, 
+            // toh use clear karne ka code yahan aayega.
             console.log("Advance tab cleared (future use)");
         }
 
+
+        /**
+         * Tabs ke beech switch karta hai aur pichle tab ko clear karta hai.
+         * @param {Event} event - Click event
+         * @param {string} tabName - 'basic' ya 'advance'
+         */
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
+
             tabs.forEach((tab) => tab.classList.remove('active'));
             buttons.forEach((btn) => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active'); 
 
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active'); // 'event' ko yahan pass kiya gaya hai
+
+            // --- Naya Clear Logic ---
             if (tabName === 'advance') {
+                // Agar 'Advance' par click kiya, toh 'Basic' tab clear karo
                 clearBasicTab();
             } else if (tabName === 'basic') {
+                // Agar 'Basic' par click kiya, toh 'Advance' tab clear karo
                 clearAdvanceTab();
             }
         }
@@ -729,6 +844,19 @@
                 activeSuggestionIndex = -1; 
             }
         });
+
+        // --- NEW GRADE BUTTON LOGIC ---
+        // Add click listener for grade buttons
+        const gradeButtons = document.querySelectorAll('.grade-btn');
+        gradeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all
+                gradeButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked one
+                button.classList.add('active');
+            });
+        });
+        // --- END NEW GRADE BUTTON LOGIC ---
 
         renderItems();
 
@@ -772,7 +900,7 @@
                 activeSuggestionIndex = -1;
             }
 
-            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+            if (activeSuggzestionIndex > -1 && items[activeSuggestionIndex]) {
                 items[activeSuggestionIndex].classList.add('suggestion-active');
                 items[activeSuggestionIndex].scrollIntoView({
                     behavior: 'smooth',

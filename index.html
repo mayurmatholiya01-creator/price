@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -547,46 +548,40 @@
                 return;
             }
 
-            // Row height in mm (approx). Adjust if you want tighter/looser rows.
-            const ROW_HEIGHT_MM = 6.5; // same as used earlier (approx 24px)
-            const A4_HEIGHT_MM = 297;
-            const A4_WIDTH_MM = 210;
-
-            // Calculate required total height:
-            // For up to 10 rows, keep exact A4 (297mm).
-            // For more than 10 rows, increase height by ROW_HEIGHT_MM per extra row.
-            const rows = items.length;
-            const totalHeight = rows <= 10 ? A4_HEIGHT_MM : Math.ceil(A4_HEIGHT_MM + (rows - 10) * ROW_HEIGHT_MM);
-
-            // Create element with computed height (in mm via CSS)
             const element = document.createElement('div');
-            element.style.width = '210mm';
-            element.style.minHeight = totalHeight + 'mm';
-            element.style.background = 'white';
-            element.style.padding = '20px';
-            element.style.boxSizing = 'border-box';
-            element.style.fontFamily = "'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-            element.innerHTML = generatePDFContent(totalHeight);
+            element.innerHTML = generatePDFContent();
 
-            // Options: use custom jsPDF page size [width, height]
+            const BASE_HEIGHT = 297;
+            const ENTRIES_FIT_IN_BASE = 10;
+            const EXTRA_HEIGHT_PER_ROW = 6.5;
+
+            let pageHeight = BASE_HEIGHT;
+            if (items.length > ENTRIES_FIT_IN_BASE) {
+                const extraEntries = items.length - ENTRIES_FIT_IN_BASE;
+                pageHeight = BASE_HEIGHT + (extraEntries * EXTRA_HEIGHT_PER_ROW);
+            }
+
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, allowTaint: true },
                 jsPDF: { 
+                    orientation: 'portrait', 
                     unit: 'mm',
-                    format: [A4_WIDTH_MM, totalHeight],
-                    orientation: 'portrait'
-                }
+                    format: [210, pageHeight]
+                },
+                pagebreak: { mode: 'avoid-all' }
             };
 
-            // Use html2pdf to generate single page PDF with the custom size
             html2pdf().set(opt).from(element).save();
         }
 
-        function generatePDFContent(totalHeight) {
+        function generatePDFContent() {
             const currentDate = new Date().toLocaleDateString('en-GB');
+            let pagesHTML = '';
+            
+            let currentItemIndex = 1;
             let tableRows = '';
 
             items.forEach((item, idx) => {
@@ -611,12 +606,31 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
 
-            // Footer reserved height (kept absolute within container to avoid overlap)
-            // We keep layout same as your original file.
-            const footerHeightMM = 120; // visual reserved space
+            // ---[YAHAN BADLAV KIYA GAYA HAI (V26)]---
+            
+            // [LOGIC 2] Spacer ka Hisaab Lagao
+            const A4_HEIGHT_MM = 297;
+            const HEADER_HEIGHT_MM = 120; // Logo + Address + Title
+            const FOOTER_AREA_HEIGHT_MM = 130; // Terms + Footer Text (Absolute position space)
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 6.5; // Lagbhag 24px
 
-            // Build the HTML (exact same structure as original, only variable spacer calculation changed)
-            const pagesHTML = `
+            let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+            
+            // Content ki height = Header + Table + padding
+            let contentHeight = HEADER_HEIGHT_MM + tableHeight + 20; // 20mm ka padding/margin
+
+            // Total height = Content + Footer space
+            let totalEstimatedHeight = contentHeight + FOOTER_AREA_HEIGHT_MM;
+            
+            let spacerHeight = 0;
+            if (totalEstimatedHeight < A4_HEIGHT_MM) {
+                 // Page ko A4 height tak push karne ke liye spacer
+                spacerHeight = A4_HEIGHT_MM - totalEstimatedHeight;
+            }
+
+            // [LOGIC 3] Outer div ko KOI height/min-height MAT DO.
+            pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: auto; /* Hamesha auto */
                             margin: 0; background: white; 
@@ -632,7 +646,7 @@
 
                     <div style="padding: 20px 25px; 
                                 position: relative; z-index: 10;
-                                padding-bottom: ${footerHeightMM}mm; /* Footer ke liye zaroori jagah */
+                                padding-bottom: ${FOOTER_AREA_HEIGHT_MM}mm; /* Footer ke liye zaroori jagah */
                     ">
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
@@ -690,13 +704,14 @@
                             </tbody>
                         </table>
                         
-                        <!-- Spacer automatically adjusts because we set container min-height above -->
+                        <div style="height: ${spacerHeight}mm;"></div>
+
                     </div> <div style="position: absolute; 
                                 z-index: 10;
                                 bottom: 20px; /* Niche se 20px ki doori */
                                 left: 25px; /* Padding match karne ke liye */
                                 right: 25px; /* Padding match karne ke liye */
-                                height: ${footerHeightMM}mm; /* Footer ki lagbhag height */
+                                height: 120mm; /* Footer ki lagbhag height */
                     ">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">

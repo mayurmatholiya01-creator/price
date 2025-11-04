@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // --- (V23 - CONDITIONAL MIN-HEIGHT FIX) ---
+        // --- (V24 - ABSOLUTE FOOTER FIX) ---
 
         const sizes = [
             '1200x1200x9MM', '1200x1790x9MM', '1200x1800x9MM', '1200x2400x9MM',
@@ -594,21 +594,16 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
 
-            // ---[YAHAN BADLAV KIYA GAYA HAI (V23)]---
+            // ---[YAHAN BADLAV KIYA GAYA HAI (V24)]---
             
-            // [LOGIC 2] Set karen ki min-height lagegi ya nahi
-            let minHeightStyle = '';
-            if (items.length <= 10) {
-                // 10 ya kam items: Page ko A4 size ka banne ke liye force karo
-                minHeightStyle = 'min-height: 296.5mm;';
-            } else {
-                // 11+ items: Page ko auto grow hone do (koi min-height nahi)
-                minHeightStyle = ''; 
-            }
-
-            // [LOGIC 3] Outer div HAMESHA auto height ka rahega
+            // [LOGIC 2] Outer div ko min-height aur relative banaya gaya
             pagesHTML = `
-                <div style="font-family: 'Arial', sans-serif; width: 210mm; height: auto; /* KOI MIN-HEIGHT NAHI */ margin: 0; background: white; position: relative; overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
+                <div style="font-family: 'Arial', sans-serif; width: 210mm; 
+                            height: auto; /* Page ko grow hone dega */
+                            min-height: 296.5mm; /* Logo ko fix rakhega */
+                            margin: 0; background: white; 
+                            position: relative; /* Footer ke liye zaroori */
+                            overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
@@ -617,97 +612,99 @@
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="position: relative; z-index: 10; padding: 20px 25px; 
-                                display: flex; flex-direction: column; 
-                                ${minHeightStyle} /* YAHAN MIN-HEIGHT STYLE LAGAYA GAYA */
-                                box-sizing: border-box; 
+                    <div style="padding: 20px 25px; 
+                                position: relative; z-index: 10;
+                                padding-bottom: 130mm; /* Footer ke liye zaroori jagah */
                     ">
                         
-                        <div style="flex: 1 0 auto;">
-                            <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
-                                <img
-                                    src="${logoGranicer_base64}"
-                                    style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
-                                />
-                                ${pinPointLine}
-                            </div>
+                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
+                            <img
+                                src="${logoGranicer_base64}"
+                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
+                            />
+                            ${pinPointLine}
+                        </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
-                                    <div>COMET GRANITO PVT.LTD.</div>
-                                    <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
-                                    <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
-                                    <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
-                                    <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
-                                </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
+                                <div>COMET GRANITO PVT.LTD.</div>
+                                <div style="color: #666; font-size: 8pt !important;">C.I. No.: U26914GJ2006PTC049091</div>
                             </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Registered Office:</div>
+                                <div style="font-size: 8pt !important;">Survey No. 118, National Highway No. 8-A</div>
+                                <div style="font-size: 8pt !important;">Tal. Morbi, Nava Jambudiya,</div>
+                                <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
+                                <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
+                                <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
+                                <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
+                                <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
+                            </div>
+                        </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
-                                    <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
-                                    <div style="font-size: 8pt !important;">🌐 Web: www.granicer.in</div>
-                                </div>
-                                <div>
-                                    <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Unit - 2:</div>
-                                    <div style="font-size: 8pt !important;">Revenue Survey No. 168 P1 and P2</div>
-                                    <div style="font-size: 8pt !important;">Revenue Survey No. 169 P1 and P6</div>
-                                    <div style="font-size: 8pt !important;">At Ratavirda, Wankaner, Morbi-Guj. -363621</div>
-                                </div>
+                        <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
+                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        </div>
+                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
+                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div> <div style="position: absolute; 
+                                z-index: 10;
+                                bottom: 20px; /* Niche se 20px ki doori */
+                                left: 25px; /* Padding match karne ke liye */
+                                right: 25px; /* Padding match karne ke liye */
+                                height: 120mm; /* Footer ki lagbhag height */
+                    ">
+                        
+                        <div style="padding-top: 12px; margin-top: 0px;">
+                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
+                                Terms & Conditions:
                             </div>
+                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                                <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
+                                <li>Prices are subject to change without prior notice depending on market conditions.</li>
+                                <li>Delivery period will be confirmed after order placement.</li>
+                                <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+                                <li>The company is not liable once goods leave the factory.</li>
+                                <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
+                                <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
+                                <li>Placing an order implies acceptance of the above terms & conditions.</li>
+                            </ul>
+                        </div>
 
-                            
-                            <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
-                                <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                                <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                                <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                        <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
+                            ${pinPointLine}
+                            <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
+                                <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
+                                <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
+                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
-                            
-                            
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                                <thead>
-                                    <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Sr. No.</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Size</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Surface Type</th>
-                                        <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody style="background: white;">
-                                    ${tableRows}
-                                </tbody>
-                            </table>
-                        </div> <div style="flex-shrink: 0;">
-                            <div style="padding-top: 12px; margin-top: 30px;">
-                                <div style="margin-bottom: 12px;">${pinPointLine}</div>
-                                <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
-                                    Terms & Conditions:
-                                </div>
-                                <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
-                                    <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
-                                    <li>Prices are subject to change without prior notice depending on market conditions.</li>
-                                    <li>Delivery period will be confirmed after order placement.</li>
-                                    <li>The company is not responsible for delays due to transport or unforeseen events.</li>
-                                    <li>The company is not liable once goods leave the factory.</li>
-                                    <li>GST and any other government levies will be charged extra as applicable at the time of billing.</li>
-                                    <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects verified by the company.</li>
-                                    <li>Placing an order implies acceptance of the above terms & conditions.</li>
-                                </ul>
-                            </div>
-
-                            <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
-                                ${pinPointLine}
-                                <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
-                                    <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
-                                    <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                    <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
-                                </div>
-                            </div>
-                        </div> </div> </div> `;
+                        </div>
+                    </div> </div> `;
             
             return pagesHTML;
         }
@@ -832,7 +829,7 @@
         }
 
         document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
-        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeyden(e, 'surface'));
+        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
     </script>
 </body>
 </html>

@@ -1047,9 +1047,8 @@
         }
         // [NEW V44] End
 
-
-        // --- [CODE MODIFIED] ---
-        // --- V43 PDF LOGIC (FIXED) ---
+        
+        // --- [CODE MODIFIED V48 - The "No-Tukka" Fix] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1058,17 +1057,35 @@
 
             const activeTabId = document.querySelector('.tab-content.active').id;
 
-            // --- [NEW] Define constants for height calculation ---
-            const HEADER_HEIGHT_MM = 125; 
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5; 
-            // This 18mm constant in V45 seems to be for the divider *between* groups
-            const GROUP_DIVIDER_HEIGHT_MM = 18; 
-            // We need a new constant for the "SIZE: XXX" title itself (approx 14pt font + margin)
-            const GROUP_TITLE_HEIGHT_MM = 10; 
-            const POST_TABLE_SPACER_MM = 10; // The <div style="height: 10mm;"></div>
-            const A4_HEIGHT_MM = 297; // Standard A4 height
+            // --- [NEW] Accurate constants based on CSS ---
+            // 1 इंच = 25.4mm = 96px (मानक DPI)
+            // 1px = 25.4 / 96 = 0.26458333... mm
+            const PX_TO_MM = 0.26458333; 
+
+            // ये मान generatePDFContent के HTML/CSS से लिए गए हैं
+            const ROW_PX = 24;                 // <tr style="height: 24px;">
+            const TABLE_HEADER_PX = 30;        // <tr style="height: 30px;"> (thead)
+            
+            // 14pt = (14 / 72) * 96 = 18.66px (फ़ॉन्ट ऊँचाई)
+            const GROUP_TITLE_FONT_PX = 18.67; 
+            const GROUP_TITLE_BOT_MARGIN_PX = 10; // margin-bottom: 10px;
+            
+            const GROUP_DIVIDER_TOP_MARGIN_PX = 10; // margin-top: 10px;
+            const GROUP_DIVIDER_BOT_MARGIN_PX = 8;  // margin-bottom: 8px;
+
+            // --- [NEW] Converted MM constants ---
+            // अब हम अनुमान नहीं लगा रहे हैं, हम गणना कर रहे हैं।
+            const ROW_HEIGHT_MM = ROW_PX * PX_TO_MM;                                   // ~6.35mm
+            const TABLE_HEADER_HEIGHT_MM = TABLE_HEADER_PX * PX_TO_MM;                 // ~7.94mm
+            const GROUP_TITLE_HEIGHT_MM = (GROUP_TITLE_FONT_PX + GROUP_TITLE_BOT_MARGIN_PX) * PX_TO_MM; // ~7.58mm
+            const GROUP_DIVIDER_HEIGHT_MM = (GROUP_DIVIDER_TOP_MARGIN_PX + GROUP_DIVIDER_BOT_MARGIN_PX) * PX_TO_MM; // ~4.76mm
+
+            // --- [STATIC] ये मान स्थिर हैं और इन्हें बदला नहीं गया है ---
+            const HEADER_HEIGHT_MM = 125; // यह हेडर सामग्री के लिए आपका अनुमानित बजट है
+            const FOOTER_BLOCK_HEIGHT_MM = 95; // यह फुटर सामग्री के लिए आपका अनुमानित बजट है
+            const POST_TABLE_SPACER_MM = 10; // <div style="height: 10mm;"></div> से
+            const A4_HEIGHT_MM = 297; 
+            // --- [END NEW CONSTANTS] ---
 
             let contentHeight = 0;
 
@@ -1082,16 +1099,13 @@
                 });
                 const numGroups = Object.keys(groups).length;
 
-                // Calculate height of all table headers (one per group)
+                // ये गणनाएँ अब सटीक mm मानों का उपयोग करती हैं
                 let tableHeadersHeight = numGroups * TABLE_HEADER_HEIGHT_MM;
-                // Calculate height of all rows
                 let rowsHeight = items.length * ROW_HEIGHT_MM;
-                // Calculate height of all "SIZE: XXX" titles (one per group)
                 let groupTitlesHeight = numGroups * GROUP_TITLE_HEIGHT_MM;
-                // Calculate height of dividers *between* groups (numGroups - 1)
                 let dividersHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_DIVIDER_HEIGHT_MM : 0;
 
-                // Total content height is Header + all table parts + post-table spacer
+                // कुल सामग्री ऊँचाई
                 contentHeight = HEADER_HEIGHT_MM + 
                                 tableHeadersHeight + 
                                 rowsHeight + 
@@ -1100,23 +1114,23 @@
                                 POST_TABLE_SPACER_MM;
                 
             } else { // 'basic' tab
+                // बेसिक टैब के लिए भी सटीक मानों का उपयोग करें
                 let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
                 contentHeight = HEADER_HEIGHT_MM + tableHeight + POST_TABLE_SPACER_MM;
             }
 
-            // Calculate the total height needed
+            // --- यह लॉजिक (V46 से) अपरिवर्तित है ---
+            // यह फुटर को ठीक से रखने के लिए spacer की गणना करता है
             const calculatedTotalHeight = contentHeight + FOOTER_BLOCK_HEIGHT_MM;
+            const totalHeight = Math.max(calculatedTotalHeight, A4_HEIGHT_MM); // A4 से कम नहीं होना चाहिए
             
-            // Page height is either the calculated height or A4 height, whichever is larger
-            const totalHeight = Math.max(calculatedTotalHeight, A4_HEIGHT_MM);
-            
-            // The spacer is the "gap" needed to fill A4 page, or 0 if content is already larger
+            // यदि सामग्री A4 से बड़ी है, तो spacer 0 या बहुत छोटा होगा
             const spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-            // --- [END NEW HEIGHT LOGIC] ---
+            // --- [END V46 LOGIC] ---
 
 
             const element = document.createElement('div');
-            // [MODIFIED] Pass the new spacerHeight to the content generator
+            // हम generatePDFContent को सही totalHeight और spacerHeight पास करते हैं
             element.innerHTML = generatePDFContent(totalHeight, activeTabId, spacerHeight); 
 
             const opt = {
@@ -1127,7 +1141,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // Use the correctly calculated totalHeight
+                    format: [210, totalHeight] // हमारी सटीक गणना की गई ऊँचाई का उपयोग करें
                 },
                 pagebreak: { mode: ['avoid'] } 
             };
@@ -1139,8 +1153,8 @@
             }).save();
         }
         
-        // --- [CODE MODIFIED] ---
-        // --- V45 PDF FONT COLOR FIX (And V47 Logo Overlap Fix) ---
+        
+        // --- [CODE MODIFIED V47 - Logo Overlap Fix] ---
         // [MODIFIED] Added spacerHeight as an argument
         function generatePDFContent(totalHeight, tabType, spacerHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');

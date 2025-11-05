@@ -1037,7 +1037,7 @@
             renderItems(); 
         }
 
-        // --- [V46 PDF LOGIC - SPACER FIX] ---
+        // --- [V47 PDF LOGIC - BASIC TAB "FLOW" LAYOUT FIX] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1045,7 +1045,17 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1; 
+            let numGroups = 1;
+
+            const HEADER_HEIGHT_MM = 125; 
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 7; 
+            const GROUP_HEADER_HEIGHT_MM = 18;
+            const basePageHeight = 296.5; // A4 Standard
+
+            let totalRows = items.length;
+            let totalHeight = 0;
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1056,20 +1066,24 @@
                     groups[item.size].push(item);
                 });
                 numGroups = Object.keys(groups).length;
-            }
+                
+                // Advance Tab: "Sticky Footer" logic (Pehle jaisa)
+                const baseRows = 6;
+                let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+                totalHeight = Math.ceil(basePageHeight + (extraRows * ROW_HEIGHT_MM));
+                if (numGroups > 1) {
+                    totalHeight += (numGroups - 1) * GROUP_HEADER_HEIGHT_MM;
+                }
 
-            const basePageHeight = 296.5; 
-            const baseRows = 6;           // 6 row A4 par fit hoti hain
-            const rowHeight = 7;          // Har row ki height 7mm
-            const groupHeaderHeight = 18; // Har "SIZE:" heading ki height
-
-            let totalRows = items.length;
-            
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
-
-            if (activeTabId === 'advance' && numGroups > 1) {
-                totalHeight += (numGroups - 1) * groupHeaderHeight;
+            } else {
+                // Basic Tab: "Flow" layout logic (Naya badlaav)
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (totalRows * ROW_HEIGHT_MM);
+                totalHeight = HEADER_HEIGHT_MM + tableHeight + FOOTER_BLOCK_HEIGHT_MM;
+                
+                // Agar content A4 se chota hai, toh bhi page A4 rakho
+                if (totalHeight < basePageHeight) {
+                    totalHeight = basePageHeight;
+                }
             }
 
             const element = document.createElement('div');
@@ -1222,11 +1236,18 @@
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-            
-            if (spacerHeight < 0) {
+            // --- YEH BADLAAV HAI (THIS IS THE CHANGE) ---
+            if (tabType === 'advance') {
+                // Advance tab: "Sticky Footer" logic
+                spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+                if (spacerHeight < 0) {
+                    spacerHeight = 0;
+                }
+            } else {
+                // Basic tab: "Flow" layout (Koi spacer nahi)
                 spacerHeight = 0;
             }
+            // --- BADLAAV KHATAM (CHANGE ENDS) ---
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 

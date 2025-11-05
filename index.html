@@ -8,66 +8,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <script src="imagedata.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* --- [UI V44] TilesPro Theme --- */
-        :root {
-          --primary: #6366f1; 
-          --primary-light: #818cf8;
-          --success: #10b981; 
-          --success-light: #34d399;
-          --error: #ef4444; 
-          --error-light: #f87171;
-          --bg-primary: #0a0a0b;
-          --bg-secondary: #1a1a1e;
-          --glass: rgba(255, 255, 255, 0.06);
-          --glass-border: rgba(255, 255, 255, 0.1);
-          --glass-hover: rgba(255, 255, 255, 0.08);
-          --text-primary: #ffffff;
-          --text-secondary: #d1d5db;
-          --text-muted: #9ca3af;
-          --border-radius: 12px;
-          --border-radius-sm: 8px;
+        /* Pura CSS wahi hai (V37) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container.advance-theme {
-            --primary: #10b981; 
-            --primary-light: #34d399;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { height: 100%; }
+
+        html,
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg-primary); 
-            color: var(--text-primary); 
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7f6;
             min-height: 100vh;
             padding: 10px;
         }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--bg-secondary); 
-            border-radius: var(--border-radius);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100dvh; 
             max-height: 100dvh; 
-            border: 1px solid var(--glass-border); 
-            transition: all 0.3s ease; 
         }
+
         .tabs {
             display: flex;
-            background: var(--glass); 
-            border-bottom: 1px solid var(--glass-border); 
+            background: #f8f9fa;
+            border-bottom: 2px solid #ddd;
             flex-shrink: 0;
         }
+
         .tab-btn {
             flex: 1;
             padding: 15px 10px;
@@ -76,156 +62,153 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: 600;
-            color: var(--text-muted); 
+            color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Poppins', sans-serif;
         }
+
         .tab-btn.active {
-            color: var(--primary); 
-            background: transparent;
-            border-bottom-color: var(--primary); 
+            color: #ed3237;
+            background: white;
+            border-bottom-color: #ed3237;
         }
+
         .tab-btn:hover {
-            color: var(--primary); 
+            color: #ed3237;
         }
+
         .tab-content {
             display: none;
             padding: 20px;
             overflow-y: auto;
             flex: 1;
         }
+
         .tab-content.active {
             display: flex;
             flex-direction: column;
         }
+
         .form-group {
             margin-bottom: 15px;
             flex-shrink: 0;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
-            color: var(--text-secondary); 
+            color: #333;
             font-weight: 600;
-            font-size: 0.9em; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
+            font-size: 0.95em;
         }
+
         input[type='text'],
         input[type='number'],
         select {
             width: 100%;
             padding: 12px;
-            background: var(--glass); 
-            border: 1px solid var(--glass-border); 
-            border-radius: var(--border-radius-sm); 
-            color: var(--text-primary); 
-            font-size: 16px; 
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: 'Inter', sans-serif;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d1d5db' stroke-width='2' fill='none'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 12px 8px;
-            cursor: pointer;
-            padding-right: 2.5rem;
-        }
-        select option {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
+
         input[type='text']:focus,
         input[type='number']:focus,
         select:focus {
             outline: none;
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); 
-            background: var(--glass-hover);
+            border-color: #ed3237;
+            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
+
         .price-input-container {
             display: flex;
             align-items: center;
-            border: none;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             transition: border-color 0.3s;
             overflow: hidden;
-            position: relative; 
         }
-        #basic .price-input-container {
-             border: 1px solid var(--glass-border);
-             border-radius: var(--border-radius-sm);
+
+        .price-input-container:focus-within {
+            border-color: #ed3237;
+            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
         }
-        #basic .price-input-container:focus-within {
-             border-color: var(--primary);
-             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-        }
-        #basic .price-symbol {
+
+        .price-symbol {
             padding: 12px 12px;
-            background: var(--glass-hover);
-            color: var(--text-secondary);
+            background: #f8f9fa;
+            color: #666;
             font-weight: 600;
             font-size: 1.1em;
-            border-right: 1px solid var(--glass-border);
+            border-right: 2px solid #ddd;
             flex-shrink: 0;
         }
-        #basic .price-input-container input {
+
+        .price-input-container input {
             flex: 1;
             border: none;
             padding: 12px;
             font-size: 1em;
             outline: none;
-            background: transparent;
-            padding-right: 35px; 
+            background: white;
         }
+
+        .price-input-container input:focus {
+            outline: none;
+            box-shadow: none;
+        }
+        
         .grade-buttons {
             display: flex;
             justify-content: space-between;
             gap: 10px;
         }
+
         .grade-buttons input[type="radio"] {
             display: none; 
         }
+
         .grade-buttons label {
             flex: 1;
             text-align: center;
             padding: 8px 10px;
-            border: 2px solid var(--glass-border);
-            border-radius: var(--border-radius-sm);
+            border: 2px solid #ddd;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9em;
-            color: var(--text-secondary);
             transition: all 0.3s ease;
             margin-bottom: 0; 
         }
+
         .grade-buttons input[type="radio"]:checked + label {
-            background-color: var(--primary); 
+            background-color: #ed3237;
             color: white;
-            border-color: var(--primary); 
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
+            border-color: #ed3237;
+            box-shadow: 0 4px 15px rgba(237, 50, 55, 0.3);
         }
+
         .grade-buttons label:hover {
-            border-color: var(--primary-light);
-            background: var(--glass-hover);
+            border-color: #b82329;
         }
+
         .button-group {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
             margin-top: 5px;
         }
+
         .add-button,
         .pdf-button {
             flex: 1;
             padding: 12px;
             color: white;
             border: none;
-            border-radius: var(--border-radius-sm);
+            border-radius: 8px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
@@ -235,61 +218,68 @@
             justify-content: center;
             gap: 8px;
         }
+
         .add-button {
-            background: linear-gradient(135deg, var(--success), var(--success-light)); 
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
+
         .add-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
         }
+
         .pdf-button {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
         }
+
         .pdf-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
         }
+
         .pdf-button:disabled {
-            background: var(--glass);
-            color: var(--text-muted);
+            background: #ccc;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
+
         .suggestions {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--bg-secondary); 
-            border: 1px solid var(--glass-border); 
+            background: white;
+            border: 2px solid #ddd;
             border-top: none;
             border-radius: 0 0 8px 8px;
             max-height: 150px;
             overflow-y: auto;
             z-index: 100;
             display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
+
         .suggestions.show {
             display: block;
         }
+
         .suggestion-item {
             padding: 10px 12px;
             cursor: pointer;
             transition: background 0.2s;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid #f0f0f0;
             font-size: 0.9em;
-            color: var(--text-secondary);
         }
+
         .suggestion-item:hover,
         .suggestion-item.suggestion-active {
-            background: var(--glass-hover);
-            color: var(--text-primary);
+            background: #f0f0f0;
         }
+
         .input-wrapper {
             position: relative;
         }
+
         .items-table {
             margin-top: 20px;
             display: flex;
@@ -298,41 +288,39 @@
             border-spacing: 0;
             table-layout: fixed;
             flex-shrink: 0; 
-            border-radius: var(--border-radius);
-            overflow: hidden; 
-            border: 1px solid var(--glass-border);
         }
+
         .items-table h3 {
-            color: var(--text-primary);
-            margin-bottom: 0; 
-            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1em;
             flex-shrink: 0;
-            padding: 15px; 
-            background: var(--glass);
-            border-bottom: 1px solid var(--glass-border); 
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: transparent;
+            background: white;
             font-size: 0.9em;
         }
+
         thead {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
             color: white;
             flex-shrink: 0;
         }
+
         th {
-            padding: 10px 5px; 
+            padding: 5px;
             text-align: center;
             font-weight: 600;
-            border: none; 
+            border: 1px solid #ed3237;
             height: 30px;
         }
+
         td {
-            padding: 8px 4px !important; 
-            border: none;
-            border-bottom: 1px solid var(--glass-border);
+            padding: 2px 4px !important;
+            border: 1px solid #ddd;
             text-align: center;
             height: 20px !important;
             max-height: 20px !important;
@@ -341,23 +329,18 @@
             overflow: hidden;
             white-space: nowrap;
             vertical-align: middle !important;
-            color: var(--text-secondary); 
         }
+
         tbody tr:hover {
-            background: var(--glass-hover);
-            color: var(--text-primary);
+            background: #f8f9fa;
         }
-        tbody tr:hover td {
-            color: var(--text-primary);
-        }
+
         tbody tr:nth-child(even) {
-            background: var(--glass);
+            background: #f8f9fa;
         }
-        tbody tr:last-child td {
-             border-bottom: none;
-        }
+
         .delete-btn {
-            background: linear-gradient(135deg, var(--error), var(--error-light)); 
+            background: #ff6b6b;
             color: white;
             width: 30px; 
             height: 30px; 
@@ -373,81 +356,89 @@
             justify-content: center;
             gap: 0;
         }
+
         .delete-btn:hover {
             background: #ff5252;
             transform: scale(1.05);
         }
+
         .empty-state {
             text-align: center;
             padding: 20px 10px;
-            color: var(--text-muted);
-            background: var(--glass);
-            margin-top: 0px; 
+            color: #999;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 10px;
             font-size: 0.9em;
         }
+
         .table-wrapper {
             overflow-x: auto;
             flex: 1;
         }
+        
         #advance-form-container {
             flex-shrink: 0;
         }
+
         #advanceSizeSelect {
             padding: 14px;
             font-size: 1.05em;
             font-weight: 600;
-            color: var(--text-primary);
+            color: #333;
         }
+
         #advance-options-container .grade-buttons label {
             padding: 6px 8px; 
             font-size: 0.8em;  
             gap: 8px;          
         }
+
         #advance-options-container {
              /* Default hidden */
         }
+
         #surfacePriceList {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr; 
             gap: 0; 
-            border: 1px solid var(--glass-border); 
+            border: 1px solid #eee; 
             border-radius: 8px;
             overflow: hidden; 
         }
+
         .surface-item-wrapper {
             display: flex;
             flex-direction: column; 
             gap: 5px;
             padding: 10px; 
-            border-bottom: 1px solid var(--glass-border); 
-            background: var(--glass);
+            border-bottom: 1px solid #eee; 
         }
+        
         .surface-item-wrapper:not(:nth-child(3n)) {
-             border-right: 1px solid var(--glass-border);
+             border-right: 1px solid #eee;
         }
+
         .surface-item-wrapper:nth-last-child(-n+3) {
             border-bottom: none;
         }
+        
         .surface-item-wrapper:last-child:nth-child(3n-1) {
              border-bottom: none;
         }
+        
         .surface-item-wrapper label {
             font-weight: 600;
-            color: var(--text-secondary);
+            color: #333;
             font-size: 0.85em; 
             margin-bottom: 0;
         }
+
         .surface-item-wrapper .price-input-container {
             border-radius: 6px; 
-            border-left: none; 
-            border: 1px solid var(--glass-border);
-            background: var(--bg-primary); 
+            border-left: 2px solid #ddd;
         }
-        .surface-item-wrapper .price-input-container:focus-within {
-             border-color: var(--primary);
-             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-             background: var(--bg-primary);
-        }
+ 
         .surface-item-wrapper .price-symbol {
              display: none; 
         }
@@ -455,66 +446,11 @@
             padding: 8px 10px; 
             font-size: 0.9em;  
             text-align: center; 
-            background: transparent;
-        }
-        .input-wrapper-clearable {
-            position: relative;
-        }
-        .clear-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-            font-size: 0.9em;
-            z-index: 5; 
-        }
-        .clear-btn.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .clear-btn:hover {
-            color: var(--text-primary);
-        }
-        #basic .input-wrapper-clearable input {
-            padding-right: 35px; 
-        }
-        #basic .price-input-container .clear-btn {
-            right: 10px;
-        }
-        #basic .price-input-container input {
-            padding-right: 35px;
-        }
-        .editable-cell {
-            cursor: pointer;
-        }
-        .editable-cell:hover {
-            background: var(--glass-hover);
-        }
-        .edit-input, .edit-select {
-            width: 90%;
-            padding: 4px;
-            font-size: 0.9em;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-        }
-        .edit-input {
-            text-align: center;
-        }
-        .edit-select {
-            padding: 3px;
         }
     </style>
 </head>
 <body>
-    <div class="container"> 
+    <div class="container">
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
@@ -522,41 +458,32 @@
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
-                
                 <div class="form-group">
                     <label for="size">Size</label>
-                    <div class="input-wrapper input-wrapper-clearable"> 
+                    <div class="input-wrapper">
                         <input
                             type="text"
                             id="size"
                             placeholder="Select or type size"
-                            oninput="filterSuggestions('size'); toggleClearButton(this, 'clearSizeBtn');" 
+                            oninput="filterSuggestions('size')"
                             inputmode="numeric" 
                         />
-                        <span class="clear-btn" id="clearSizeBtn" onclick="clearInput('size', 'clearSizeBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
                         <div class="suggestions" id="sizeSuggestions"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="surface">Surface</label>
-                    <div class="input-wrapper input-wrapper-clearable">
+                    <div class="input-wrapper">
                         <input
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
-                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface'); toggleClearButton(this, 'clearSurfaceBtn');"
+                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface')"
                             title="Please enter only letters and spaces."
                         />
-                        <span class="clear-btn" id="clearSurfaceBtn" onclick="clearInput('surface', 'clearSurfaceBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
                         <div class="suggestions" id="surfaceSuggestions"></div>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="price">Price</label>
                     <div class="price-input-container">
@@ -567,14 +494,10 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
-                            oninput="this.value = this.value.replace(/[eE+\-]/g, ''); toggleClearButton(this, 'clearPriceBtn');"
+                            oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
                         />
-                        <span class="clear-btn" id="clearPriceBtn" onclick="clearInput('price', 'clearPriceBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
                     </div>
                 </div>
-                
                 <div class="form-group">
                     <label>Grade</label>
                     <div class="grade-buttons">
@@ -652,7 +575,7 @@
         </div>
 
     <script>
-        // --- (V46 - FINAL SPACER LAYOUT FIX) ---
+        // --- (V41 - FOOTER GAP FIX) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -672,7 +595,6 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; // [V44] Editing lock
 
         // --- 2. Function Definitions ---
 
@@ -709,8 +631,6 @@
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
-            if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
-            if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
 
         function addItem() {
@@ -741,28 +661,6 @@
             document.getElementById('price').value = '';
             document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
-            
-            toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
-            toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
-            toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
-        }
-        
-        function toggleClearButton(input, btnId) {
-            const btn = document.getElementById(btnId);
-            if (!btn) return; 
-            if (input.value) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
-        }
-
-        function clearInput(inputId, btnId) {
-            document.getElementById(inputId).value = '';
-            document.getElementById(btnId).classList.remove('visible');
-            document.getElementById(inputId).focus();
-            if (inputId === 'size') filterSuggestions('size');
-            if (inputId === 'surface') filterSuggestions('surface');
         }
 
         function handleSuggestionKeydown(e, type) {
@@ -835,17 +733,9 @@
 
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
-
-            // [V45 FIX]
-            clearAdvancePriceInputs(); 
-            const gradePre = document.getElementById('adv_grade_pre');
-            if (gradePre) gradePre.checked = true;
-            
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
-                if (document.getElementById('surfacePriceList').children.length === 0) {
-                    populateSurfaceList();
-                }
+                populateSurfaceList(); 
             } else {
                 optionsContainer.style.display = 'none';
             }
@@ -965,8 +855,9 @@
                     <tr>
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'grade')">${item.grade}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'price')">₹ ${item.price.toFixed(2)}</td>
+                        <td>${item.grade}</td>
+                        <td>₹ ${item.price.toFixed(2)}</td>
+                        
                         <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
                     </tr>
                 `;
@@ -974,106 +865,25 @@
             tableHTML += '</tbody></table>';
             container.innerHTML = tableHTML;
         }
-        
-        function editCell(tdElement, itemId, field) {
-            if (isEditing) return; 
-            isEditing = true;
 
-            const item = items.find(i => i.id === itemId);
-            const originalValue = item[field];
-            
-            tdElement.innerHTML = ''; 
-            tdElement.onclick = null; 
-
-            if (field === 'price') {
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.className = 'edit-input';
-                input.value = originalValue;
-                input.onblur = () => saveEdit(itemId, field, input.value);
-                input.onkeydown = (e) => {
-                    if (e.key === 'Enter') input.blur();
-                    if (e.key === 'Escape') {
-                        isEditing = false;
-                        renderItems(); // Cancel
-                    }
-                };
-                tdElement.appendChild(input);
-                input.focus();
-                input.select();
-            } else if (field === 'grade') {
-                const select = document.createElement('select');
-                select.className = 'edit-select';
-                ['PRE', 'STD', 'GOLD', 'ECO'].forEach(grade => {
-                    const option = document.createElement('option');
-                    option.value = grade;
-                    option.text = grade;
-                    if (grade === originalValue) option.selected = true;
-                    select.appendChild(option);
-                });
-                select.onblur = () => saveEdit(itemId, field, select.value); 
-                select.onchange = () => saveEdit(itemId, field, select.value); 
-                select.onkeydown = (e) => {
-                     if (e.key === 'Escape') {
-                        isEditing = false;
-                        renderItems(); // Cancel
-                    }
-                };
-                tdElement.appendChild(select);
-                select.focus();
-            }
-        }
-
-        function saveEdit(itemId, field, newValue) {
-            const item = items.find(i => i.id === itemId);
-            if (item) {
-                if (field === 'price') {
-                    item.price = parseFloat(newValue) || 0;
-                } else if (field === 'grade') {
-                    item.grade = newValue;
-                }
-            }
-            isEditing = false; 
-            renderItems(); 
-        }
-
-        // --- [V46 PDF LOGIC - SPACER FIX] ---
+        // --- [V40 PDF LOGIC] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
-            const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1; 
-
-            if (activeTabId === 'advance') {
-                const groups = {};
-                items.forEach(item => {
-                    if (!groups[item.size]) {
-                        groups[item.size] = [];
-                    }
-                    groups[item.size].push(item);
-                });
-                numGroups = Object.keys(groups).length;
-            }
-
             const basePageHeight = 296.5; 
-            const baseRows = 6;           // 6 row A4 par fit hoti hain
-            const rowHeight = 7;          // Har row ki height 7mm
-            const groupHeaderHeight = 18; // Har "SIZE:" heading ki height
-
-            let totalRows = items.length;
+            const baseRows = 6;           
+            const extraPerRow = 7;       
             
+            let totalRows = items.length;
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
-
-            if (activeTabId === 'advance' && numGroups > 1) {
-                totalHeight += (numGroups - 1) * groupHeaderHeight;
-            }
+            
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
+            element.innerHTML = generatePDFContent(totalHeight); 
 
             const opt = {
                 margin: 0,
@@ -1095,134 +905,47 @@
             }).save();
         }
         
-        // --- [V46 PDF CONTENT FIX - SPACER LOGIC] ---
-        function generatePDFContent(totalHeight, tabType) { 
+        // --- [V41 HTML LAYOUT FIX] ---
+        function generatePDFContent(totalHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
-            let tableContentHTML = ''; 
-            const pdfTextColor = '#333';
+            
+            let tableRows = '';
+
+            items.forEach((item, idx) => {
+                const actualIndex = idx + 1;
+                const rowStyle = (idx % 2 === 0) 
+                    ? 'background: white;' 
+                    : 'background: #f8f9fa;'; 
+
+                tableRows += `
+                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
+                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- Calculation Constants ---
-            const HEADER_HEIGHT_MM = 125; 
+            // --- [V41 SPACER CALCULATION] ---
+            const HEADER_HEIGHT_MM = 125; // Header + Address + Title
+            // [FIX] Footer height ko 120 se 95 kiya
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 7; 
-            const GROUP_HEADER_HEIGHT_MM = 18; 
-
-            let contentHeight = 0;
-            let spacerHeight = 0;
+            const ROW_HEIGHT_MM = 7; // Humne 7mm fix kiya hai
             
-            if (tabType === 'advance') {
-                const groups = {};
-                items.forEach(item => {
-                    if (!groups[item.size]) {
-                        groups[item.size] = [];
-                    }
-                    groups[item.size].push(item);
-                });
+            let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+            let contentHeight = HEADER_HEIGHT_MM + tableHeight;
 
-                let numGroups = 0;
-                let groupKeys = Object.keys(groups); 
-
-                for (const size of groupKeys) {
-                    numGroups++;
-                    
-                    if (numGroups > 1) {
-                        tableContentHTML += `
-                            <div style="margin-top: 10px; margin-bottom: 8px;">
-                                ${pinPointLine}
-                            </div>
-                        `;
-                    }
-                    
-                    tableContentHTML += `
-                        <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; 
-                                    margin-top: 0;
-                                    margin-bottom: 10px;">
-                            SIZE: ${size}
-                        </div>
-                    `;
-                    
-                    tableContentHTML += `
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                            <thead>
-                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                                </tr>
-                            </thead>
-                            <tbody style="background: white;">
-                    `;
-
-                    let groupSrNo = 1;
-                    groups[size].forEach((item, idx) => {
-                        const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
-                        tableContentHTML += `
-                            <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${groupSrNo}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.size}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
-                            </tr>
-                        `;
-                        groupSrNo++;
-                    });
-                    
-                    tableContentHTML += '</tbody></table>';
-                } 
-                
-                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
-
-            } 
-            else {
-                let tableRows = ''; 
-                items.forEach((item, idx) => {
-                    const actualIndex = idx + 1;
-                    const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
-                    tableRows += `
-                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${actualIndex}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.size}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-
-                tableContentHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                        <thead>
-                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                            </tr>
-                        </thead>
-                        <tbody style="background: white;">
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                `;
-                
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight;
-            }
-
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            let spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
             
             if (spacerHeight < 0) {
                 spacerHeight = 0;
@@ -1254,7 +977,7 @@
                             />
                             ${pinPointLine}
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: ${pdfTextColor}; line-height: 1.8; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
                                 <div>COMET GRANITO PVT.LTD.</div>
@@ -1267,7 +990,7 @@
                                 <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: ${pdfTextColor}; margin-bottom: 20px; line-height: 1.8;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
                                 <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
@@ -1286,20 +1009,32 @@
                             <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
                         </div>
                         
-                        ${tableContentHTML}
-                        
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                                ${tableRows}
+                            </tbody>
+                        </table>
                     </div>
 
                     <div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
-                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: ${FOOTER_BLOCK_HEIGHT_MM}mm; flex-shrink: 0;">
+                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: 95mm; flex-shrink: 0;">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>
-                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 18px; line-height: 1.6;">
+                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
                                 <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
                                 <li>Prices are subject to change without prior notice depending on market conditions.</li>
                                 <li>Delivery period will be confirmed after order placement.</li>
@@ -1324,11 +1059,12 @@
             
             return pagesHTML;
         }
-        
-        // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); 
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
+            document.getElementById('grade_pre').checked = true; 
             items = [];
             renderItems(); 
         }
@@ -1346,13 +1082,12 @@
             if(optionsContainer) optionsContainer.style.display = 'none';
 
             clearAdvancePriceInputs();
-            renderItems(); 
+            renderItems(); // Advance tab ko bhi empty render karo
         }
 
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
-            const container = document.querySelector('.container');
 
             tabs.forEach((tab) => tab.classList.remove('active'));
             buttons.forEach((btn) => btn.classList.remove('active'));
@@ -1361,11 +1096,9 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); // Green theme
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); // Default (Purple) theme
                 clearAdvanceTab();
             }
         }

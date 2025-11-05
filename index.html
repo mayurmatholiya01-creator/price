@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai (V44) */
+        /* --- [UI V44] TilesPro Theme --- */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -1107,6 +1107,7 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
+            // --- Calculation Constants ---
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
@@ -1221,8 +1222,6 @@
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            // --- [LOGIC 3: Spacer aur Final HTML banao] ---
-            
             spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
             
             if (spacerHeight < 0) {

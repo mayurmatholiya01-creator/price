@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* --- [UI V44] TilesPro Theme --- */
+        /* Pura CSS wahi hai (V44) */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -592,7 +592,7 @@
                     <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
                     </button>
-                    <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
+                    <button class="pdf-button" onclick="generateBasicPDF()" id="pdfBtn" disabled>
                         <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
@@ -636,7 +636,7 @@
                     <button class="add-button" onclick="addAdvanceItems()">
                         <i class="fas fa-plus"></i> Add Items
                     </button>
-                    <button class="pdf-button" onclick="generatePDF()" id="advancePdfBtn" disabled>
+                    <button class="pdf-button" onclick="generateAdvancePDF()" id="advancePdfBtn" disabled>
                         <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
@@ -652,7 +652,7 @@
         </div>
 
     <script>
-        // --- (V46 - FINAL SPACER LAYOUT FIX) ---
+        // --- (V47 - DUAL PDF LOGIC FIX) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -836,7 +836,6 @@
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
 
-            // [V45 FIX]
             clearAdvancePriceInputs(); 
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
@@ -1037,57 +1036,66 @@
             renderItems(); 
         }
 
-        // --- [V47 PDF LOGIC - BASIC TAB "FLOW" LAYOUT FIX] ---
-        function generatePDF() {
+        // --- [NEW V47] 'Basic' Tab ke liye Original PDF Logic ---
+        function generateBasicPDF() {
+            if (items.length === 0) {
+                alert('Please add items first');
+                return;
+            }
+            
+            const element = document.createElement('div');
+            // 'totalHeight' 0 pass karo, aur type 'basic'
+            element.innerHTML = generatePDFContent(0, 'basic'); 
+
+            const opt = {
+                margin: 0,
+                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
+                jsPDF: {
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4' // <-- Yahi hai original logic jo multi-page banata hai
+                },
+                pagebreak: { mode: ['auto'] } // Default
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // --- [NEW V47] 'Advance' Tab ke liye Naya PDF Logic ---
+        function generateAdvancePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
-            const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1;
+            let numGroups = 1; 
+            const groups = {};
+            items.forEach(item => {
+                if (!groups[item.size]) {
+                    groups[item.size] = [];
+                }
+                groups[item.size].push(item);
+            });
+            numGroups = Object.keys(groups).length;
 
-            const HEADER_HEIGHT_MM = 125; 
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 7; 
-            const GROUP_HEADER_HEIGHT_MM = 18;
-            const basePageHeight = 296.5; // A4 Standard
+            const basePageHeight = 296.5; 
+            const baseRows = 6;           
+            const rowHeight = 7;
+            const groupHeaderHeight = 18; 
 
             let totalRows = items.length;
-            let totalHeight = 0;
+            
+            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
 
-            if (activeTabId === 'advance') {
-                const groups = {};
-                items.forEach(item => {
-                    if (!groups[item.size]) {
-                        groups[item.size] = [];
-                    }
-                    groups[item.size].push(item);
-                });
-                numGroups = Object.keys(groups).length;
-                
-                // Advance Tab: "Sticky Footer" logic (Pehle jaisa)
-                const baseRows = 6;
-                let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-                totalHeight = Math.ceil(basePageHeight + (extraRows * ROW_HEIGHT_MM));
-                if (numGroups > 1) {
-                    totalHeight += (numGroups - 1) * GROUP_HEADER_HEIGHT_MM;
-                }
-
-            } else {
-                // Basic Tab: "Flow" layout logic (Naya badlaav)
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (totalRows * ROW_HEIGHT_MM);
-                totalHeight = HEADER_HEIGHT_MM + tableHeight + FOOTER_BLOCK_HEIGHT_MM;
-                
-                // Agar content A4 se chota hai, toh bhi page A4 rakho
-                if (totalHeight < basePageHeight) {
-                    totalHeight = basePageHeight;
-                }
+            if (numGroups > 1) {
+                totalHeight += (numGroups - 1) * groupHeaderHeight;
             }
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
+            element.innerHTML = generatePDFContent(totalHeight, 'advance'); 
 
             const opt = {
                 margin: 0,
@@ -1109,7 +1117,7 @@
             }).save();
         }
         
-        // --- [V46 PDF CONTENT FIX - SPACER LOGIC] ---
+        // --- [NEW V47] generatePDFContent ab DUAL LOGIC handle karega ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -1121,7 +1129,6 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- Calculation Constants ---
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
@@ -1130,7 +1137,9 @@
 
             let contentHeight = 0;
             let spacerHeight = 0;
-            
+            let mainDivStyle = ''; // Style yahan define karenge
+
+            // --- [LOGIC 1: 'Advance' Tab ke liye (Grouping)] ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1195,10 +1204,18 @@
                 } 
                 
                 let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
+                let groupHeadingHeight = (numGroups * GROUP_HEADER_HEIGHT_MM) + ((numGroups - 1) * PINPOINT_LINE_HEIGHT_MM);
                 contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
 
+                // Advance tab 'Spacer' logic
+                spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+                if (spacerHeight < 0) spacerHeight = 0;
+                
+                // Advance tab 'Page' style
+                mainDivStyle = `height: ${totalHeight}mm; position: relative;`;
+
             } 
+            // --- [LOGIC 2: 'Basic' Tab ke liye (Simple)] ---
             else {
                 let tableRows = ''; 
                 items.forEach((item, idx) => {
@@ -1232,28 +1249,19 @@
                     </table>
                 `;
                 
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight;
-            }
-
-            // --- YEH BADLAAV HAI (THIS IS THE CHANGE) ---
-            if (tabType === 'advance') {
-                // Advance tab: "Sticky Footer" logic
-                spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-                if (spacerHeight < 0) {
-                    spacerHeight = 0;
-                }
-            } else {
-                // Basic tab: "Flow" layout (Koi spacer nahi)
+                // Basic tab 'Spacer' logic (isme spacer nahi hota)
                 spacerHeight = 0;
+                
+                // Basic tab 'Page' style (ORIGINAL)
+                mainDivStyle = `min-height: 296.5mm; height: auto; position: relative;`;
             }
-            // --- BADLAAV KHATAM (CHANGE ENDS) ---
 
+            // --- [LOGIC 3: Final HTML banao] ---
+            
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            height: ${totalHeight}mm; 
+                            ${mainDivStyle} 
                             margin: 0; background: white; 
-                            position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">

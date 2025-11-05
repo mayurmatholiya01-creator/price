@@ -652,7 +652,7 @@
         </div>
 
     <script>
-        // --- (V46 - ALL FIXES APPLIED) ---
+        // --- (V47 - Logo Overlap Fix) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -929,7 +929,6 @@
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
             
-            // दोनों कंटेनर को रेंडर करें
             const basicContainer = document.getElementById('itemsContainer');
             const advanceContainer = document.getElementById('advanceItemsContainer');
             const pdfBtn = document.getElementById('pdfBtn');
@@ -975,7 +974,6 @@
             });
             tableHTML += '</tbody></table>';
 
-            // टेबल HTML को दोनों कंटेनर में सेट करें
             basicContainer.innerHTML = tableHTML;
             advanceContainer.innerHTML = tableHTML;
         }
@@ -999,7 +997,7 @@
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
-                        input.onblur = null; // [FIX V46] Blur इवेंट को सेव करने से रोकें
+                        input.onblur = null; 
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1021,7 +1019,7 @@
                 select.onchange = () => saveEdit(itemId, field, select.value); 
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
-                        select.onblur = null; // [FIX V46] Blur इवेंट को सेव करने से रोकें
+                        select.onblur = null; 
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1045,7 +1043,7 @@
         }
 
 
-        // --- [FIX V46] PDF LOGIC (Updated Height Calculation) ---
+        // --- [FIX V47] PDF LOGIC (Updated Height Calculation) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1055,13 +1053,17 @@
             const activeTabId = document.querySelector('.tab-content.active').id;
             
             // --- [नया और सटीक हाइट कैलकुलेशन] ---
-            const HEADER_HEIGHT_MM = 125;
-            const TABLE_HEADER_HEIGHT_MM = 10;
-            const ROW_HEIGHT_MM = 6.5;         // आपकी नई वैल्यू
-            const GROUP_HEADER_HEIGHT_MM = 18; // Advance टैब के लिए
+            // कंटेंट ब्लॉक्स की हाइट
+            const HEADER_CONTENT_MM = 105;     // हेडर लोगो, एड्रेस, "PRICE LIST" टेक्स्ट
+            const TABLE_HEADER_HEIGHT_MM = 10; // टेबल का <thead>
+            const ROW_HEIGHT_MM = 6.5;         // हर <tr>
+            const GROUP_HEADER_HEIGHT_MM = 18; // "SIZE: ..." टेक्स्ट (Advance मोड)
             const POST_TABLE_SPACER_MM = 10; // टेबल के नीचे का 10mm गैप
-            const FOOTER_BLOCK_HEIGHT_MM = 95;
-            const BASE_PADDING_MM = 20;      // ऊपर-नीचे का अतिरिक्त पैडिंग/ब्रीदिंग रूम
+            const FOOTER_CONTENT_MM = 95;      // Terms & Conditions + फुटर टेक्स्ट
+            
+            // पेज पैडिंग (सेफ एरिया)
+            const PADDING_TOP_MM = 20;         // पेज के टॉप पर खाली जगह
+            const PADDING_BOTTOM_MM = 35;      // पेज के बॉटम में (लोगो के लिए सेफ एरिया)
 
             let tableHeight = 0;
             let groupHeight = 0;
@@ -1077,30 +1079,27 @@
                 let numGroups = Object.keys(groups).length;
                 
                 if (numGroups > 0) {
-                    // हर ग्रुप के हेडर के लिए हाइट
                     groupHeight = numGroups * GROUP_HEADER_HEIGHT_MM; 
                 }
-                // सभी टेबल हेडर + सभी रो की कुल हाइट
                 tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
             } else {
-                // Basic टैब के लिए सिंपल कैलकुलेशन
                 tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
             }
 
             // सभी हिस्सों को जोड़कर कुल हाइट
-            let totalContentHeight = HEADER_HEIGHT_MM + 
-                                     tableHeight + 
-                                     groupHeight + 
-                                     POST_TABLE_SPACER_MM + 
-                                     FOOTER_BLOCK_HEIGHT_MM + 
-                                     BASE_PADDING_MM;
+            let totalHeight = PADDING_TOP_MM + 
+                              HEADER_CONTENT_MM +
+                              tableHeight + 
+                              groupHeight + 
+                              POST_TABLE_SPACER_MM + 
+                              FOOTER_CONTENT_MM + 
+                              PADDING_BOTTOM_MM;
 
-            let totalHeight = Math.ceil(totalContentHeight);
+            totalHeight = Math.ceil(totalHeight);
             // --- [नया कैलकुलेशन समाप्त] ---
 
 
             const element = document.createElement('div');
-            // हम इस नई 'totalHeight' को PDF कंटेंट जनरेटर में पास करेंगे
             element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
 
             const opt = {
@@ -1123,9 +1122,9 @@
             }).save();
         }
         
-        // --- [FIX V46] PDF CONTENT (Removed Absolute Footer) ---
+        // --- [FIX V47] PDF CONTENT (Added mm padding) ---
         function generatePDFContent(totalHeight, tabType) { 
-            const currentDate = new Date().toLocaleDateString('en-GB');
+            const currentDate = new Date().toLocaleString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
@@ -1135,8 +1134,7 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // सभी हाइट कैलकुलेशन और spacerHeight को हटा दिया गया है
-            
+            // [Advance Tab Logic - No Change]
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1200,6 +1198,7 @@
                     tableContentHTML += '</tbody></table>';
                 } 
             } 
+            // [Basic Tab Logic - No Change]
             else {
                 let tableRows = ''; 
                 items.forEach((item, idx) => {
@@ -1241,15 +1240,15 @@
                             position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
-                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                    <div style="position: absolute; top: 0; right: 0; width: 25mm; height: 30mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
 
-                    <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
+                    <div style="position: absolute; left: 0mm; bottom: 0mm; width: 25mm; height: 30mm; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="padding: 20px 25px 20px 25px; 
+                    <div style="padding: 20mm 25mm 35mm 25mm; 
                                 position: relative; z-index: 10;
                     ">
                         
@@ -1331,16 +1330,11 @@
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            // [FIX V46] क्लियर फ़ंक्शन अब items = [] नहीं करता
             clearForm(); 
-            // items = []; // <-- हटा दिया गया
             renderItems(); 
         }
 
         function clearAdvanceTab() {
-            // [FIX V46] क्लियर फ़ंक्शन अब items = [] नहीं करता
-            // items = []; // <-- हटा दिया गया
-            
             const sizeSelect = document.getElementById('advanceSizeSelect');
             if (sizeSelect) sizeSelect.value = ""; 
             
@@ -1366,15 +1360,12 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); // Green theme
-                // clearBasicTab(); // [FIX V46] डेटा लॉस को रोकने के लिए हटा दिया गया
+                container.classList.add('advance-theme'); 
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); // Default (Purple) theme
-                // clearAdvanceTab(); // [FIX V46] डेटा लॉस को रोकने के लिए हटा दिया गया
+                container.classList.remove('advance-theme'); 
             }
             
-            // टैब स्विच के बाद टेबल को फिर से रेंडर करें
             renderItems();
         }
         

@@ -1045,37 +1045,40 @@
     return;
   }
 
-  // Step 1: Create invisible HTML for measurement
+  // Step 1: Create temporary element
   const element = document.createElement('div');
-  element.innerHTML = generatePDFContent(null, 'basic'); // null means auto height
-  document.body.appendChild(element);
+  element.innerHTML = generatePDFContent(null, 'basic'); // no height limit
+  element.style.width = '210mm';
+  element.style.background = '#fff';
   element.style.position = 'absolute';
-  element.style.visibility = 'hidden';
-  element.style.width = '210mm'; // A4 width
+  element.style.left = '-9999px'; // hide off-screen
+  document.body.appendChild(element);
 
-  // Step 2: Measure actual rendered height in pixels
+  // Step 2: measure real height
   const pxHeight = element.offsetHeight;
-  const mmHeight = pxHeight * 0.264583; // Convert px → mm
+  const mmHeight = pxHeight * 0.264583; // px → mm
 
-  // Step 3: Remove temporary element
-  document.body.removeChild(element);
+  // Step 3: use measured height to generate clean version
+  const finalElement = document.createElement('div');
+  finalElement.innerHTML = generatePDFContent(mmHeight, 'basic');
+  document.body.appendChild(finalElement);
 
-  // Step 4: Generate final PDF with measured height
   const opt = {
     margin: 0,
     filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-    jsPDF: {
-      orientation: 'portrait',
-      unit: 'mm',
-      format: [210, mmHeight]
-    },
+    jsPDF: { orientation: 'portrait', unit: 'mm', format: [210, mmHeight] },
     pagebreak: { mode: ['avoid'] }
   };
 
-  html2pdf().set(opt).from(element).save();
+  html2pdf().set(opt).from(finalElement).save().then(() => {
+    // clean up
+    document.body.removeChild(element);
+    document.body.removeChild(finalElement);
+  });
 }
+
 
 
         // [NEW] ADVANCE TAB PDF (V43 logic)

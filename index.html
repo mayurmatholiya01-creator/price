@@ -575,7 +575,7 @@
         </div>
 
     <script>
-        // --- (V40 - FINAL PDF/SPACER FIX) ---
+        // --- (V41 - FOOTER GAP FIX) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -866,18 +866,16 @@
             container.innerHTML = tableHTML;
         }
 
-        // --- [V40 PDF LOGIC FIX] ---
+        // --- [V40 PDF LOGIC] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
-            // [FIX 1] baseRows ko 10 se 6 kiya (aapke screenshot ke hisab se)
             const basePageHeight = 296.5; 
             const baseRows = 6;           
-            // [FIX 2] extraPerRow ko 10 se 7 kiya (approx 24px + margin)
-            const extraPerRow = 7; // Aap ise 6.5 se 10 ke beech adjust kar sakte hain       
+            const extraPerRow = 7;       
             
             let totalRows = items.length;
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
@@ -885,7 +883,6 @@
             let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
 
             const element = document.createElement('div');
-            // [FIX 3] Height ko HTML content function me pass karo
             element.innerHTML = generatePDFContent(totalHeight); 
 
             const opt = {
@@ -896,7 +893,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // [FIX 4] Dynamic height yahan pass ki
+                    format: [210, totalHeight] 
                 },
                 pagebreak: { mode: ['avoid'] } 
             };
@@ -908,8 +905,8 @@
             }).save();
         }
         
-        // --- [V40 HTML LAYOUT FIX] ---
-        function generatePDFContent(totalHeight) { // totalHeight parameter le raha hai
+        // --- [V41 HTML LAYOUT FIX] ---
+        function generatePDFContent(totalHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             
@@ -938,27 +935,25 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- [V40 SPACER CALCULATION] ---
+            // --- [V41 SPACER CALCULATION] ---
             const HEADER_HEIGHT_MM = 125; // Header + Address + Title
-            const FOOTER_BLOCK_HEIGHT_MM = 120; // Terms + Footer Text
+            // [FIX] Footer height ko 120 se 95 kiya
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
             const ROW_HEIGHT_MM = 7; // Humne 7mm fix kiya hai
             
             let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
             let contentHeight = HEADER_HEIGHT_MM + tableHeight;
 
-            // Spacer ki height = Total Page Height - (Content + Footer)
             let spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
             
-            // Agar content + footer page se lamba hai, to spacer 0 rakho
             if (spacerHeight < 0) {
                 spacerHeight = 0;
             }
 
-            // [FIX 5] Outer div ab 'totalHeight' ko CSS me use karega
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            height: ${totalHeight}mm; /* Explicit Height Fix */
+                            height: ${totalHeight}mm; 
                             margin: 0; background: white; 
                             position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -1032,7 +1027,7 @@
 
                     <div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
-                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: 120mm; flex-shrink: 0;">
+                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: 95mm; flex-shrink: 0;">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>

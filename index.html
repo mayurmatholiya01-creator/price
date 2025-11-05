@@ -532,7 +532,6 @@
                             id="size"
                             placeholder="Select or type size"
                             oninput="filterSuggestions('size'); toggleClearButton(this, 'clearSizeBtn');" 
-                            inputmode="numeric" 
                         />
                         <span class="clear-btn" id="clearSizeBtn" onclick="clearInput('size', 'clearSizeBtn')">
                             <i class="fas fa-times-circle"></i>
@@ -653,7 +652,7 @@
         </div>
 
     <script>
-        // --- (V45 - CLEAR BUTTON & CLICK-TO-EDIT) ---
+        // --- (V46 - ALL FIXES APPLIED) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -673,7 +672,7 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; // [V44] Editing lock
+        let isEditing = false; 
 
         // --- 2. Function Definitions ---
 
@@ -710,7 +709,6 @@
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
-            // [V44] Clear button ko show karo
             if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
             if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
@@ -744,13 +742,11 @@
             document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
             
-            // [V44] Clear buttons ko hide karo
             toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
             toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
             toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
         }
         
-        // [NEW V44] Clear 'X' button functions
         function toggleClearButton(input, btnId) {
             const btn = document.getElementById(btnId);
             if (input.value) {
@@ -764,11 +760,9 @@
             document.getElementById(inputId).value = '';
             document.getElementById(btnId).classList.remove('visible');
             document.getElementById(inputId).focus();
-            // Agar suggestion box khula tha, to use band karo
             if (inputId === 'size') filterSuggestions('size');
             if (inputId === 'surface') filterSuggestions('surface');
         }
-        // [NEW V44] End
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
@@ -838,17 +832,12 @@
             });
         }
 
-        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
 
-            // --- [V45 FIX] ---
-            // 1. Purane price clear karo
             clearAdvancePriceInputs(); 
-            // 2. Grade ko 'PRE' par reset karo
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
-            // --- [FIX END] ---
 
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
@@ -936,25 +925,30 @@
             renderItems();
         }
 
-        // [MODIFIED V44] Click-to-Edit ke liye
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
             
-            const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
-            const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
+            // दोनों कंटेनर को रेंडर करें
+            const basicContainer = document.getElementById('itemsContainer');
+            const advanceContainer = document.getElementById('advanceItemsContainer');
+            const pdfBtn = document.getElementById('pdfBtn');
+            const advancePdfBtn = document.getElementById('advancePdfBtn');
 
-            const container = document.getElementById(containerId);
-            const pdfBtn = document.getElementById(pdfBtnId);
-
-            if (!container || !pdfBtn) return; 
+            if (!basicContainer || !advanceContainer) return;
 
             if (items.length === 0) {
-                container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                pdfBtn.disabled = true;
+                const emptyState = '<div class="empty-state">No items added yet</div>';
+                basicContainer.innerHTML = emptyState;
+                advanceContainer.innerHTML = emptyState;
+                if (pdfBtn) pdfBtn.disabled = true;
+                if (advancePdfBtn) advancePdfBtn.disabled = true;
                 return;
             }
-            pdfBtn.disabled = false;
+
+            if (pdfBtn) pdfBtn.disabled = false;
+            if (advancePdfBtn) advancePdfBtn.disabled = false;
+
             let tableHTML = `
                 <table>
                     <thead>
@@ -980,19 +974,21 @@
                 `;
             });
             tableHTML += '</tbody></table>';
-            container.innerHTML = tableHTML;
+
+            // टेबल HTML को दोनों कंटेनर में सेट करें
+            basicContainer.innerHTML = tableHTML;
+            advanceContainer.innerHTML = tableHTML;
         }
         
-        // [NEW V44] Click-to-Edit Functions
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return; // Ek time par ek hi edit
+            if (isEditing) return; 
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
             const originalValue = item[field];
             
-            tdElement.innerHTML = ''; // Cell ko khali karo
-            tdElement.onclick = null; // Dobara click na ho
+            tdElement.innerHTML = ''; 
+            tdElement.onclick = null; 
 
             if (field === 'price') {
                 const input = document.createElement('input');
@@ -1003,6 +999,7 @@
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
+                        input.onblur = null; // [FIX V46] Blur इवेंट को सेव करने से रोकें
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1020,10 +1017,11 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
-                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
+                select.onblur = () => saveEdit(itemId, field, select.value); 
+                select.onchange = () => saveEdit(itemId, field, select.value); 
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
+                        select.onblur = null; // [FIX V46] Blur इवेंट को सेव करने से रोकें
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1042,13 +1040,12 @@
                     item.grade = newValue;
                 }
             }
-            isEditing = false; // Lock release karo
-            renderItems(); // Table ko redraw karo
+            isEditing = false; 
+            renderItems(); 
         }
-        // [NEW V44] End
 
 
-        // --- V43 PDF LOGIC (Untouched) ---
+        // --- [FIX V46] PDF LOGIC (Updated Height Calculation) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1056,7 +1053,18 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1; 
+            
+            // --- [नया और सटीक हाइट कैलकुलेशन] ---
+            const HEADER_HEIGHT_MM = 125;
+            const TABLE_HEADER_HEIGHT_MM = 10;
+            const ROW_HEIGHT_MM = 6.5;         // आपकी नई वैल्यू
+            const GROUP_HEADER_HEIGHT_MM = 18; // Advance टैब के लिए
+            const POST_TABLE_SPACER_MM = 10; // टेबल के नीचे का 10mm गैप
+            const FOOTER_BLOCK_HEIGHT_MM = 95;
+            const BASE_PADDING_MM = 20;      // ऊपर-नीचे का अतिरिक्त पैडिंग/ब्रीदिंग रूम
+
+            let tableHeight = 0;
+            let groupHeight = 0;
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1066,26 +1074,33 @@
                     }
                     groups[item.size].push(item);
                 });
-                numGroups = Object.keys(groups).length;
+                let numGroups = Object.keys(groups).length;
+                
+                if (numGroups > 0) {
+                    // हर ग्रुप के हेडर के लिए हाइट
+                    groupHeight = numGroups * GROUP_HEADER_HEIGHT_MM; 
+                }
+                // सभी टेबल हेडर + सभी रो की कुल हाइट
+                tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
+            } else {
+                // Basic टैब के लिए सिंपल कैलकुलेशन
+                tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
             }
 
-            const basePageHeight = 296.5; 
-            const baseRows = 6;           
-            const rowHeight = 6.5;
-            const groupHeaderHeight = 18; 
+            // सभी हिस्सों को जोड़कर कुल हाइट
+            let totalContentHeight = HEADER_HEIGHT_MM + 
+                                     tableHeight + 
+                                     groupHeight + 
+                                     POST_TABLE_SPACER_MM + 
+                                     FOOTER_BLOCK_HEIGHT_MM + 
+                                     BASE_PADDING_MM;
 
-            let totalRows = items.length;
-            
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
-
-// 👇 [NEW LOGIC] Shift all footer-area content with page height
-if (items.length > baseRows) {
-    totalHeight += (items.length - baseRows) * 0; // keep 0 now (footer handled separately)
-}
+            let totalHeight = Math.ceil(totalContentHeight);
+            // --- [नया कैलकुलेशन समाप्त] ---
 
 
             const element = document.createElement('div');
+            // हम इस नई 'totalHeight' को PDF कंटेंट जनरेटर में पास करेंगे
             element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
 
             const opt = {
@@ -1096,7 +1111,7 @@ if (items.length > baseRows) {
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] 
+                    format: [210, totalHeight] // यहाँ नई 'totalHeight' का उपयोग करें
                 },
                 pagebreak: { mode: ['avoid'] } 
             };
@@ -1108,7 +1123,7 @@ if (items.length > baseRows) {
             }).save();
         }
         
-        // --- V45 PDF FONT COLOR FIX (Untouched) ---
+        // --- [FIX V46] PDF CONTENT (Removed Absolute Footer) ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -1120,14 +1135,7 @@ if (items.length > baseRows) {
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            const HEADER_HEIGHT_MM = 125; 
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5; 
-            const GROUP_HEADER_HEIGHT_MM = 18; 
-
-            let contentHeight = 0;
-            let spacerHeight = 0;
+            // सभी हाइट कैलकुलेशन और spacerHeight को हटा दिया गया है
             
             if (tabType === 'advance') {
                 const groups = {};
@@ -1191,11 +1199,6 @@ if (items.length > baseRows) {
                     
                     tableContentHTML += '</tbody></table>';
                 } 
-                
-                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
-
             } 
             else {
                 let tableRows = ''; 
@@ -1229,19 +1232,7 @@ if (items.length > baseRows) {
                         </tbody>
                     </table>
                 `;
-                
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
-
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-
-            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
-            if (items.length > 6) {
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-
-}   
-
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
@@ -1258,7 +1249,7 @@ if (items.length > baseRows) {
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="padding: 20px 25px 0 25px; 
+                    <div style="padding: 20px 25px 20px 25px; 
                                 position: relative; z-index: 10;
                     ">
                         
@@ -1302,24 +1293,9 @@ if (items.length > baseRows) {
                         </div>
                         
                         ${tableContentHTML}
+                        
                         <div style="height: 10mm;"></div>
 
-                        
-                    </div>
-
-                    <!-- remove spacer from pushing footer -->
-<div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
-
-<!-- fix footer position absolutely to page bottom -->
-<div style="
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  padding: 0 25px 20px 25px;
-  height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
-">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
@@ -1355,13 +1331,15 @@ if (items.length > baseRows) {
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
-            items = [];
+            // [FIX V46] क्लियर फ़ंक्शन अब items = [] नहीं करता
+            clearForm(); 
+            // items = []; // <-- हटा दिया गया
             renderItems(); 
         }
 
         function clearAdvanceTab() {
-            items = [];
+            // [FIX V46] क्लियर फ़ंक्शन अब items = [] नहीं करता
+            // items = []; // <-- हटा दिया गया
             
             const sizeSelect = document.getElementById('advanceSizeSelect');
             if (sizeSelect) sizeSelect.value = ""; 
@@ -1389,12 +1367,15 @@ if (items.length > baseRows) {
 
             if (tabName === 'advance') {
                 container.classList.add('advance-theme'); // Green theme
-                clearBasicTab();
+                // clearBasicTab(); // [FIX V46] डेटा लॉस को रोकने के लिए हटा दिया गया
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
                 container.classList.remove('advance-theme'); // Default (Purple) theme
-                clearAdvanceTab();
+                // clearAdvanceTab(); // [FIX V46] डेटा लॉस को रोकने के लिए हटा दिया गया
             }
+            
+            // टैब स्विच के बाद टेबल को फिर से रेंडर करें
+            renderItems();
         }
         
         // --- 3. Event Listeners & Initial Calls ---

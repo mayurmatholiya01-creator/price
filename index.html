@@ -1056,7 +1056,8 @@
 
   // Step 2: measure real height
   const pxHeight = element.offsetHeight;
-  const mmHeight = pxHeight * 0.264583; // px → mm
+  const mmHeight = (pxHeight * 0.264583) + 15; // add 15mm extra buffer for footer space
+
 
   // Step 3: use measured height to generate clean version
   const finalElement = document.createElement('div');

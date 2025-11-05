@@ -8,14 +8,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <script src="imagedata.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai (V37) */
+        /* --- [UI V44] TilesPro Theme --- */
+        :root {
+          /* Theme Colors */
+          --primary: #6366f1; /* Purple (Basic) */
+          --primary-light: #818cf8;
+          --success: #10b981; /* Green */
+          --success-light: #34d399;
+          --error: #ef4444; /* Red */
+          --error-light: #f87171;
+          
+          /* Dark Mode Palette */
+          --bg-primary: #0a0a0b;
+          --bg-secondary: #1a1a1e;
+          --glass: rgba(255, 255, 255, 0.06);
+          --glass-border: rgba(255, 255, 255, 0.1);
+          --glass-hover: rgba(255, 255, 255, 0.08);
+          
+          /* Text Colors */
+          --text-primary: #ffffff;
+          --text-secondary: #d1d5db;
+          --text-muted: #9ca3af;
+          
+          --border-radius: 12px;
+          --border-radius-sm: 8px;
+        }
+
+        /* [THEME SWITCH] Jab Advance tab active ho */
+        .container.advance-theme {
+            --primary: #10b981; /* Green (Advance) */
+            --primary-light: #34d399;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -28,8 +60,9 @@
         }
 
         body {
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f7f6;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font Change */
+            background: var(--bg-primary); /* BG Change */
+            color: var(--text-primary); /* Text Change */
             min-height: 100vh;
             padding: 10px;
         }
@@ -37,20 +70,22 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: var(--bg-secondary); /* Container BG Change */
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100dvh; 
             max-height: 100dvh; 
+            border: 1px solid var(--glass-border); /* Border Add */
+            transition: all 0.3s ease; /* Theme switch transition */
         }
 
         .tabs {
             display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #ddd;
+            background: var(--glass); /* Tabs BG Change */
+            border-bottom: 1px solid var(--glass-border); /* Border Change */
             flex-shrink: 0;
         }
 
@@ -62,20 +97,20 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: 600;
-            color: #666;
+            color: var(--text-muted); /* Color Change */
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif; /* Font Change */
         }
 
         .tab-btn.active {
-            color: #ed3237;
-            background: white;
-            border-bottom-color: #ed3237;
+            color: var(--primary); /* THEME Color */
+            background: transparent;
+            border-bottom-color: var(--primary); /* THEME Color */
         }
 
         .tab-btn:hover {
-            color: #ed3237;
+            color: var(--primary); /* THEME Color */
         }
 
         .tab-content {
@@ -98,9 +133,11 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
+            color: var(--text-secondary); /* Color Change */
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.9em; /* Thoda chhota */
+            text-transform: uppercase; /* Uppercase */
+            letter-spacing: 0.5px;
         }
 
         input[type='text'],
@@ -108,57 +145,75 @@
         select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--glass); /* Input BG Change */
+            border: 1px solid var(--glass-border); /* Input Border Change */
+            border-radius: var(--border-radius-sm); /* Radius Change */
+            color: var(--text-primary); /* Input Text Change */
+            font-size: 16px; /* iOS zoom fix */
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'Inter', sans-serif;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        
+        /* Dropdown arrow style */
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d1d5db' stroke-width='2' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px 8px;
+            cursor: pointer;
+            padding-right: 2.5rem;
+        }
+        select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         input[type='text']:focus,
         input[type='number']:focus,
         select:focus {
             outline: none;
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
+            border-color: var(--primary); /* THEME Color */
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); /* Focus shadow */
+            background: var(--glass-hover);
         }
 
         .price-input-container {
             display: flex;
             align-items: center;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            /* Border/Radius ab child par hai */
+            border: none;
             transition: border-color 0.3s;
             overflow: hidden;
         }
-
-        .price-input-container:focus-within {
-            border-color: #ed3237;
-            box-shadow: 0 0 0 3px rgba(237, 50, 55, 0.1);
+        
+        /* Basic tab price container */
+        #basic .price-input-container {
+             border: 1px solid var(--glass-border);
+             border-radius: var(--border-radius-sm);
         }
-
-        .price-symbol {
+        #basic .price-input-container:focus-within {
+             border-color: var(--primary);
+             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+        #basic .price-symbol {
             padding: 12px 12px;
-            background: #f8f9fa;
-            color: #666;
+            background: var(--glass-hover);
+            color: var(--text-secondary);
             font-weight: 600;
             font-size: 1.1em;
-            border-right: 2px solid #ddd;
+            border-right: 1px solid var(--glass-border);
             flex-shrink: 0;
         }
-
-        .price-input-container input {
+        #basic .price-input-container input {
             flex: 1;
             border: none;
             padding: 12px;
             font-size: 1em;
             outline: none;
-            background: white;
-        }
-
-        .price-input-container input:focus {
-            outline: none;
-            box-shadow: none;
+            background: transparent;
         }
         
         .grade-buttons {
@@ -175,24 +230,26 @@
             flex: 1;
             text-align: center;
             padding: 8px 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            border: 2px solid var(--glass-border);
+            border-radius: var(--border-radius-sm);
             cursor: pointer;
             font-weight: 600;
             font-size: 0.9em;
+            color: var(--text-secondary);
             transition: all 0.3s ease;
             margin-bottom: 0; 
         }
 
         .grade-buttons input[type="radio"]:checked + label {
-            background-color: #ed3237;
+            background-color: var(--primary); /* THEME Color */
             color: white;
-            border-color: #ed3237;
-            box-shadow: 0 4px 15px rgba(237, 50, 55, 0.3);
+            border-color: var(--primary); /* THEME Color */
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
         }
 
         .grade-buttons label:hover {
-            border-color: #b82329;
+            border-color: var(--primary-light);
+            background: var(--glass-hover);
         }
 
         .button-group {
@@ -208,7 +265,7 @@
             padding: 12px;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--border-radius-sm);
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
@@ -220,27 +277,29 @@
         }
 
         .add-button {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, var(--success), var(--success-light)); /* Green */
         }
 
         .add-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.2);
         }
 
         .pdf-button {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); /* THEME Color */
         }
 
         .pdf-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(237, 50, 55, 0.4);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
         }
 
         .pdf-button:disabled {
-            background: #ccc;
+            background: var(--glass);
+            color: var(--text-muted);
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .suggestions {
@@ -248,15 +307,15 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: white;
-            border: 2px solid #ddd;
+            background: var(--bg-secondary); /* BG Change */
+            border: 1px solid var(--glass-border); /* Border Change */
             border-top: none;
             border-radius: 0 0 8px 8px;
             max-height: 150px;
             overflow-y: auto;
             z-index: 100;
             display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .suggestions.show {
@@ -267,13 +326,15 @@
             padding: 10px 12px;
             cursor: pointer;
             transition: background 0.2s;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid var(--glass-border);
             font-size: 0.9em;
+            color: var(--text-secondary);
         }
 
         .suggestion-item:hover,
         .suggestion-item.suggestion-active {
-            background: #f0f0f0;
+            background: var(--glass-hover);
+            color: var(--text-primary);
         }
 
         .input-wrapper {
@@ -288,39 +349,45 @@
             border-spacing: 0;
             table-layout: fixed;
             flex-shrink: 0; 
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Radius ke liye */
+            border: 1px solid var(--glass-border);
         }
 
         .items-table h3 {
-            color: #333;
+            color: var(--text-primary);
             margin-bottom: 10px;
-            font-size: 1em;
+            font-size: 1.1em;
             flex-shrink: 0;
+            padding: 10px 15px 0 15px; /* Thodi padding */
+            background: var(--glass);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            background: transparent;
             font-size: 0.9em;
         }
 
         thead {
-            background: linear-gradient(135deg, #ed3237 0%, #b82329 100%);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); /* THEME Color */
             color: white;
             flex-shrink: 0;
         }
 
         th {
-            padding: 5px;
+            padding: 10px 5px; /* Padding badhai */
             text-align: center;
             font-weight: 600;
-            border: 1px solid #ed3237;
+            border: none; /* Border hata di */
             height: 30px;
         }
 
         td {
-            padding: 2px 4px !important;
-            border: 1px solid #ddd;
+            padding: 8px 4px !important; /* Padding badhai */
+            border: none;
+            border-bottom: 1px solid var(--glass-border);
             text-align: center;
             height: 20px !important;
             max-height: 20px !important;
@@ -329,18 +396,27 @@
             overflow: hidden;
             white-space: nowrap;
             vertical-align: middle !important;
+            color: var(--text-secondary);
         }
 
         tbody tr:hover {
-            background: #f8f9fa;
+            background: var(--glass-hover);
+            color: var(--text-primary);
+        }
+        tbody tr:hover td {
+            color: var(--text-primary);
         }
 
         tbody tr:nth-child(even) {
-            background: #f8f9fa;
+            background: var(--glass);
+        }
+        
+        tbody tr:last-child td {
+             border-bottom: none;
         }
 
         .delete-btn {
-            background: #ff6b6b;
+            background: linear-gradient(135deg, var(--error), var(--error-light)); /* Red */
             color: white;
             width: 30px; 
             height: 30px; 
@@ -365,8 +441,8 @@
         .empty-state {
             text-align: center;
             padding: 20px 10px;
-            color: #999;
-            background: #f8f9fa;
+            color: var(--text-muted);
+            background: var(--glass);
             border-radius: 8px;
             margin-top: 10px;
             font-size: 0.9em;
@@ -385,7 +461,7 @@
             padding: 14px;
             font-size: 1.05em;
             font-weight: 600;
-            color: #333;
+            color: var(--text-primary);
         }
 
         #advance-options-container .grade-buttons label {
@@ -402,7 +478,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr; 
             gap: 0; 
-            border: 1px solid #eee; 
+            border: 1px solid var(--glass-border); 
             border-radius: 8px;
             overflow: hidden; 
         }
@@ -412,11 +488,12 @@
             flex-direction: column; 
             gap: 5px;
             padding: 10px; 
-            border-bottom: 1px solid #eee; 
+            border-bottom: 1px solid var(--glass-border); 
+            background: var(--glass);
         }
         
         .surface-item-wrapper:not(:nth-child(3n)) {
-             border-right: 1px solid #eee;
+             border-right: 1px solid var(--glass-border);
         }
 
         .surface-item-wrapper:nth-last-child(-n+3) {
@@ -429,14 +506,22 @@
         
         .surface-item-wrapper label {
             font-weight: 600;
-            color: #333;
+            color: var(--text-secondary);
             font-size: 0.85em; 
             margin-bottom: 0;
         }
 
         .surface-item-wrapper .price-input-container {
             border-radius: 6px; 
-            border-left: 2px solid #ddd;
+            border-left: none; /* Hata diya */
+            border: 1px solid var(--glass-border);
+            background: var(--bg-primary); /* Input BG alag kiya */
+        }
+        
+        .surface-item-wrapper .price-input-container:focus-within {
+             border-color: var(--primary);
+             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+             background: var(--bg-primary);
         }
  
         .surface-item-wrapper .price-symbol {
@@ -446,11 +531,12 @@
             padding: 8px 10px; 
             font-size: 0.9em;  
             text-align: center; 
+            background: transparent;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container"> 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
@@ -575,7 +661,7 @@
         </div>
 
     <script>
-        // --- (V43 - PINPOINT LINE BETWEEN GROUPS) ---
+        // --- (V44 - THEME CHANGE) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -866,7 +952,7 @@
             container.innerHTML = tableHTML;
         }
 
-        // --- [V43 PDF LOGIC] ---
+        // --- V43 PDF LOGIC (Untouched) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -890,7 +976,6 @@
             const basePageHeight = 296.5; 
             const baseRows = 6;           
             const rowHeight = 7;
-            // [FIX] Extra height = 10mm (line) + 8mm (margin)
             const groupHeaderHeight = 18; 
 
             let totalRows = items.length;
@@ -925,7 +1010,7 @@
             }).save();
         }
         
-        // --- [V43 HTML LAYOUT FIX] ---
+        // --- V43 PDF CONTENT LOGIC (Untouched) ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -940,7 +1025,7 @@
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
             const ROW_HEIGHT_MM = 7; 
-            const GROUP_HEADER_HEIGHT_MM = 18; // 10mm heading + 8mm line/margin
+            const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;
             let spacerHeight = 0;
@@ -955,12 +1040,11 @@
                 });
 
                 let numGroups = 0;
-                let groupKeys = Object.keys(groups); // Size ke hisab se keys
+                let groupKeys = Object.keys(groups); 
 
                 for (const size of groupKeys) {
                     numGroups++;
                     
-                    // [PINPOINT LINE FIX] Pehle group se pehle line NAHI dikhani
                     if (numGroups > 1) {
                         tableContentHTML += `
                             <div style="margin-top: 10px; margin-bottom: 8px;">
@@ -969,7 +1053,6 @@
                         `;
                     }
                     
-                    // Group Heading
                     tableContentHTML += `
                         <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; 
                                     margin-top: 0;
@@ -1180,9 +1263,11 @@
             renderItems(); 
         }
 
+        // --- [UI V44] Theme Switch Logic ---
         function switchTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
+            const container = document.querySelector('.container');
 
             tabs.forEach((tab) => tab.classList.remove('active'));
             buttons.forEach((btn) => btn.classList.remove('active'));
@@ -1191,9 +1276,11 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
+                container.classList.add('advance-theme'); // Green theme
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
+                container.classList.remove('advance-theme'); // Default (Purple) theme
                 clearAdvanceTab();
             }
         }

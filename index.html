@@ -1036,16 +1036,27 @@
             renderItems(); 
         }
 
-        // --- [NEW V47] 'Basic' Tab ke liye Original PDF Logic ---
+        // --- [V47] PDF FUNCTIONS (SPLIT) ---
+
+        // [NEW] BASIC TAB PDF (Original V41 logic)
         function generateBasicPDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
+
+            // Simple V41 height calculation
+            const basePageHeight = 296.5; 
+            const baseRows = 6;           
+            const rowHeight = 7;
             
+            let totalRows = items.length;
+            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+
             const element = document.createElement('div');
-            // 'totalHeight' 0 pass karo, aur type 'basic'
-            element.innerHTML = generatePDFContent(0, 'basic'); 
+            // 'basic' type pass karo
+            element.innerHTML = generatePDFContent(totalHeight, 'basic'); 
 
             const opt = {
                 margin: 0,
@@ -1055,15 +1066,19 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: 'a4' // <-- Yahi hai original logic jo multi-page banata hai
+                    format: [210, totalHeight] // Dynamic height
                 },
-                pagebreak: { mode: ['auto'] } // Default
+                pagebreak: { mode: ['avoid'] } 
             };
 
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                while (pdf.internal.getNumberOfPages() > 1) {
+                    pdf.deletePage(pdf.internal.getNumberOfPages());
+                }
+            }).save();
         }
 
-        // --- [NEW V47] 'Advance' Tab ke liye Naya PDF Logic ---
+        // [NEW] ADVANCE TAB PDF (V43 logic)
         function generateAdvancePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1083,18 +1098,20 @@
             const basePageHeight = 296.5; 
             const baseRows = 6;           
             const rowHeight = 7;
-            const groupHeaderHeight = 18; 
+            const groupHeaderHeight = 18; // 10mm heading + 8mm line
 
             let totalRows = items.length;
             
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
             let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
 
+            // [FIX] Extra height for groups
             if (numGroups > 1) {
                 totalHeight += (numGroups - 1) * groupHeaderHeight;
             }
 
             const element = document.createElement('div');
+            // 'advance' type pass karo
             element.innerHTML = generatePDFContent(totalHeight, 'advance'); 
 
             const opt = {
@@ -1117,7 +1134,7 @@
             }).save();
         }
         
-        // --- [NEW V47] generatePDFContent ab DUAL LOGIC handle karega ---
+        // --- [V47] generatePDFContent (DUAL LOGIC) ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
@@ -1129,17 +1146,18 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
+            // --- Calculation Constants ---
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
             const ROW_HEIGHT_MM = 7; 
-            const GROUP_HEADER_HEIGHT_MM = 18; 
+            const GROUP_HEADER_HEIGHT_MM = 10;
+            const PINPOINT_LINE_HEIGHT_MM = 8;
 
             let contentHeight = 0;
             let spacerHeight = 0;
-            let mainDivStyle = ''; // Style yahan define karenge
-
-            // --- [LOGIC 1: 'Advance' Tab ke liye (Grouping)] ---
+            
+            // --- [LOGIC 1: 'Advance' Tab (Grouping)] ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1207,15 +1225,8 @@
                 let groupHeadingHeight = (numGroups * GROUP_HEADER_HEIGHT_MM) + ((numGroups - 1) * PINPOINT_LINE_HEIGHT_MM);
                 contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
 
-                // Advance tab 'Spacer' logic
-                spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-                if (spacerHeight < 0) spacerHeight = 0;
-                
-                // Advance tab 'Page' style
-                mainDivStyle = `height: ${totalHeight}mm; position: relative;`;
-
             } 
-            // --- [LOGIC 2: 'Basic' Tab ke liye (Simple)] ---
+            // --- [LOGIC 2: 'Basic' Tab (Original V41 logic)] ---
             else {
                 let tableRows = ''; 
                 items.forEach((item, idx) => {
@@ -1249,19 +1260,23 @@
                     </table>
                 `;
                 
-                // Basic tab 'Spacer' logic (isme spacer nahi hota)
-                spacerHeight = 0;
-                
-                // Basic tab 'Page' style (ORIGINAL)
-                mainDivStyle = `min-height: 296.5mm; height: auto; position: relative;`;
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            // --- [LOGIC 3: Final HTML banao] ---
+            // --- [LOGIC 3: Spacer aur Final HTML banao] ---
             
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            
+            if (spacerHeight < 0) {
+                spacerHeight = 0;
+            }
+
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            ${mainDivStyle} 
+                            height: ${totalHeight}mm; 
                             margin: 0; background: white; 
+                            position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">

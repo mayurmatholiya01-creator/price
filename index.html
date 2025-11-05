@@ -575,7 +575,7 @@
         </div>
 
     <script>
-        // --- (V41 - FOOTER GAP FIX) ---
+        // --- (V42 - DUAL PDF LOGIC) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -866,24 +866,50 @@
             container.innerHTML = tableHTML;
         }
 
-        // --- [V40 PDF LOGIC] ---
+        // --- [YAHAN V42 KA DUAL PDF LOGIC HAI] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
 
+            // 1. Active Tab konsa hai?
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            let numGroups = 1; // Basic tab ke liye 1 hi group hai
+
+            if (activeTabId === 'advance') {
+                // Advance tab ke liye, groups count karo
+                const groups = {};
+                items.forEach(item => {
+                    if (!groups[item.size]) {
+                        groups[item.size] = [];
+                    }
+                    groups[item.size].push(item);
+                });
+                numGroups = Object.keys(groups).length;
+            }
+
+            // 2. Height Calculate karo
             const basePageHeight = 296.5; 
-            const baseRows = 6;           
-            const extraPerRow = 7;       
-            
+            const baseRows = 6;           // 6 row A4 par fit hoti hain
+            const rowHeight = 7;          // Har row ki height 7mm
+            const groupHeaderHeight = 10; // Har naye "SIZE: ..." heading ki height
+
             let totalRows = items.length;
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
             
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * extraPerRow));
+            // Calculate height based on rows
+            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+
+            // Advance tab ke liye, har naye group ki extra height add karo
+            if (activeTabId === 'advance' && numGroups > 1) {
+                 // (numGroups - 1) kyunki pehla group extra space nahi leta
+                totalHeight += (numGroups - 1) * groupHeaderHeight;
+            }
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight); 
+            // 3. Tab ID ko content generator me pass karo
+            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
 
             const opt = {
                 margin: 0,
@@ -893,7 +919,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] 
+                    format: [210, totalHeight] // Dynamic height
                 },
                 pagebreak: { mode: ['avoid'] } 
             };
@@ -905,47 +931,131 @@
             }).save();
         }
         
-        // --- [V41 HTML LAYOUT FIX] ---
-        function generatePDFContent(totalHeight) { 
+        // --- [YAHAN V42 KA DUAL PDF CONTENT LOGIC HAI] ---
+        function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
-            
-            let tableRows = '';
-
-            items.forEach((item, idx) => {
-                const actualIndex = idx + 1;
-                const rowStyle = (idx % 2 === 0) 
-                    ? 'background: white;' 
-                    : 'background: #f8f9fa;'; 
-
-                tableRows += `
-                    <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
-                        <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-
+            let tableContentHTML = ''; // Table content yahan banega
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- [V41 SPACER CALCULATION] ---
-            const HEADER_HEIGHT_MM = 125; // Header + Address + Title
-            // [FIX] Footer height ko 120 se 95 kiya
+            // --- Calculation Constants ---
+            const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 7; // Humne 7mm fix kiya hai
-            
-            let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-            let contentHeight = HEADER_HEIGHT_MM + tableHeight;
+            const ROW_HEIGHT_MM = 7; 
+            const GROUP_HEADER_HEIGHT_MM = 10; // "SIZE: ..." heading ki height
 
-            let spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            let contentHeight = 0;
+            let spacerHeight = 0;
+            
+            // --- [LOGIC 1: 'Advance' Tab ke liye table banao (Grouping ke saath)] ---
+            if (tabType === 'advance') {
+                const groups = {};
+                items.forEach(item => {
+                    if (!groups[item.size]) {
+                        groups[item.size] = [];
+                    }
+                    groups[item.size].push(item);
+                });
+
+                let numGroups = 0;
+                for (const size in groups) {
+                    numGroups++;
+                    // Group Heading
+                    tableContentHTML += `
+                        <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; 
+                                    margin-top: ${numGroups > 1 ? '20px' : '0'}; /* Pehle group se pehle margin nahi */
+                                    margin-bottom: 10px;">
+                            SIZE: ${size}
+                        </div>
+                    `;
+                    
+                    // Table Header
+                    tableContentHTML += `
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                            <thead>
+                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
+                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                                </tr>
+                            </thead>
+                            <tbody style="background: white;">
+                    `;
+
+                    let groupSrNo = 1;
+                    groups[size].forEach((item, idx) => {
+                        const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
+                        tableContentHTML += `
+                            <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${groupSrNo}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                            </tr>
+                        `;
+                        groupSrNo++;
+                    });
+                    
+                    tableContentHTML += '</tbody></table>';
+                } // End for loop (groups)
+                
+                // Advance tab ke liye Content Height Calculate karo
+                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
+                let groupHeadingHeight = (numGroups * GROUP_HEADER_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
+
+            } 
+            // --- [LOGIC 2: 'Basic' Tab ke liye table banao (Simple)] ---
+            else {
+                let tableRows = ''; // Basic ke liye local
+                items.forEach((item, idx) => {
+                    const actualIndex = idx + 1;
+                    const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
+                    tableRows += `
+                        <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                tableContentHTML = `
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <thead>
+                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
+                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody style="background: white;">
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                `;
+                
+                // Basic tab ke liye Content Height Calculate karo
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight;
+            }
+
+            // --- [LOGIC 3: Spacer aur Final HTML banao] ---
+            
+            // Spacer ki height = Total Page Height - (Content + Footer)
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
             
             if (spacerHeight < 0) {
                 spacerHeight = 0;
@@ -1009,25 +1119,13 @@
                             <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
                         </div>
                         
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                            <thead>
-                                <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
-                                    <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                                </tr>
-                            </thead>
-                            <tbody style="background: white;">
-                                ${tableRows}
-                            </tbody>
-                        </table>
+                        ${tableContentHTML}
+                        
                     </div>
 
                     <div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
-                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: 95mm; flex-shrink: 0;">
+                    <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: ${FOOTER_BLOCK_HEIGHT_MM}mm; flex-shrink: 0;">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
@@ -1082,7 +1180,7 @@
             if(optionsContainer) optionsContainer.style.display = 'none';
 
             clearAdvancePriceInputs();
-            renderItems(); // Advance tab ko bhi empty render karo
+            renderItems(); 
         }
 
         function switchTab(event, tabName) {

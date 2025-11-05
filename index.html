@@ -1077,11 +1077,7 @@
             let totalRows = items.length;
             
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight)); 
-            totalHeight += 95; // FOOTER_BLOCK_HEIGHT_MM
-// footer height remove from here
-
-
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
 
 // 👇 [NEW LOGIC] Shift all footer-area content with page height
 if (items.length > baseRows) {
@@ -1238,19 +1234,13 @@ if (items.length > baseRows) {
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-   // Calculate spacer area (to push footer down)
-spacerHeight = totalHeight - contentHeight;
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
 
-// Add footer block height properly here
-spacerHeight = spacerHeight > 0 ? spacerHeight : 0;
-spacerHeight += FOOTER_BLOCK_HEIGHT_MM;
+            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
+            if (items.length > 6) {
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
 
-// For extra entries, slightly extend page
-if (items.length > 6) {
-    spacerHeight += (items.length - 6) * 0.5; // fine micro shift
-}
-
-
+}   
 
 
             pagesHTML = `
@@ -1322,13 +1312,14 @@ if (items.length > 6) {
 
 <!-- fix footer position absolutely to page bottom -->
 <div style="
-  position: relative;
-  margin-top: 5mm;      /* table ke niche thoda gap */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
   padding: 0 25px 20px 25px;
   height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
-  z-index: 5;
 ">
-
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>

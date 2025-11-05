@@ -1107,7 +1107,6 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- Calculation Constants ---
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
@@ -1117,7 +1116,6 @@
             let contentHeight = 0;
             let spacerHeight = 0;
             
-            // --- [LOGIC 1: 'Advance' Tab ke liye table banao (Grouping ke saath)] ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1186,7 +1184,6 @@
                 contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
 
             } 
-            // --- [LOGIC 2: 'Basic' Tab ke liye table banao (Simple)] ---
             else {
                 let tableRows = ''; 
                 items.forEach((item, idx) => {

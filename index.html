@@ -356,11 +356,12 @@
 
         .items-table h3 {
             color: var(--text-primary);
-            margin-bottom: 10px;
+            margin-bottom: 0; /* Changed */
             font-size: 1.1em;
             flex-shrink: 0;
-            padding: 10px 15px 0 15px; /* Thodi padding */
+            padding: 15px; /* Changed */
             background: var(--glass);
+            border-bottom: 1px solid var(--glass-border); /* Added */
         }
 
         table {
@@ -396,7 +397,7 @@
             overflow: hidden;
             white-space: nowrap;
             vertical-align: middle !important;
-            color: var(--text-secondary);
+            color: var(--text-secondary); /* THIS IS THE BUG */
         }
 
         tbody tr:hover {
@@ -443,8 +444,8 @@
             padding: 20px 10px;
             color: var(--text-muted);
             background: var(--glass);
-            border-radius: 8px;
-            margin-top: 10px;
+            /* border-radius: 8px; */ /* Removed radius */
+            margin-top: 0px; /* Removed margin */
             font-size: 0.9em;
         }
 
@@ -513,9 +514,9 @@
 
         .surface-item-wrapper .price-input-container {
             border-radius: 6px; 
-            border-left: none; /* Hata diya */
+            border-left: none; 
             border: 1px solid var(--glass-border);
-            background: var(--bg-primary); /* Input BG alag kiya */
+            background: var(--bg-primary); 
         }
         
         .surface-item-wrapper .price-input-container:focus-within {
@@ -661,7 +662,7 @@
         </div>
 
     <script>
-        // --- (V44 - THEME CHANGE) ---
+        // --- (V45 - PDF FONT COLOR FIX) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -1010,11 +1011,12 @@
             }).save();
         }
         
-        // --- V43 PDF CONTENT LOGIC (Untouched) ---
+        // --- [V45 PDF FONT COLOR FIX] ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
+            const pdfTextColor = '#333'; // <-- YAHAN FIX KIYA GAYA
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
@@ -1080,11 +1082,11 @@
                         const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
                         tableContentHTML += `
                             <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${groupSrNo}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
-                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${groupSrNo}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.size}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
+                                <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
                             </tr>
                         `;
                         groupSrNo++;
@@ -1105,11 +1107,11 @@
                     const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
                     tableRows += `
                         <tr style="height: 24px; max-height: 24px; min-height: 24px; overflow: hidden; line-height: 1; ${rowStyle}">
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${actualIndex}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.size}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.surface}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">${item.grade}</td>
-                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; max-height: 20px; min-height: 20px; font-size: 9pt !important; overflow: hidden; white-space: nowrap; line-height: 1; vertical-align: middle;">₹ ${item.price.toFixed(2)}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${actualIndex}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.size}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
+                            <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
                         </tr>
                     `;
                 });
@@ -1167,7 +1169,7 @@
                             />
                             ${pinPointLine}
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; line-height: 1.8; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: ${pdfTextColor}; line-height: 1.8; margin-bottom: 20px;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Company Details:</div>
                                 <div>COMET GRANITO PVT.LTD.</div>
@@ -1180,7 +1182,7 @@
                                 <div style="font-size: 8pt !important;">GJ 363642, INDIA</div>
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: #333; margin-bottom: 20px; line-height: 1.8;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 9pt !important; color: ${pdfTextColor}; margin-bottom: 20px; line-height: 1.8;">
                             <div>
                                 <div style="font-weight: 600; margin-bottom: 8px; color: #1a1a1a;">Contact:</div>
                                 <div style="font-size: 8pt !important;">📧 Email: info@granicer.in</div>
@@ -1212,7 +1214,7 @@
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>
-                            <ul style="font-size: 8pt !important; color: #555; margin: 0; padding-left: 18px; line-height: 1.6;">
+                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 18px; line-height: 1.6;">
                                 <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
                                 <li>Prices are subject to change without prior notice depending on market conditions.</li>
                                 <li>Delivery period will be confirmed after order placement.</li>

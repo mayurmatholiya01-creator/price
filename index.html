@@ -16,61 +16,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* --- [UI V44] TilesPro Theme --- */
+        /* Pura CSS wahi hai (V44) */
         :root {
-          /* Theme Colors */
-          --primary: #6366f1; /* Purple (Basic) */
+          --primary: #6366f1; 
           --primary-light: #818cf8;
-          --success: #10b981; /* Green */
+          --success: #10b981; 
           --success-light: #34d399;
-          --error: #ef4444; /* Red */
+          --error: #ef4444; 
           --error-light: #f87171;
-          
-          /* Dark Mode Palette */
           --bg-primary: #0a0a0b;
           --bg-secondary: #1a1a1e;
           --glass: rgba(255, 255, 255, 0.06);
           --glass-border: rgba(255, 255, 255, 0.1);
           --glass-hover: rgba(255, 255, 255, 0.08);
-          
-          /* Text Colors */
           --text-primary: #ffffff;
           --text-secondary: #d1d5db;
           --text-muted: #9ca3af;
-          
           --border-radius: 12px;
           --border-radius-sm: 8px;
         }
-
-        /* [THEME SWITCH] Jab Advance tab active ho */
         .container.advance-theme {
-            --primary: #10b981; /* Green (Advance) */
+            --primary: #10b981; 
             --primary-light: #34d399;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
-            height: 100%;
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font Change */
-            background: var(--bg-primary); /* BG Change */
-            color: var(--text-primary); /* Text Change */
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
             min-height: 100vh;
             padding: 10px;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--bg-secondary); /* Container BG Change */
+            background: var(--bg-secondary); 
             border-radius: var(--border-radius);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
@@ -78,17 +59,15 @@
             flex-direction: column;
             height: 100dvh; 
             max-height: 100dvh; 
-            border: 1px solid var(--glass-border); /* Border Add */
-            transition: all 0.3s ease; /* Theme switch transition */
+            border: 1px solid var(--glass-border); 
+            transition: all 0.3s ease; 
         }
-
         .tabs {
             display: flex;
-            background: var(--glass); /* Tabs BG Change */
-            border-bottom: 1px solid var(--glass-border); /* Border Change */
+            background: var(--glass); 
+            border-bottom: 1px solid var(--glass-border); 
             flex-shrink: 0;
         }
-
         .tab-btn {
             flex: 1;
             padding: 15px 10px;
@@ -97,66 +76,58 @@
             cursor: pointer;
             font-size: 1em;
             font-weight: 600;
-            color: var(--text-muted); /* Color Change */
+            color: var(--text-muted); 
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
-            font-family: 'Inter', sans-serif; /* Font Change */
+            font-family: 'Inter', sans-serif; 
         }
-
         .tab-btn.active {
-            color: var(--primary); /* THEME Color */
+            color: var(--primary); 
             background: transparent;
-            border-bottom-color: var(--primary); /* THEME Color */
+            border-bottom-color: var(--primary); 
         }
-
         .tab-btn:hover {
-            color: var(--primary); /* THEME Color */
+            color: var(--primary); 
         }
-
         .tab-content {
             display: none;
             padding: 20px;
             overflow-y: auto;
             flex: 1;
         }
-
         .tab-content.active {
             display: flex;
             flex-direction: column;
         }
-
         .form-group {
             margin-bottom: 15px;
             flex-shrink: 0;
         }
-
         label {
             display: block;
             margin-bottom: 8px;
-            color: var(--text-secondary); /* Color Change */
+            color: var(--text-secondary); 
             font-weight: 600;
-            font-size: 0.9em; /* Thoda chhota */
-            text-transform: uppercase; /* Uppercase */
+            font-size: 0.9em; 
+            text-transform: uppercase; 
             letter-spacing: 0.5px;
         }
-
         input[type='text'],
         input[type='number'],
         select {
             width: 100%;
             padding: 12px;
-            background: var(--glass); /* Input BG Change */
-            border: 1px solid var(--glass-border); /* Input Border Change */
-            border-radius: var(--border-radius-sm); /* Radius Change */
-            color: var(--text-primary); /* Input Text Change */
-            font-size: 16px; /* iOS zoom fix */
+            background: var(--glass); 
+            border: 1px solid var(--glass-border); 
+            border-radius: var(--border-radius-sm); 
+            color: var(--text-primary); 
+            font-size: 16px; 
             transition: border-color 0.3s, box-shadow 0.3s;
             font-family: 'Inter', sans-serif;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
         }
-        
         select {
             background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d1d5db' stroke-width='2' fill='none'/></svg>");
             background-repeat: no-repeat;
@@ -169,25 +140,22 @@
             background: var(--bg-primary);
             color: var(--text-primary);
         }
-
         input[type='text']:focus,
         input[type='number']:focus,
         select:focus {
             outline: none;
-            border-color: var(--primary); /* THEME Color */
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); /* Focus shadow */
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); 
             background: var(--glass-hover);
         }
-
         .price-input-container {
             display: flex;
             align-items: center;
             border: none;
             transition: border-color 0.3s;
             overflow: hidden;
-            position: relative; /* [V44] Clear button ke liye */
+            position: relative; 
         }
-        
         #basic .price-input-container {
              border: 1px solid var(--glass-border);
              border-radius: var(--border-radius-sm);
@@ -212,19 +180,16 @@
             font-size: 1em;
             outline: none;
             background: transparent;
-            padding-right: 35px; /* [V44] Clear button ke liye jagah */
+            padding-right: 35px; 
         }
-        
         .grade-buttons {
             display: flex;
             justify-content: space-between;
             gap: 10px;
         }
-
         .grade-buttons input[type="radio"] {
             display: none; 
         }
-
         .grade-buttons label {
             flex: 1;
             text-align: center;
@@ -238,26 +203,22 @@
             transition: all 0.3s ease;
             margin-bottom: 0; 
         }
-
         .grade-buttons input[type="radio"]:checked + label {
-            background-color: var(--primary); /* THEME Color */
+            background-color: var(--primary); 
             color: white;
-            border-color: var(--primary); /* THEME Color */
+            border-color: var(--primary); 
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
         }
-
         .grade-buttons label:hover {
             border-color: var(--primary-light);
             background: var(--glass-hover);
         }
-
         .button-group {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
             margin-top: 5px;
         }
-
         .add-button,
         .pdf-button {
             flex: 1;
@@ -274,25 +235,20 @@
             justify-content: center;
             gap: 8px;
         }
-
         .add-button {
-            background: linear-gradient(135deg, var(--success), var(--success-light)); /* Green */
+            background: linear-gradient(135deg, var(--success), var(--success-light)); 
         }
-
         .add-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(16, 185, 129, 0.2);
         }
-
         .pdf-button {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); /* THEME Color */
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
         }
-
         .pdf-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
         }
-
         .pdf-button:disabled {
             background: var(--glass);
             color: var(--text-muted);
@@ -300,14 +256,13 @@
             transform: none;
             box-shadow: none;
         }
-
         .suggestions {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--bg-secondary); /* BG Change */
-            border: 1px solid var(--glass-border); /* Border Change */
+            background: var(--bg-secondary); 
+            border: 1px solid var(--glass-border); 
             border-top: none;
             border-radius: 0 0 8px 8px;
             max-height: 150px;
@@ -316,11 +271,9 @@
             display: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .suggestions.show {
             display: block;
         }
-
         .suggestion-item {
             padding: 10px 12px;
             cursor: pointer;
@@ -329,17 +282,14 @@
             font-size: 0.9em;
             color: var(--text-secondary);
         }
-
         .suggestion-item:hover,
         .suggestion-item.suggestion-active {
             background: var(--glass-hover);
             color: var(--text-primary);
         }
-
         .input-wrapper {
             position: relative;
         }
-
         .items-table {
             margin-top: 20px;
             display: flex;
@@ -349,43 +299,38 @@
             table-layout: fixed;
             flex-shrink: 0; 
             border-radius: var(--border-radius);
-            overflow: hidden; /* Radius ke liye */
+            overflow: hidden; 
             border: 1px solid var(--glass-border);
         }
-
         .items-table h3 {
             color: var(--text-primary);
-            margin-bottom: 0; /* Changed */
+            margin-bottom: 0; 
             font-size: 1.1em;
             flex-shrink: 0;
-            padding: 15px; /* Changed */
+            padding: 15px; 
             background: var(--glass);
-            border-bottom: 1px solid var(--glass-border); /* Added */
+            border-bottom: 1px solid var(--glass-border); 
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             background: transparent;
             font-size: 0.9em;
         }
-
         thead {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); /* THEME Color */
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
             color: white;
             flex-shrink: 0;
         }
-
         th {
-            padding: 10px 5px; /* Padding badhai */
+            padding: 10px 5px; 
             text-align: center;
             font-weight: 600;
-            border: none; /* Border hata di */
+            border: none; 
             height: 30px;
         }
-
         td {
-            padding: 8px 4px !important; /* Padding badhai */
+            padding: 8px 4px !important; 
             border: none;
             border-bottom: 1px solid var(--glass-border);
             text-align: center;
@@ -396,9 +341,8 @@
             overflow: hidden;
             white-space: nowrap;
             vertical-align: middle !important;
-            color: var(--text-secondary);
+            color: var(--text-secondary); 
         }
-
         tbody tr:hover {
             background: var(--glass-hover);
             color: var(--text-primary);
@@ -406,17 +350,14 @@
         tbody tr:hover td {
             color: var(--text-primary);
         }
-
         tbody tr:nth-child(even) {
             background: var(--glass);
         }
-        
         tbody tr:last-child td {
              border-bottom: none;
         }
-
         .delete-btn {
-            background: linear-gradient(135deg, var(--error), var(--error-light)); /* Red */
+            background: linear-gradient(135deg, var(--error), var(--error-light)); 
             color: white;
             width: 30px; 
             height: 30px; 
@@ -432,48 +373,39 @@
             justify-content: center;
             gap: 0;
         }
-
         .delete-btn:hover {
             background: #ff5252;
             transform: scale(1.05);
         }
-
         .empty-state {
             text-align: center;
             padding: 20px 10px;
             color: var(--text-muted);
             background: var(--glass);
-            /* border-radius: 8px; */ /* Removed radius */
-            margin-top: 0px; /* Removed margin */
+            margin-top: 0px; 
             font-size: 0.9em;
         }
-
         .table-wrapper {
             overflow-x: auto;
             flex: 1;
         }
-        
         #advance-form-container {
             flex-shrink: 0;
         }
-
         #advanceSizeSelect {
             padding: 14px;
             font-size: 1.05em;
             font-weight: 600;
             color: var(--text-primary);
         }
-
         #advance-options-container .grade-buttons label {
             padding: 6px 8px; 
             font-size: 0.8em;  
             gap: 8px;          
         }
-
         #advance-options-container {
              /* Default hidden */
         }
-
         #surfacePriceList {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr; 
@@ -482,7 +414,6 @@
             border-radius: 8px;
             overflow: hidden; 
         }
-
         .surface-item-wrapper {
             display: flex;
             flex-direction: column; 
@@ -491,39 +422,32 @@
             border-bottom: 1px solid var(--glass-border); 
             background: var(--glass);
         }
-        
         .surface-item-wrapper:not(:nth-child(3n)) {
              border-right: 1px solid var(--glass-border);
         }
-
         .surface-item-wrapper:nth-last-child(-n+3) {
             border-bottom: none;
         }
-        
         .surface-item-wrapper:last-child:nth-child(3n-1) {
              border-bottom: none;
         }
-        
         .surface-item-wrapper label {
             font-weight: 600;
             color: var(--text-secondary);
             font-size: 0.85em; 
             margin-bottom: 0;
         }
-
         .surface-item-wrapper .price-input-container {
             border-radius: 6px; 
             border-left: none; 
             border: 1px solid var(--glass-border);
             background: var(--bg-primary); 
         }
-        
         .surface-item-wrapper .price-input-container:focus-within {
              border-color: var(--primary);
              box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
              background: var(--bg-primary);
         }
- 
         .surface-item-wrapper .price-symbol {
              display: none; 
         }
@@ -533,8 +457,6 @@
             text-align: center; 
             background: transparent;
         }
-        
-        /* --- [CSS V44] Clear 'X' Button --- */
         .input-wrapper-clearable {
             position: relative;
         }
@@ -549,7 +471,7 @@
             transition: opacity 0.2s ease;
             pointer-events: none;
             font-size: 0.9em;
-            z-index: 5; /* Suggestions ke piche */
+            z-index: 5; 
         }
         .clear-btn.visible {
             opacity: 1;
@@ -567,8 +489,6 @@
         #basic .price-input-container input {
             padding-right: 35px;
         }
-
-        /* --- [CSS V44] Click-to-Edit --- */
         .editable-cell {
             cursor: pointer;
         }
@@ -733,7 +653,7 @@
         </div>
 
     <script>
-        // --- (V44 - CLICK-TO-EDIT + CLEAR BUTTONS) ---
+        // --- (V45 - CLEAR BUTTON & CLICK-TO-EDIT) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -918,8 +838,18 @@
             });
         }
 
+        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
+
+            // --- [V45 FIX] ---
+            // 1. Purane price clear karo
+            clearAdvancePriceInputs(); 
+            // 2. Grade ko 'PRE' par reset karo
+            const gradePre = document.getElementById('adv_grade_pre');
+            if (gradePre) gradePre.checked = true;
+            // --- [FIX END] ---
+
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
                 populateSurfaceList(); 

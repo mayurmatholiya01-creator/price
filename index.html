@@ -1040,43 +1040,43 @@
 
         // [NEW] BASIC TAB PDF (Original V41 logic)
         function generateBasicPDF() {
-            if (items.length === 0) {
-                alert('Please add items first');
-                return;
-            }
+  if (items.length === 0) {
+    alert('Please add items first');
+    return;
+  }
 
-            // Simple V41 height calculation
-            const basePageHeight = 296.5; 
-            const baseRows = 6;           
-            const rowHeight = 7;
-            
-            let totalRows = items.length;
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+  // Step 1: Create invisible HTML for measurement
+  const element = document.createElement('div');
+  element.innerHTML = generatePDFContent(null, 'basic'); // null means auto height
+  document.body.appendChild(element);
+  element.style.position = 'absolute';
+  element.style.visibility = 'hidden';
+  element.style.width = '210mm'; // A4 width
 
-            const element = document.createElement('div');
-            // 'basic' type pass karo
-            element.innerHTML = generatePDFContent(totalHeight, 'basic'); 
+  // Step 2: Measure actual rendered height in pixels
+  const pxHeight = element.offsetHeight;
+  const mmHeight = pxHeight * 0.264583; // Convert px → mm
 
-            const opt = {
-                margin: 0,
-                filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
-                jsPDF: {
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: [210, totalHeight] // Dynamic height
-                },
-                pagebreak: { mode: ['avoid'] } 
-            };
+  // Step 3: Remove temporary element
+  document.body.removeChild(element);
 
-            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                while (pdf.internal.getNumberOfPages() > 1) {
-                    pdf.deletePage(pdf.internal.getNumberOfPages());
-                }
-            }).save();
-        }
+  // Step 4: Generate final PDF with measured height
+  const opt = {
+    margin: 0,
+    filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+    jsPDF: {
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [210, mmHeight]
+    },
+    pagebreak: { mode: ['avoid'] }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
+
 
         // [NEW] ADVANCE TAB PDF (V43 logic)
         function generateAdvancePDF() {
@@ -1227,7 +1227,8 @@
                 contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
                 
                 // Advance tab 'Page' style
-                mainDivStyle = `height: ${totalHeight}mm; position: relative;`;
+                mainDivStyle = totalHeight ? `height: ${totalHeight}mm; position: relative;` : 'position: relative;';
+
 
             } 
             // --- [LOGIC 2: 'Basic' Tab (Original V41 logic)] ---
@@ -1268,7 +1269,8 @@
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
                 
                 // Basic tab 'Page' style
-                mainDivStyle = `height: ${totalHeight}mm; position: relative;`;
+                mainDivStyle = totalHeight ? `height: ${totalHeight}mm; position: relative;` : 'position: relative;';
+
             }
 
             // --- [LOGIC 3: Spacer aur Final HTML banao] ---

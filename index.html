@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -1049,7 +1048,8 @@
         // [NEW V44] End
 
 
-        // --- V43 PDF LOGIC (Untouched) ---
+        // --- [CODE MODIFIED] ---
+        // --- V43 PDF LOGIC (FIXED) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1057,7 +1057,20 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1; 
+
+            // --- [NEW] Define constants for height calculation ---
+            const HEADER_HEIGHT_MM = 125; 
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 6.5; 
+            // This 18mm constant in V45 seems to be for the divider *between* groups
+            const GROUP_DIVIDER_HEIGHT_MM = 18; 
+            // We need a new constant for the "SIZE: XXX" title itself (approx 14pt font + margin)
+            const GROUP_TITLE_HEIGHT_MM = 10; 
+            const POST_TABLE_SPACER_MM = 10; // The <div style="height: 10mm;"></div>
+            const A4_HEIGHT_MM = 297; // Standard A4 height
+
+            let contentHeight = 0;
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1067,27 +1080,44 @@
                     }
                     groups[item.size].push(item);
                 });
-                numGroups = Object.keys(groups).length;
+                const numGroups = Object.keys(groups).length;
+
+                // Calculate height of all table headers (one per group)
+                let tableHeadersHeight = numGroups * TABLE_HEADER_HEIGHT_MM;
+                // Calculate height of all rows
+                let rowsHeight = items.length * ROW_HEIGHT_MM;
+                // Calculate height of all "SIZE: XXX" titles (one per group)
+                let groupTitlesHeight = numGroups * GROUP_TITLE_HEIGHT_MM;
+                // Calculate height of dividers *between* groups (numGroups - 1)
+                let dividersHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_DIVIDER_HEIGHT_MM : 0;
+
+                // Total content height is Header + all table parts + post-table spacer
+                contentHeight = HEADER_HEIGHT_MM + 
+                                tableHeadersHeight + 
+                                rowsHeight + 
+                                groupTitlesHeight + 
+                                dividersHeight + 
+                                POST_TABLE_SPACER_MM;
+                
+            } else { // 'basic' tab
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight + POST_TABLE_SPACER_MM;
             }
 
-            const basePageHeight = 296.5; 
-            const baseRows = 6;           
-            const rowHeight = 7;
-            const groupHeaderHeight = 18; 
-
-            let totalRows = items.length;
+            // Calculate the total height needed
+            const calculatedTotalHeight = contentHeight + FOOTER_BLOCK_HEIGHT_MM;
             
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
-
-// 👇 [NEW LOGIC] Shift all footer-area content with page height
-if (items.length > baseRows) {
-    totalHeight += (items.length - baseRows) * 0; // keep 0 now (footer handled separately)
-}
+            // Page height is either the calculated height or A4 height, whichever is larger
+            const totalHeight = Math.max(calculatedTotalHeight, A4_HEIGHT_MM);
+            
+            // The spacer is the "gap" needed to fill A4 page, or 0 if content is already larger
+            const spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            // --- [END NEW HEIGHT LOGIC] ---
 
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
+            // [MODIFIED] Pass the new spacerHeight to the content generator
+            element.innerHTML = generatePDFContent(totalHeight, activeTabId, spacerHeight); 
 
             const opt = {
                 margin: 0,
@@ -1097,7 +1127,7 @@ if (items.length > baseRows) {
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] 
+                    format: [210, totalHeight] // Use the correctly calculated totalHeight
                 },
                 pagebreak: { mode: ['avoid'] } 
             };
@@ -1109,27 +1139,26 @@ if (items.length > baseRows) {
             }).save();
         }
         
-        // --- V45 PDF FONT COLOR FIX (Untouched) ---
-        function generatePDFContent(totalHeight, tabType) { 
+        // --- [CODE MODIFIED] ---
+        // --- V45 PDF FONT COLOR FIX (And V47 Logo Overlap Fix) ---
+        // [MODIFIED] Added spacerHeight as an argument
+        function generatePDFContent(totalHeight, tabType, spacerHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
+            
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            const HEADER_HEIGHT_MM = 125; 
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5; 
-            const GROUP_HEADER_HEIGHT_MM = 18; 
+            // [REMOVED] All contentHeight and spacerHeight calculations are removed from here.
+            // They are now done in generatePDF()
 
-            let contentHeight = 0;
-            let spacerHeight = 0;
-            
+            // --- This part of the logic (generating tableContentHTML) is unchanged ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1192,11 +1221,6 @@ if (items.length > baseRows) {
                     
                     tableContentHTML += '</tbody></table>';
                 } 
-                
-                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
-
             } 
             else {
                 let tableRows = ''; 
@@ -1230,20 +1254,12 @@ if (items.length > baseRows) {
                         </tbody>
                     </table>
                 `;
-                
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
-
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-
-            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
-            if (items.length > 6) {
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-
-}   
+            // --- End of table generation logic ---
 
 
+            // [MODIFIED] This is the new HTML layout.
+            // It removes position:absolute from the footer and uses the calculated spacerHeight.
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}mm; 
@@ -1254,7 +1270,6 @@ if (items.length > baseRows) {
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-
                     <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
@@ -1303,31 +1318,26 @@ if (items.length > baseRows) {
                         </div>
                         
                         ${tableContentHTML}
-                        <div style="height: 10mm;"></div>
-
                         
-                    </div>
+                        <div style="height: 10mm;"></div>
+                        
+                    </div> <div style="height: ${spacerHeight}mm;"></div>
 
-                    <!-- remove spacer from pushing footer -->
-<div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
-<!-- fix footer position absolutely to page bottom -->
-<div style="
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  padding: 0 25px 20px 25px;
-  height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
-">
+                    <div style="
+                      position: relative;
+                      z-index: 5; /* [V47 Note] z-index 5 is above logo (z-index 1) */
+                      padding: 0 25px 20px 25px; /* Parent padding */
+                      height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
+                    ">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>
-                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 18px; line-height: 1.6;">
+                            
+                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 55px; /* [FIX] Changed 18px to 55px to avoid logo overlap */ line-height: 1.6;">
                                 <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
                                 <li>Prices are subject to change without prior notice depending on market conditions.</li>
                                 <li>Delivery period will be confirmed after order placement.</li>
@@ -1347,8 +1357,7 @@ if (items.length > baseRows) {
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-                    </div> 
-                </div> `;
+                    </div> </div> `; // End of main wrapper div
             
             return pagesHTML;
         }

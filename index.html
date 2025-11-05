@@ -1077,8 +1077,9 @@
             let totalRows = items.length;
             
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight) + 95); 
-// +95mm = footer ke liye fixed space
+            llet totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight)); 
+// footer height remove from here
+
 
 
 // 👇 [NEW LOGIC] Shift all footer-area content with page height
@@ -1236,12 +1237,18 @@ if (items.length > baseRows) {
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+   // Calculate spacer area (to push footer down)
+spacerHeight = totalHeight - contentHeight;
 
-// 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
+// Add footer block height properly here
+spacerHeight = spacerHeight > 0 ? spacerHeight : 0;
+spacerHeight += FOOTER_BLOCK_HEIGHT_MM;
+
+// For extra entries, slightly extend page
 if (items.length > 6) {
-    spacerHeight += (items.length - 6) * 6.5; // small progressive shift per extra row
+    spacerHeight += (items.length - 6) * 0.5; // fine micro shift
 }
+
 
 
 

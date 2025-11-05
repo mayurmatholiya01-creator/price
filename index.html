@@ -1238,11 +1238,11 @@ if (items.length > baseRows) {
 
             spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
 
-            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
-            if (items.length > 6) {
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+// 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
+if (items.length > 6) {
+    spacerHeight += (items.length - 6) * 6.5; // small progressive shift per extra row
+}
 
-}   
 
 
             pagesHTML = `
@@ -1315,7 +1315,7 @@ if (items.length > baseRows) {
 <!-- fix footer position absolutely to page bottom -->
 <div style="
   position: relative;
-  margin-top: 10mm;      /* table ke niche thoda gap */
+  margin-top: 5mm;      /* table ke niche thoda gap */
   padding: 0 25px 20px 25px;
   height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
   z-index: 5;

@@ -1415,5 +1415,128 @@ if (items.length > baseRows) {
         // Initial page load
         renderItems(); 
     </script>
+
+<!-- AUTO HEIGHT PDF GENERATOR (FOOTER FIXED VERSION) -->
+<script>
+if (typeof getCssPpi !== 'function') {
+  function getCssPpi(){
+    const div = document.createElement('div');
+    div.style.width = '1in';
+    div.style.height = '1in';
+    div.style.position = 'absolute';
+    div.style.left = '-100%';
+    document.body.appendChild(div);
+    const px = div.getBoundingClientRect().width || 96;
+    document.body.removeChild(div);
+    return px;
+  }
+}
+if (typeof pxToMm !== 'function') {
+  function pxToMm(px){
+    const pxPerInch = getCssPpi();
+    const mmPerInch = 25.4;
+    return px * (mmPerInch / pxPerInch);
+  }
+}
+
+function generatePDFContentWithoutSpacer(tabType) {
+  try {
+    if (typeof generatePDFContent === 'function') {
+      const tmp = generatePDFContent(100, tabType);
+      if (typeof tmp === 'string') {
+        return tmp.replace(/<div[^>]*style=["'][^"']*height:\s*\d+(\.\d+)?mm[^"']*["'][^>]*><\/div>/i, '');
+      } else if (tmp instanceof Element) {
+        return tmp.outerHTML;
+      }
+    }
+  } catch (e) {}
+  let rowsHtml = items.map((it, i) => `<tr>
+      <td style="padding:4px;border:1px solid #ddd;text-align:center">${i+1}</td>
+      <td style="padding:4px;border:1px solid #ddd;text-align:center">${it.size}</td>
+      <td style="padding:4px;border:1px solid #ddd;text-align:center">${it.surface}</td>
+      <td style="padding:4px;border:1px solid #ddd;text-align:center">${it.grade}</td>
+      <td style="padding:4px;border:1px solid #ddd;text-align:center">${(typeof it.price === 'number') ? '₹ ' + it.price.toFixed(2) : it.price}</td>
+    </tr>`).join('');
+  const html = `
+    <div style="font-family: Arial, sans-serif; width:210mm; background:white;">
+      <div style="padding:15px;">
+        <h2 style="margin:0 0 8px 0;">Price List</h2>
+        <table style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding:6px;border:1px solid #ddd">#</th>
+              <th style="padding:6px;border:1px solid #ddd">Size</th>
+              <th style="padding:6px;border:1px solid #ddd">Surface</th>
+              <th style="padding:6px;border:1px solid #ddd">Grade</th>
+              <th style="padding:6px;border:1px solid #ddd">Price</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
+    </div>`;
+  return html;
+}
+
+async function generatePDF() {
+  if (!items || items.length === 0) {
+    alert('Please add items first');
+    return;
+  }
+
+  const tabType = document.querySelector('.tab-content.active')?.id || 'basic';
+  const PAGE_WIDTH_MM = 210;
+  const FOOTER_BLOCK_HEIGHT_MM = 95;
+
+  const tempContainer = document.createElement('div');
+  tempContainer.style.position = 'absolute';
+  tempContainer.style.left = '-9999px';
+  tempContainer.style.width = '210mm';
+  tempContainer.style.background = 'white';
+  tempContainer.innerHTML = generatePDFContentWithoutSpacer(tabType);
+  document.body.appendChild(tempContainer);
+
+  const pxHeight = tempContainer.scrollHeight;
+  const measuredTableMM = pxToMm(pxHeight);
+  const contentHeightMM = measuredTableMM;
+  let totalHeightMM = Math.ceil(contentHeightMM + FOOTER_BLOCK_HEIGHT_MM);
+  const spacerMM = Math.max(0, totalHeightMM - contentHeightMM - FOOTER_BLOCK_HEIGHT_MM);
+
+  const spacerDiv = document.createElement('div');
+  spacerDiv.style.height = spacerMM + 'mm';
+  tempContainer.appendChild(spacerDiv);
+
+  const footerHTML = document.createElement('div');
+  footerHTML.style.padding = '12px 20px';
+  footerHTML.style.borderTop = '1px solid #eee';
+  footerHTML.style.fontSize = '9pt';
+  footerHTML.innerHTML = `<div style="font-weight:600;color:#b82329;">Terms & Conditions:</div>
+    <ul style="margin:0;padding-left:18px;line-height:1.6;font-size:8.5pt;color:#333;">
+      <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
+      <li>Prices are subject to change without prior notice depending on market conditions.</li>
+      <li>Delivery period will be confirmed after order placement.</li>
+      <li>The company is not responsible for delays due to transport or unforeseen events.</li>
+      <li>No return or replacement will be accepted once goods are sold, except for genuine manufacturing defects.</li>
+    </ul>
+    <div style="text-align:center;margin-top:10px;font-size:7.5pt;color:#666;">
+      This is an electronically generated price list. Generated on: ${new Date().toLocaleDateString()}
+    </div>`;
+  tempContainer.appendChild(footerHTML);
+
+  const totalPx = tempContainer.scrollHeight;
+  const totalMm = pxToMm(totalPx);
+  const opt = {
+    margin: 0,
+    filename: 'PriceList_' + new Date().toISOString().slice(0,10) + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: [PAGE_WIDTH_MM, totalMm], orientation: 'portrait' }
+  };
+
+  await html2pdf().set(opt).from(tempContainer).save();
+  document.body.removeChild(tempContainer);
+}
+</script>
+
 </body>
 </html>

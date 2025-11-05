@@ -1077,7 +1077,9 @@
             let totalRows = items.length;
             
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight) + 95); 
+// +95mm = footer ke liye fixed space
+
 
 // 👇 [NEW LOGIC] Shift all footer-area content with page height
 if (items.length > baseRows) {
@@ -1312,14 +1314,13 @@ if (items.length > baseRows) {
 
 <!-- fix footer position absolutely to page bottom -->
 <div style="
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
+  position: relative;
+  margin-top: 10mm;      /* table ke niche thoda gap */
   padding: 0 25px 20px 25px;
   height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
+  z-index: 5;
 ">
+
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>

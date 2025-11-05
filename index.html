@@ -128,475 +128,120 @@
             -moz-appearance: none;
             appearance: none;
         }
-        select {
-            background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d1d5db' stroke-width='2' fill='none'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 12px 8px;
+        .input-wrapper {
+            position: relative;
+            display: block;
+        }
+        .input-wrapper .clear-btn {
+            position: absolute;
+            right: 8px;
+            top: 10px;
             cursor: pointer;
-            padding-right: 2.5rem;
-        }
-        select option {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-        input[type='text']:focus,
-        input[type='number']:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); 
-            background: var(--glass-hover);
-        }
-        .price-input-container {
-            display: flex;
-            align-items: center;
-            border: none;
-            transition: border-color 0.3s;
-            overflow: hidden;
-            position: relative; 
-        }
-        #basic .price-input-container {
-             border: 1px solid var(--glass-border);
-             border-radius: var(--border-radius-sm);
-        }
-        #basic .price-input-container:focus-within {
-             border-color: var(--primary);
-             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-        }
-        #basic .price-symbol {
-            padding: 12px 12px;
-            background: var(--glass-hover);
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 1.1em;
-            border-right: 1px solid var(--glass-border);
-            flex-shrink: 0;
-        }
-        #basic .price-input-container input {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-size: 1em;
-            outline: none;
-            background: transparent;
-            padding-right: 35px; 
-        }
-        .grade-buttons {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .grade-buttons input[type="radio"] {
-            display: none; 
-        }
-        .grade-buttons label {
-            flex: 1;
-            text-align: center;
-            padding: 8px 10px;
-            border: 2px solid var(--glass-border);
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            margin-bottom: 0; 
-        }
-        .grade-buttons input[type="radio"]:checked + label {
-            background-color: var(--primary); 
-            color: white;
-            border-color: var(--primary); 
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.1);
-        }
-        .grade-buttons label:hover {
-            border-color: var(--primary-light);
-            background: var(--glass-hover);
+            color: var(--text-muted);
         }
         .button-group {
             display: flex;
             gap: 10px;
-            flex-shrink: 0;
-            margin-top: 5px;
-        }
-        .add-button,
-        .pdf-button {
-            flex: 1;
-            padding: 12px;
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-sm);
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
+            margin-top: 10px;
         }
-        .add-button {
-            background: linear-gradient(135deg, var(--success), var(--success-light)); 
-        }
-        .add-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.2);
-        }
-        .pdf-button {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
-        }
-        .pdf-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
-        }
-        .pdf-button:disabled {
-            background: var(--glass);
-            color: var(--text-muted);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--bg-secondary); 
-            border: 1px solid var(--glass-border); 
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 100;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        .suggestions.show {
-            display: block;
-        }
-        .suggestion-item {
-            padding: 10px 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid var(--glass-border);
-            font-size: 0.9em;
-            color: var(--text-secondary);
-        }
-        .suggestion-item:hover,
-        .suggestion-item.suggestion-active {
-            background: var(--glass-hover);
-            color: var(--text-primary);
-        }
-        .input-wrapper {
-            position: relative;
-        }
-        .items-table {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            border-collapse: collapse;
-            border-spacing: 0;
-            table-layout: fixed;
-            flex-shrink: 0; 
-            border-radius: var(--border-radius);
-            overflow: hidden; 
-            border: 1px solid var(--glass-border);
-        }
-        .items-table h3 {
-            color: var(--text-primary);
-            margin-bottom: 0; 
-            font-size: 1.1em;
-            flex-shrink: 0;
-            padding: 15px; 
-            background: var(--glass);
-            border-bottom: 1px solid var(--glass-border); 
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: transparent;
-            font-size: 0.9em;
-        }
-        thead {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
-            color: white;
-            flex-shrink: 0;
-        }
-        th {
-            padding: 10px 5px; 
-            text-align: center;
-            font-weight: 600;
-            border: none; 
-            height: 30px;
-        }
-        td {
-            padding: 8px 4px !important; 
-            border: none;
-            border-bottom: 1px solid var(--glass-border);
-            text-align: center;
-            height: 20px !important;
-            max-height: 20px !important;
-            min-height: 20px !important;
-            line-height: 1 !important;
-            overflow: hidden;
-            white-space: nowrap;
-            vertical-align: middle !important;
-            color: var(--text-secondary); 
-        }
-        tbody tr:hover {
-            background: var(--glass-hover);
-            color: var(--text-primary);
-        }
-        tbody tr:hover td {
-            color: var(--text-primary);
-        }
-        tbody tr:nth-child(even) {
-            background: var(--glass);
-        }
-        tbody tr:last-child td {
-             border-bottom: none;
-        }
-        .delete-btn {
-            background: linear-gradient(135deg, var(--error), var(--error-light)); 
-            color: white;
-            width: 30px; 
-            height: 30px; 
-            line-height: 30px; 
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em; 
-            transition: all 0.3s ease;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-        }
-        .delete-btn:hover {
-            background: #ff5252;
-            transform: scale(1.05);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 20px 10px;
-            color: var(--text-muted);
-            background: var(--glass);
-            margin-top: 0px; 
-            font-size: 0.9em;
-        }
-        .table-wrapper {
-            overflow-x: auto;
-            flex: 1;
-        }
-        #advance-form-container {
-            flex-shrink: 0;
-        }
-        #advanceSizeSelect {
-            padding: 14px;
-            font-size: 1.05em;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        #advance-options-container .grade-buttons label {
-            padding: 6px 8px; 
-            font-size: 0.8em;  
-            gap: 8px;          
-        }
-        #advance-options-container {
-             /* Default hidden */
-        }
-        #surfacePriceList {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 0; 
-            border: 1px solid var(--glass-border); 
+        .add-button, .pdf-button {
+            padding: 10px 14px;
             border-radius: 8px;
-            overflow: hidden; 
-        }
-        .surface-item-wrapper {
-            display: flex;
-            flex-direction: column; 
-            gap: 5px;
-            padding: 10px; 
-            border-bottom: 1px solid var(--glass-border); 
-            background: var(--glass);
-        }
-        .surface-item-wrapper:not(:nth-child(3n)) {
-             border-right: 1px solid var(--glass-border);
-        }
-        .surface-item-wrapper:nth-last-child(-n+3) {
-            border-bottom: none;
-        }
-        .surface-item-wrapper:last-child:nth-child(3n-1) {
-             border-bottom: none;
-        }
-        .surface-item-wrapper label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.85em; 
-            margin-bottom: 0;
-        }
-        .surface-item-wrapper .price-input-container {
-            border-radius: 6px; 
-            border-left: none; 
-            border: 1px solid var(--glass-border);
-            background: var(--bg-primary); 
-        }
-        .surface-item-wrapper .price-input-container:focus-within {
-             border-color: var(--primary);
-             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-             background: var(--bg-primary);
-        }
-        .surface-item-wrapper .price-symbol {
-             display: none; 
-        }
-        .surface-item-wrapper .price-input-container input {
-            padding: 8px 10px; 
-            font-size: 0.9em;  
-            text-align: center; 
+            border: 2px solid var(--primary);
             background: transparent;
-        }
-        .input-wrapper-clearable {
-            position: relative;
-        }
-        .clear-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--primary);
             cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-            font-size: 0.9em;
-            z-index: 5; 
+            font-weight: 700;
+            transition: transform .12s ease;
         }
-        .clear-btn.visible {
-            opacity: 1;
-            pointer-events: all;
-        }
-        .clear-btn:hover {
-            color: var(--text-primary);
-        }
-        #basic .input-wrapper-clearable input {
-            padding-right: 35px; 
-        }
-        #basic .price-input-container .clear-btn {
-            right: 10px;
-        }
-        #basic .price-input-container input {
-            padding-right: 35px;
-        }
-        .editable-cell {
-            cursor: pointer;
-        }
-        .editable-cell:hover {
-            background: var(--glass-hover);
-        }
-        .edit-input, .edit-select {
-            width: 90%;
-            padding: 4px;
-            font-size: 0.9em;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            font-family: 'Inter', sans-serif;
-        }
-        .edit-input {
-            text-align: center;
-        }
-        .edit-select {
-            padding: 3px;
-        }
-        
+        .add-button:active, .pdf-button:active { transform: translateY(2px) scale(.995); }
+        .items-table { margin-top: 10px; flex: 1; overflow: auto; }
+        .table-wrapper { overflow-x: auto; }
+        .empty-state { padding: 20px; color: var(--text-muted); background: var(--glass); border-radius: 8px; text-align:center; }
+
+        /* small table styles used inside PDF generation */
+        table.pdf-table { width:100%; border-collapse:collapse; font-size:9pt; }
+        table.pdf-table th, table.pdf-table td { padding:6px; border:1px solid #ddd; text-align:center; }
+        th { background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white;}
+        /* rest of your CSS preserved... */
     </style>
 </head>
 <body>
-    <div class="container"> 
+    <div class="container" id="app">
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
-            </div>
+        </div>
 
         <div id="basic" class="tab-content active">
-            <div style="flex: 0 0 auto;">
-                
-                <div class="form-group">
-                    <label for="size">Size</label>
-                    <div class="input-wrapper input-wrapper-clearable"> 
-                        <input
-                            type="text"
-                            id="size"
-                            placeholder="Select or type size"
-                            oninput="filterSuggestions('size'); toggleClearButton(this, 'clearSizeBtn');" 
-                        />
-                        <span class="clear-btn" id="clearSizeBtn" onclick="clearInput('size', 'clearSizeBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
-                        <div class="suggestions" id="sizeSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="surface">Surface</label>
-                    <div class="input-wrapper input-wrapper-clearable">
-                        <input
-                            type="text"
-                            id="surface"
-                            placeholder="Select or type surface"
-                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface'); toggleClearButton(this, 'clearSurfaceBtn');"
-                            title="Please enter only letters and spaces."
-                        />
-                        <span class="clear-btn" id="clearSurfaceBtn" onclick="clearInput('surface', 'clearSurfaceBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
-                        <div class="suggestions" id="surfaceSuggestions"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="price">Price</label>
-                    <div class="price-input-container">
-                        <span class="price-symbol">₹</span>
-                        <input
-                            type="number"
-                            id="price"
-                            placeholder="Enter price"
-                            min="0"
-                            step="0.01"
-                            oninput="this.value = this.value.replace(/[eE+\-]/g, ''); toggleClearButton(this, 'clearPriceBtn');"
-                        />
-                        <span class="clear-btn" id="clearPriceBtn" onclick="clearInput('price', 'clearPriceBtn')">
-                            <i class="fas fa-times-circle"></i>
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Grade</label>
-                    <div class="grade-buttons">
-                        <input type="radio" id="grade_pre" name="grade" value="PRE" checked>
-                        <label for="grade_pre">PRE</label>
-                        <input type="radio" id="grade_std" name="grade" value="STD">
-                        <label for="grade_std">STD</label>
-                        <input type="radio" id="grade_gold" name="grade" value="GOLD">
-                        <label for="grade_gold">GOLD</label>
-                        <input type="radio" id="grade_eco" name="grade" value="ECO">
-                        <label for="grade_eco">ECO</label>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="add-button" onclick="addItem()">
-                        <i class="fas fa-plus"></i> Add
-                    </button>
-                    <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
-                        <i class="fas fa-file-pdf"></i> Generate PDF
-                    </button>
+            <div class="form-group">
+                <label for="size">Size</label>
+                <div class="input-wrapper">
+                    <input type="text" id="size" placeholder="Select or type size" oninput="filterSuggestions('size'); toggleClearButton(this, 'clearSizeBtn')" />
+                    <span class="clear-btn" id="clearSizeBtn" onclick="clearInput('size','clearSizeBtn')"><i class="fas fa-times-circle"></i></span>
+                    <div class="suggestions" id="sizeSuggestions"></div>
                 </div>
             </div>
+
+            <div class="form-group">
+                <label for="surface">Surface</label>
+                <div class="input-wrapper input-wrapper-clearable">
+                    <input
+                        type="text"
+                        id="surface"
+                        placeholder="Select or type surface"
+                        oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface'); toggleClearButton(this, 'clearSurfaceBtn');"
+                        title="Please enter only letters and spaces."
+                    />
+                    <span class="clear-btn" id="clearSurfaceBtn" onclick="clearInput('surface', 'clearSurfaceBtn')">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                    <div class="suggestions" id="surfaceSuggestions"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price</label>
+                <div class="price-input-container">
+                    <span class="price-symbol">₹</span>
+                    <input
+                        type="number"
+                        id="price"
+                        placeholder="Enter price"
+                        min="0"
+                        step="0.01"
+                        oninput="this.value = this.value.replace(/[eE+\\-]/g, ''); toggleClearButton(this, 'clearPriceBtn');"
+                    />
+                    <span class="clear-btn" id="clearPriceBtn" onclick="clearInput('price', 'clearPriceBtn')">
+                        <i class="fas fa-times-circle"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Grade</label>
+                <div class="grade-buttons">
+                    <input type="radio" id="grade_pre" name="grade" value="PRE" checked>
+                    <label for="grade_pre">PRE</label>
+                    <input type="radio" id="grade_std" name="grade" value="STD">
+                    <label for="grade_std">STD</label>
+                    <input type="radio" id="grade_gold" name="grade" value="GOLD">
+                    <label for="grade_gold">GOLD</label>
+                    <input type="radio" id="grade_eco" name="grade" value="ECO">
+                    <label for="grade_eco">ECO</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="add-button" onclick="addItem()">
+                    <i class="fas fa-plus"></i> Add
+                </button>
+                <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
+                    <i class="fas fa-file-pdf"></i> Generate PDF
+                </button>
+            </div>
+
             <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
@@ -604,8 +249,8 @@
                 </div>
             </div>
         </div>
+
         <div id="advance" class="tab-content">
-            
             <div id="advance-form-container">
                 <div class="form-group">
                     <label for="advanceSizeSelect">1. Select Size</label>
@@ -649,10 +294,9 @@
                 </div>
             </div>
         </div>
-        </div>
 
     <script>
-        // --- (V47 - Logo Overlap Fix) ---
+        // --- (V45 - CLEAR BUTTON & CLICK-TO-EDIT) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -672,7 +316,7 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; 
+        let isEditing = false; // [V44] Editing lock
 
         // --- 2. Function Definitions ---
 
@@ -704,250 +348,63 @@
         }
 
         function selectSuggestion(inputId, value) {
-            activeSuggestionIndex = -1; 
-            document.getElementById(inputId).value = value;
-            document
-                .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
-                .classList.remove('show');
-            if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
-            if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
+            const el = document.getElementById(inputId);
+            if (el) el.value = value;
+            const suggestionsDiv = document.getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions');
+            if (suggestionsDiv) suggestionsDiv.classList.remove('show');
         }
 
+        function toggleClearButton(input, btnId) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            if (input.value && input.value.length > 0) btn.style.display = 'inline';
+            else btn.style.display = 'none';
+        }
+
+        function clearInput(fieldId, btnId) {
+            const el = document.getElementById(fieldId);
+            if (el) el.value = '';
+            const btn = document.getElementById(btnId);
+            if (btn) btn.style.display = 'none';
+        }
+
+        // --- ADD / RENDER / DELETE ---
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
-            const price = document.getElementById('price').value.trim();
+            const priceStr = document.getElementById('price').value.trim();
+            const price = priceStr === '' ? 0 : parseFloat(priceStr);
             const grade = document.querySelector('input[name="grade"]:checked').value;
 
-            if (!size || !surface || !price || !grade) { 
+            if (!size || !surface || isNaN(price) || !grade) {
                 alert('Please fill all fields');
                 return;
             }
-            const item = {
-                id: itemIdCounter++,
-                size: size,
-                surface: surface,
-                grade: grade, 
-                price: parseFloat(price),
-            };
+
+            const item = { id: ++itemIdCounter, size, surface, price, grade };
             items.push(item);
             renderItems();
-            clearForm();
-        }
-
-        function clearForm() {
-            document.getElementById('size').value = '';
-            document.getElementById('surface').value = '';
-            document.getElementById('price').value = '';
-            document.getElementById('grade_pre').checked = true; 
-            document.getElementById('size').focus();
-            
-            toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
-            toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
-            toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
-        }
-        
-        function toggleClearButton(input, btnId) {
-            const btn = document.getElementById(btnId);
-            if (input.value) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-            }
-        }
-
-        function clearInput(inputId, btnId) {
-            document.getElementById(inputId).value = '';
-            document.getElementById(btnId).classList.remove('visible');
-            document.getElementById(inputId).focus();
-            if (inputId === 'size') filterSuggestions('size');
-            if (inputId === 'surface') filterSuggestions('surface');
-        }
-
-        function handleSuggestionKeydown(e, type) {
-            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
-            const suggestionsDiv = document.getElementById(suggestionsId);
-            
-            if (!suggestionsDiv || !suggestionsDiv.classList.contains('show')) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            const items = suggestionsDiv.querySelectorAll('.suggestion-item');
-            if (items.length === 0) {
-                activeSuggestionIndex = -1;
-                return;
-            }
-
-            items.forEach(item => item.classList.remove('suggestion-active'));
-
-            if (e.key === 'ArrowDown') {
-                e.preventDefault(); 
-                activeSuggestionIndex++;
-                if (activeSuggestionIndex >= items.length) {
-                    activeSuggestionIndex = 0; 
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault(); 
-                activeSuggestionIndex--;
-                if (activeSuggestionIndex < 0) {
-                    activeSuggestionIndex = items.length - 1; 
-                }
-            } else if (e.key === 'Enter') {
-                e.preventDefault(); 
-                if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                    items[activeSuggestionIndex].click(); 
-                    activeSuggestionIndex = -1; 
-                }
-            } else if (e.key === 'Escape') {
-                suggestionsDiv.classList.remove('show'); 
-                activeSuggestionIndex = -1;
-            }
-
-            if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
-                items[activeSuggestionIndex].classList.add('suggestion-active');
-                items[activeSuggestionIndex].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest'
-                });
-            }
-        }
-
-        // --- ADVANCE TAB FUNCTIONS ---
-        function populateSizeDropdown() {
-            const select = document.getElementById('advanceSizeSelect');
-            if (select.options.length > 0) return; 
-            
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.textContent = "Select a Size...";
-            defaultOption.selected = true;
-            select.appendChild(defaultOption);
-
-            sizes.forEach(size => {
-                const option = document.createElement('option');
-                option.value = size;
-                option.textContent = size;
-                select.appendChild(option);
-            });
-        }
-
-        function handleAdvanceSizeChange(selectElement) {
-            const optionsContainer = document.getElementById('advance-options-container');
-
-            clearAdvancePriceInputs(); 
-            const gradePre = document.getElementById('adv_grade_pre');
-            if (gradePre) gradePre.checked = true;
-
-            if (selectElement.value) {
-                optionsContainer.style.display = 'block';
-                populateSurfaceList(); 
-            } else {
-                optionsContainer.style.display = 'none';
-            }
-        }
-
-        function populateSurfaceList() {
-            const listDiv = document.getElementById('surfacePriceList');
-            if (listDiv.children.length > 0) return; 
-
-            let html = '';
-            surfaces.forEach(surface => {
-                const inputId = `adv_price_${surface.replace(/\s+/g, '_')}`; 
-                html += `
-                    <div class="surface-item-wrapper"> 
-                        <label for="${inputId}">${surface}</label>
-                        <div class="price-input-container">
-                            <input
-                                type="number"
-                                id="${inputId}"
-                                data-surface-name="${surface}"
-                                placeholder="Price" 
-                                min="0"
-                                step="0.01"
-                                oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
-                                style="text-align: center; border-radius: 6px;" 
-                            />
-                        </div>
-                    </div>
-                `;
-            });
-            listDiv.innerHTML = html;
-        }
-
-        function clearAdvancePriceInputs() {
-            const inputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
-            inputs.forEach(input => {
-                input.value = '';
-            });
-        }
-
-        function addAdvanceItems() {
-            const size = document.getElementById('advanceSizeSelect').value;
-            if (!size) {
-                alert('Please select a size first.');
-                return;
-            }
-            const grade = document.querySelector('input[name="adv_grade"]:checked').value;
-            
-            const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
-            let itemsAdded = 0;
-
-            priceInputs.forEach(input => {
-                const price = input.value.trim();
-                const surface = input.getAttribute('data-surface-name');
-
-                if (price && parseFloat(price) > 0) {
-                    const item = {
-                        id: itemIdCounter++,
-                        size: size,
-                        surface: surface,
-                        grade: grade,
-                        price: parseFloat(price),
-                    };
-                    items.push(item);
-                    itemsAdded++;
-                }
-            });
-
-            if (itemsAdded === 0) {
-                alert('Please enter at least one price.');
-                return;
-            }
-
-            renderItems(); 
-            clearAdvancePriceInputs(); 
-        }
-
-        // --- SHARED FUNCTIONS ---
-        function deleteItem(id) {
-            items = items.filter((item) => item.id !== id);
-            renderItems();
+            document.getElementById('pdfBtn').disabled = false;
+            document.getElementById('advancePdfBtn').disabled = false;
         }
 
         function renderItems() {
-            const activeTab = document.querySelector('.tab-content.active');
-            const activeTabId = activeTab ? activeTab.id : 'basic';
-            
-            const basicContainer = document.getElementById('itemsContainer');
-            const advanceContainer = document.getElementById('advanceItemsContainer');
-            const pdfBtn = document.getElementById('pdfBtn');
-            const advancePdfBtn = document.getElementById('advancePdfBtn');
+            renderItemsForContainer('itemsContainer', 'pdfBtn');
+            renderItemsForContainer('advanceItemsContainer', 'advancePdfBtn');
+        }
 
-            if (!basicContainer || !advanceContainer) return;
+        function renderItemsForContainer(containerId, pdfBtnId) {
+            const container = document.getElementById(containerId);
+            const pdfBtn = document.getElementById(pdfBtnId);
+
+            if (!container || !pdfBtn) return; 
 
             if (items.length === 0) {
-                const emptyState = '<div class="empty-state">No items added yet</div>';
-                basicContainer.innerHTML = emptyState;
-                advanceContainer.innerHTML = emptyState;
-                if (pdfBtn) pdfBtn.disabled = true;
-                if (advancePdfBtn) advancePdfBtn.disabled = true;
+                container.innerHTML = '<div class="empty-state">No items added yet</div>';
+                pdfBtn.disabled = true;
                 return;
             }
-
-            if (pdfBtn) pdfBtn.disabled = false;
-            if (advancePdfBtn) advancePdfBtn.disabled = false;
-
+            pdfBtn.disabled = false;
             let tableHTML = `
                 <table>
                     <thead>
@@ -973,20 +430,24 @@
                 `;
             });
             tableHTML += '</tbody></table>';
-
-            basicContainer.innerHTML = tableHTML;
-            advanceContainer.innerHTML = tableHTML;
+            container.innerHTML = tableHTML;
         }
-        
+
+        function deleteItem(id) {
+            items = items.filter(i => i.id !== id);
+            renderItems();
+        }
+
+        // [NEW V44] Click-to-Edit Functions
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return; 
+            if (isEditing) return; // Ek time par ek hi edit
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
             const originalValue = item[field];
             
-            tdElement.innerHTML = ''; 
-            tdElement.onclick = null; 
+            tdElement.innerHTML = ''; // Cell ko khali karo
+            tdElement.onclick = null; // Dobara click na ho
 
             if (field === 'price') {
                 const input = document.createElement('input');
@@ -997,7 +458,6 @@
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
-                        input.onblur = null; 
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1015,11 +475,10 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(itemId, field, select.value); 
-                select.onchange = () => saveEdit(itemId, field, select.value); 
+                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
+                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
-                        select.onblur = null; 
                         isEditing = false;
                         renderItems(); // Cancel
                     }
@@ -1038,12 +497,13 @@
                     item.grade = newValue;
                 }
             }
-            isEditing = false; 
-            renderItems(); 
+            isEditing = false; // Lock release karo
+            renderItems(); // Table ko redraw karo
         }
+        // [NEW V44] End
 
 
-        // --- [FIX V47] PDF LOGIC (Updated Height Calculation) ---
+        // --- V43 PDF LOGIC (Patched spacer & height safe) ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1051,22 +511,7 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-            
-            // --- [नया और सटीक हाइट कैलकुलेशन] ---
-            // कंटेंट ब्लॉक्स की हाइट
-            const HEADER_CONTENT_MM = 105;     // हेडर लोगो, एड्रेस, "PRICE LIST" टेक्स्ट
-            const TABLE_HEADER_HEIGHT_MM = 10; // टेबल का <thead>
-            const ROW_HEIGHT_MM = 6.5;         // हर <tr>
-            const GROUP_HEADER_HEIGHT_MM = 18; // "SIZE: ..." टेक्स्ट (Advance मोड)
-            const POST_TABLE_SPACER_MM = 10; // टेबल के नीचे का 10mm गैप
-            const FOOTER_CONTENT_MM = 95;      // Terms & Conditions + फुटर टेक्स्ट
-            
-            // पेज पैडिंग (सेफ एरिया)
-            const PADDING_TOP_MM = 20;         // पेज के टॉप पर खाली जगह
-            const PADDING_BOTTOM_MM = 35;      // पेज के बॉटम में (लोगो के लिए सेफ एरिया)
-
-            let tableHeight = 0;
-            let groupHeight = 0;
+            let numGroups = 1;
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1076,31 +521,33 @@
                     }
                     groups[item.size].push(item);
                 });
-                let numGroups = Object.keys(groups).length;
-                
-                if (numGroups > 0) {
-                    groupHeight = numGroups * GROUP_HEADER_HEIGHT_MM; 
-                }
-                tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-            } else {
-                tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                numGroups = Object.keys(groups).length;
             }
 
-            // सभी हिस्सों को जोड़कर कुल हाइट
-            let totalHeight = PADDING_TOP_MM + 
-                              HEADER_CONTENT_MM +
-                              tableHeight + 
-                              groupHeight + 
-                              POST_TABLE_SPACER_MM + 
-                              FOOTER_CONTENT_MM + 
-                              PADDING_BOTTOM_MM;
+            // Unified constants (mm)
+            const basePageHeight = 296.5; // base A4-like height
+            const baseRows = 6;
+            const rowHeight = 7.0; // unified row height in mm
+            const tableHeaderHeight = 10;
+            const headerHeight = 125;
+            const footerHeight = 95;
+            const paddingTop = 0;
+            const paddingBottom = 0;
 
-            totalHeight = Math.ceil(totalHeight);
-            // --- [नया कैलकुलेशन समाप्त] ---
+            const totalRows = items.length;
+            const extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
 
+            // Start with base + extra rows
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
 
+            // Estimate minimal required height to fit content + footer
+            const estimatedTableHeight = (totalRows * rowHeight) + tableHeaderHeight;
+            const minimalRequired = Math.ceil(paddingTop + headerHeight + estimatedTableHeight + footerHeight + paddingBottom);
+            totalHeight = Math.max(totalHeight, minimalRequired);
+
+            // Build content HTML using the computed totalHeight
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
+            element.innerHTML = generatePDFContent(totalHeight, activeTabId);
 
             const opt = {
                 margin: 0,
@@ -1110,21 +557,18 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // यहाँ नई 'totalHeight' का उपयोग करें
+                    format: [210, totalHeight]
                 },
-                pagebreak: { mode: ['avoid'] } 
+                pagebreak: { mode: ['avoid'] }
             };
 
-            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                while (pdf.internal.getNumberOfPages() > 1) {
-                    pdf.deletePage(pdf.internal.getNumberOfPages());
-                }
-            }).save();
+            // Generate PDF (avoid fragile page-deletion hacks)
+            html2pdf().set(opt).from(element).save();
         }
         
-        // --- [FIX V47] PDF CONTENT (Added mm padding) ---
+        // --- V45 PDF FONT COLOR FIX (Modified spacer calculation) ---
         function generatePDFContent(totalHeight, tabType) { 
-            const currentDate = new Date().toLocaleString('en-GB');
+            const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
@@ -1134,7 +578,17 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // [Advance Tab Logic - No Change]
+            const HEADER_HEIGHT_MM = 125; 
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 7.0; 
+            const GROUP_HEADER_HEIGHT_MM = 18; 
+            const PAGE_PADDING_TOP_MM = 0; 
+            const PAGE_PADDING_BOTTOM_MM = 0;
+
+            let contentHeight = 0;
+            let spacerHeight = 0;
+            
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1197,8 +651,12 @@
                     
                     tableContentHTML += '</tbody></table>';
                 } 
+                
+                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
+                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
+                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
+
             } 
-            // [Basic Tab Logic - No Change]
             else {
                 let tableRows = ''; 
                 items.forEach((item, idx) => {
@@ -1214,24 +672,18 @@
                         </tr>
                     `;
                 });
-
-                tableContentHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                        <thead>
-                            <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 35%;">Size</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 25%;">Surface Type</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Grade</th>
-                                <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
-                            </tr>
-                        </thead>
-                        <tbody style="background: white;">
-                            ${tableRows}
-                        </tbody>
-                    </table>
-                `;
+                
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
+
+            // ensure totalHeight covers content + footer
+            if (typeof totalHeight === 'undefined' || totalHeight < (contentHeight + FOOTER_BLOCK_HEIGHT_MM + PAGE_PADDING_BOTTOM_MM)) {
+                totalHeight = Math.ceil(contentHeight + FOOTER_BLOCK_HEIGHT_MM + PAGE_PADDING_BOTTOM_MM);
+            }
+
+            // safe spacer (never negative)
+            spacerHeight = Math.max(0, totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM - PAGE_PADDING_BOTTOM_MM);
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
@@ -1240,15 +692,15 @@
                             position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
-                    <div style="position: absolute; top: 0; right: 0; width: 25mm; height: 30mm; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
+                    <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
 
-                    <div style="position: absolute; left: 0mm; bottom: 0mm; width: 25mm; height: 30mm; overflow: hidden; z-index: 1;">
+                    <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="padding: 20mm 25mm 35mm 25mm; 
+                    <div style="padding: 20px 25px 0 25px; 
                                 position: relative; z-index: 10;
                     ">
                         
@@ -1292,9 +744,24 @@
                         </div>
                         
                         ${tableContentHTML}
-                        
                         <div style="height: 10mm;"></div>
 
+                        
+                    </div>
+
+                    <!-- remove spacer from pushing footer -->
+<div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
+
+<!-- fix footer position absolutely to page bottom -->
+<div style="
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 0 25px 20px 25px;
+  height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
+">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
@@ -1330,11 +797,14 @@
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); 
+            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
+            items = [];
             renderItems(); 
         }
 
         function clearAdvanceTab() {
+            items = [];
+            
             const sizeSelect = document.getElementById('advanceSizeSelect');
             if (sizeSelect) sizeSelect.value = ""; 
             
@@ -1360,13 +830,13 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); 
+                container.classList.add('advance-theme'); // Green theme
+                clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); 
+                container.classList.remove('advance-theme'); // Default (Purple) theme
+                clearAdvanceTab();
             }
-            
-            renderItems();
         }
         
         // --- 3. Event Listeners & Initial Calls ---

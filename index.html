@@ -1123,7 +1123,7 @@ if (items.length > baseRows) {
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 7; 
+            const ROW_HEIGHT_MM = 6.5; 
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;
@@ -1161,7 +1161,7 @@ if (items.length > baseRows) {
                     `;
                     
                     tableContentHTML += `
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
                             <thead>
                                 <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
@@ -1301,6 +1301,8 @@ if (items.length > baseRows) {
                         </div>
                         
                         ${tableContentHTML}
+                        <div style="height: 10mm;"></div>
+
                         
                     </div>
 

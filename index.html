@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai (V44) */
+        /* CSS में कोई बदलाव नहीं */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -1047,8 +1047,8 @@
         }
         // [NEW V44] End
 
-        
-        // --- [CODE MODIFIED V48 - The "No-Tukka" Fix] ---
+
+        // --- [CODE MODIFIED V49 - The "Professional" Fix] ---
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1056,82 +1056,13 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-
-            // --- [NEW] Accurate constants based on CSS ---
-            // 1 इंच = 25.4mm = 96px (मानक DPI)
-            // 1px = 25.4 / 96 = 0.26458333... mm
-            const PX_TO_MM = 0.26458333; 
-
-            // ये मान generatePDFContent के HTML/CSS से लिए गए हैं
-            const ROW_PX = 24;                 // <tr style="height: 24px;">
-            const TABLE_HEADER_PX = 30;        // <tr style="height: 30px;"> (thead)
             
-            // 14pt = (14 / 72) * 96 = 18.66px (फ़ॉन्ट ऊँचाई)
-            const GROUP_TITLE_FONT_PX = 18.67; 
-            const GROUP_TITLE_BOT_MARGIN_PX = 10; // margin-bottom: 10px;
+            // [NEW LOGIC V49] ऊँचाई की कोई गणना नहीं।
+            // हम html2pdf.js को पेज ब्रेक खुद हैंडल करने देंगे।
             
-            const GROUP_DIVIDER_TOP_MARGIN_PX = 10; // margin-top: 10px;
-            const GROUP_DIVIDER_BOT_MARGIN_PX = 8;  // margin-bottom: 8px;
-
-            // --- [NEW] Converted MM constants ---
-            // अब हम अनुमान नहीं लगा रहे हैं, हम गणना कर रहे हैं।
-            const ROW_HEIGHT_MM = ROW_PX * PX_TO_MM;                                   // ~6.35mm
-            const TABLE_HEADER_HEIGHT_MM = TABLE_HEADER_PX * PX_TO_MM;                 // ~7.94mm
-            const GROUP_TITLE_HEIGHT_MM = (GROUP_TITLE_FONT_PX + GROUP_TITLE_BOT_MARGIN_PX) * PX_TO_MM; // ~7.58mm
-            const GROUP_DIVIDER_HEIGHT_MM = (GROUP_DIVIDER_TOP_MARGIN_PX + GROUP_DIVIDER_BOT_MARGIN_PX) * PX_TO_MM; // ~4.76mm
-
-            // --- [STATIC] ये मान स्थिर हैं और इन्हें बदला नहीं गया है ---
-            const HEADER_HEIGHT_MM = 125; // यह हेडर सामग्री के लिए आपका अनुमानित बजट है
-            const FOOTER_BLOCK_HEIGHT_MM = 95; // यह फुटर सामग्री के लिए आपका अनुमानित बजट है
-            const POST_TABLE_SPACER_MM = 10; // <div style="height: 10mm;"></div> से
-            const A4_HEIGHT_MM = 297; 
-            // --- [END NEW CONSTANTS] ---
-
-            let contentHeight = 0;
-
-            if (activeTabId === 'advance') {
-                const groups = {};
-                items.forEach(item => {
-                    if (!groups[item.size]) {
-                        groups[item.size] = [];
-                    }
-                    groups[item.size].push(item);
-                });
-                const numGroups = Object.keys(groups).length;
-
-                // ये गणनाएँ अब सटीक mm मानों का उपयोग करती हैं
-                let tableHeadersHeight = numGroups * TABLE_HEADER_HEIGHT_MM;
-                let rowsHeight = items.length * ROW_HEIGHT_MM;
-                let groupTitlesHeight = numGroups * GROUP_TITLE_HEIGHT_MM;
-                let dividersHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_DIVIDER_HEIGHT_MM : 0;
-
-                // कुल सामग्री ऊँचाई
-                contentHeight = HEADER_HEIGHT_MM + 
-                                tableHeadersHeight + 
-                                rowsHeight + 
-                                groupTitlesHeight + 
-                                dividersHeight + 
-                                POST_TABLE_SPACER_MM;
-                
-            } else { // 'basic' tab
-                // बेसिक टैब के लिए भी सटीक मानों का उपयोग करें
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + POST_TABLE_SPACER_MM;
-            }
-
-            // --- यह लॉजिक (V46 से) अपरिवर्तित है ---
-            // यह फुटर को ठीक से रखने के लिए spacer की गणना करता है
-            const calculatedTotalHeight = contentHeight + FOOTER_BLOCK_HEIGHT_MM;
-            const totalHeight = Math.max(calculatedTotalHeight, A4_HEIGHT_MM); // A4 से कम नहीं होना चाहिए
-            
-            // यदि सामग्री A4 से बड़ी है, तो spacer 0 या बहुत छोटा होगा
-            const spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-            // --- [END V46 LOGIC] ---
-
-
             const element = document.createElement('div');
-            // हम generatePDFContent को सही totalHeight और spacerHeight पास करते हैं
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId, spacerHeight); 
+            // हम generatePDFContent को कोई ऊँचाई (height) नहीं भेज रहे हैं।
+            element.innerHTML = generatePDFContent(activeTabId); 
 
             const opt = {
                 margin: 0,
@@ -1141,38 +1072,36 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // हमारी सटीक गणना की गई ऊँचाई का उपयोग करें
+                    format: 'a4' // [FIX] A4 फॉर्मेट का उपयोग करें, कस्टम ऊँचाई का नहीं
                 },
-                pagebreak: { mode: ['avoid'] } 
+                // [FIX] 'legacy' मोड का उपयोग करें ताकि टेबल पेज के बीच सही से ब्रेक हो
+                pagebreak: { mode: 'legacy' } 
             };
 
-            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                while (pdf.internal.getNumberOfPages() > 1) {
-                    pdf.deletePage(pdf.internal.getNumberOfPages());
-                }
-            }).save();
+            // [FIX] हमने वह कोड हटा दिया है जो अतिरिक्त पेज को डिलीट करता था
+            html2pdf().set(opt).from(element).save();
         }
         
         
-        // --- [CODE MODIFIED V47 - Logo Overlap Fix] ---
-        // [MODIFIED] Added spacerHeight as an argument
-        function generatePDFContent(totalHeight, tabType, spacerHeight) { 
+        // --- [CODE MODIFIED V49] ---
+        // [MODIFIED] totalHeight और spacerHeight आर्ग्यूमेंट्स हटा दिए गए
+        function generatePDFContent(tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
             
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+            // [REMOVED] FOOTER_BLOCK_HEIGHT_MM की अब ज़रूरत नहीं है
+            // const FOOTER_BLOCK_HEIGHT_MM = 95; // (Removed)
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // [REMOVED] All contentHeight and spacerHeight calculations are removed from here.
-            // They are now done in generatePDF()
+            // [REMOVED] ऊँचाई की सभी गणनाएँ हटा दी गईं।
 
-            // --- This part of the logic (generating tableContentHTML) is unchanged ---
+            // --- टेबल जनरेशन लॉजिक (इसमें कोई बदलाव नहीं) ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1269,14 +1198,15 @@
                     </table>
                 `;
             }
-            // --- End of table generation logic ---
+            // --- टेबल लॉजिक का अंत ---
 
 
-            // [MODIFIED] This is the new HTML layout.
-            // It removes position:absolute from the footer and uses the calculated spacerHeight.
+            // [MODIFIED V49]
+            // मुख्य रैपर (wrapper) div से 'height: ${totalHeight}mm;' हटा दिया गया है।
+            // अब इसकी ऊँचाई 'auto' (स्वचालित) है।
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            height: ${totalHeight}mm; 
+                            /* height: ${totalHeight}mm; <-- [REMOVED] */
                             margin: 0; background: white; 
                             position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -1335,14 +1265,11 @@
                         
                         <div style="height: 10mm;"></div>
                         
-                    </div> <div style="height: ${spacerHeight}mm;"></div>
-
-
-                    <div style="
-                      position: relative;
-                      z-index: 5; /* [V47 Note] z-index 5 is above logo (z-index 1) */
-                      padding: 0 25px 20px 25px; /* Parent padding */
-                      height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
+                    </div> <div style="
+                      position: relative; /* [MODIFIED] position: relative ठीक है */
+                      z-index: 5; 
+                      padding: 0 25px 20px 25px; 
+                      /* height: ${FOOTER_BLOCK_HEIGHT_MM}mm; <-- [REMOVED] */
                     ">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
@@ -1351,7 +1278,7 @@
                                 Terms & Conditions:
                             </div>
                             
-                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 55px; /* [FIX] Changed 18px to 55px to avoid logo overlap */ line-height: 1.6;">
+                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 55px; line-height: 1.6;">
                                 <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
                                 <li>Prices are subject to change without prior notice depending on market conditions.</li>
                                 <li>Delivery period will be confirmed after order placement.</li>
@@ -1371,7 +1298,7 @@
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-                    </div> </div> `; // End of main wrapper div
+                    </div> </div> `; // मुख्य रैपर div का अंत
             
             return pagesHTML;
         }
@@ -1379,7 +1306,7 @@
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
+            clearForm(); 
             items = [];
             renderItems(); 
         }
@@ -1412,11 +1339,11 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); // Green theme
+                container.classList.add('advance-theme'); 
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); // Default (Purple) theme
+                container.classList.remove('advance-theme'); 
                 clearAdvanceTab();
             }
         }

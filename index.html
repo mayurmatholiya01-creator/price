@@ -511,7 +511,6 @@
         .edit-select {
             padding: 3px;
         }
-        
     </style>
 </head>
 <body>
@@ -653,7 +652,7 @@
         </div>
 
     <script>
-        // --- (V45 - CLEAR BUTTON & CLICK-TO-EDIT) ---
+        // --- (V45 - ADVANCE TAB RESET FIX) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -710,7 +709,6 @@
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
-            // [V44] Clear button ko show karo
             if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
             if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
@@ -744,15 +742,14 @@
             document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
             
-            // [V44] Clear buttons ko hide karo
             toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
             toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
             toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
         }
         
-        // [NEW V44] Clear 'X' button functions
         function toggleClearButton(input, btnId) {
             const btn = document.getElementById(btnId);
+            if (!btn) return; // [FIX] Agar button na male to error na aave
             if (input.value) {
                 btn.classList.add('visible');
             } else {
@@ -764,11 +761,9 @@
             document.getElementById(inputId).value = '';
             document.getElementById(btnId).classList.remove('visible');
             document.getElementById(inputId).focus();
-            // Agar suggestion box khula tha, to use band karo
             if (inputId === 'size') filterSuggestions('size');
             if (inputId === 'surface') filterSuggestions('surface');
         }
-        // [NEW V44] End
 
         function handleSuggestionKeydown(e, type) {
             const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
@@ -838,7 +833,7 @@
             });
         }
 
-        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
+        // [MODIFIED V45]
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
 
@@ -852,7 +847,10 @@
 
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
-                populateSurfaceList(); 
+                // Pehli baar list banao
+                if (document.getElementById('surfacePriceList').children.length === 0) {
+                    populateSurfaceList();
+                }
             } else {
                 optionsContainer.style.display = 'none';
             }
@@ -860,6 +858,7 @@
 
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
+            // Check badal diyo
             if (listDiv.children.length > 0) return; 
 
             let html = '';
@@ -936,7 +935,6 @@
             renderItems();
         }
 
-        // [MODIFIED V44] Click-to-Edit ke liye
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
@@ -985,14 +983,14 @@
         
         // [NEW V44] Click-to-Edit Functions
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return; // Ek time par ek hi edit
+            if (isEditing) return; 
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
             const originalValue = item[field];
             
-            tdElement.innerHTML = ''; // Cell ko khali karo
-            tdElement.onclick = null; // Dobara click na ho
+            tdElement.innerHTML = ''; 
+            tdElement.onclick = null; 
 
             if (field === 'price') {
                 const input = document.createElement('input');
@@ -1020,8 +1018,8 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
-                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
+                select.onblur = () => saveEdit(itemId, field, select.value); 
+                select.onchange = () => saveEdit(itemId, field, select.value); 
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
                         isEditing = false;
@@ -1042,8 +1040,8 @@
                     item.grade = newValue;
                 }
             }
-            isEditing = false; // Lock release karo
-            renderItems(); // Table ko redraw karo
+            isEditing = false; 
+            renderItems(); 
         }
         // [NEW V44] End
 
@@ -1338,7 +1336,7 @@
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
+            clearForm(); 
             items = [];
             renderItems(); 
         }

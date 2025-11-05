@@ -1079,9 +1079,11 @@
             let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
             let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
 
-            if (activeTabId === 'advance' && numGroups > 1) {
-                totalHeight += (numGroups - 1) * groupHeaderHeight;
-            }
+// 👇 [NEW LOGIC] Shift all footer-area content with page height
+if (items.length > baseRows) {
+    totalHeight += (items.length - baseRows) * 0; // keep 0 now (footer handled separately)
+}
+
 
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
@@ -1233,10 +1235,12 @@
             }
 
             spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-            
-            if (spacerHeight < 0) {
-                spacerHeight = 0;
-            }
+
+            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
+            if (items.length > 6) {
+            spacerHeight += (items.length - 6) * 7; // 7mm per extra row
+}   
+
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
@@ -1300,7 +1304,8 @@
                         
                     </div>
 
-                    <div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
+                    <div style="height: ${spacerHeight}mm; flex-shrink: 0; transition: all 0.2s ease;"></div>
+
 
                     <div style="position: relative; z-index: 5; padding: 0 25px 20px 25px; height: ${FOOTER_BLOCK_HEIGHT_MM}mm; flex-shrink: 0;">
                         

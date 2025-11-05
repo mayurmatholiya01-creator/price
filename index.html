@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -16,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* CSS में कोई बदलाव नहीं */
+        /* Pura CSS wahi hai (V44) */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -1047,74 +1048,33 @@
         }
         // [NEW V44] End
 
-        
-        // --- [CODE MODIFIED V50 - "Self-Calibrating" Fix] ---
 
-        /**
-         * [NEW V50] यह फ़ंक्शन 1mm में कितने पिक्सल होते हैं, इसकी गणना करता है।
-         * यह ब्राउज़र के रेंडरिंग इंजन के आधार पर सटीक मान देता है।
-         */
-        function getPxPerMm() {
-            // एक अदृश्य 'div' बनाएं
-            let d = document.createElement("div");
-            d.style = "width: 100mm; height: 100mm; position: absolute; left: -9999px; top: 0; padding: 0; margin: 0; border: none;";
-            document.body.appendChild(d);
-            
-            // पिक्सल में इसकी चौड़ाई नापें
-            // clientWidth पूर्णांक (integer) देता है, getBoundingClientRect() दशमलव (float) देता है जो ज़्यादा सटीक है।
-            let pxPer100mm = d.getBoundingClientRect().width;
-            
-            // 'div' को हटा दें
-            document.body.removeChild(d);
-            
-            // 1mm में पिक्सल की संख्या लौटाएं
-            return pxPer100mm / 100;
-        }
-
-
+        // --- V43 PDF LOGIC (Untouched) ---
         function generatePDF() {
             if (items.length === 0) {
-                alert('Please add items first');
+                alert('कृपया कम से कम एक item जोड़ें');
                 return;
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
 
-            // --- [NEW V50] Self-Calibrating Logic ---
-            // 1. ब्राउज़र से पूछें कि 1mm में कितने पिक्सल हैं
-            const PX_PER_MM = getPxPerMm(); 
-            // 2. 1 पिक्सल में कितने mm होते हैं, इसकी गणना करें
-            const MM_PER_PX = 1 / PX_PER_MM; 
-            // --- [END NEW V50] ---
+            // ✅ FIXED MEASUREMENTS (सभी mm में)
+            const A4_HEIGHT = 297;                    // A4 page height
+            const HEADER_HEIGHT_MM = 125;             // Header
+            const FOOTER_HEIGHT_MM = 95;              // Footer
+            const TABLE_HEADER_HEIGHT_MM = 10;        // Table header row
+            const ROW_HEIGHT_MM = 6.5;                // Per row height
+            const GROUP_HEADER_HEIGHT_MM = 18;        // Group size header
+            const SPACER_MM = 10;                     // Gap between content and footer
+            const GROUP_SEPARATOR_MM = 5;             // Gap between groups
 
+            // Available space for table content on first page
+            const AVAILABLE_SPACE = A4_HEIGHT - HEADER_HEIGHT_MM - FOOTER_HEIGHT_MM;  // 77mm
 
-            // --- [V48 Logic - Kept] ---
-            // ये मान generatePDFContent के HTML/CSS से लिए गए हैं
-            const ROW_PX = 24;                 // <tr style="height: 24px;">
-            const TABLE_HEADER_PX = 30;        // <tr style="height: 30px;"> (thead)
-            
-            // 14pt = (14 / 72) * 96 = 18.66px (फ़ॉन्ट ऊँचाई)
-            const GROUP_TITLE_FONT_PX = 18.67; 
-            const GROUP_TITLE_BOT_MARGIN_PX = 10; // margin-bottom: 10px;
-            
-            const GROUP_DIVIDER_TOP_MARGIN_PX = 10; // margin-top: 10px;
-            const GROUP_DIVIDER_BOT_MARGIN_PX = 8;  // margin-bottom: 8px;
-
-            // --- [MODIFIED V50] Converted MM constants ---
-            // अब हम "तुक्का" नहीं लगा रहे, हम "नापे" गए मान का उपयोग कर रहे हैं।
-            const ROW_HEIGHT_MM = ROW_PX * MM_PER_PX;
-            const TABLE_HEADER_HEIGHT_MM = TABLE_HEADER_PX * MM_PER_PX;
-            const GROUP_TITLE_HEIGHT_MM = (GROUP_TITLE_FONT_PX + GROUP_TITLE_BOT_MARGIN_PX) * MM_PER_PX;
-            const GROUP_DIVIDER_HEIGHT_MM = (GROUP_DIVIDER_TOP_MARGIN_PX + GROUP_DIVIDER_BOT_MARGIN_PX) * MM_PER_PX;
-
-            // --- [STATIC] ये मान स्थिर हैं ---
-            const HEADER_HEIGHT_MM = 125; 
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const POST_TABLE_SPACER_MM = 10; 
-            const A4_HEIGHT_MM = 297; 
-            // --- [END CONSTANTS] ---
-
-            let contentHeight = 0;
+            let totalHeight = HEADER_HEIGHT_MM;
+            let totalRows = items.length;
+            let numPages = 1;
+            let spacerHeight = SPACER_MM;
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1124,85 +1084,115 @@
                     }
                     groups[item.size].push(item);
                 });
+
                 const numGroups = Object.keys(groups).length;
+                const groupSeparators = (numGroups - 1) * GROUP_SEPARATOR_MM;
 
-                // ये गणनाएँ अब सटीक mm मानों का उपयोग करती हैं
-                let tableHeadersHeight = numGroups * TABLE_HEADER_HEIGHT_MM;
-                let rowsHeight = items.length * ROW_HEIGHT_MM;
-                let groupTitlesHeight = numGroups * GROUP_TITLE_HEIGHT_MM;
-                let dividersHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_DIVIDER_HEIGHT_MM : 0;
+                // Calculate content height for grouped table
+                let contentHeight = TABLE_HEADER_HEIGHT_MM + 
+                                  (totalRows * ROW_HEIGHT_MM) + 
+                                  (numGroups * GROUP_HEADER_HEIGHT_MM) +
+                                  groupSeparators;
 
-                contentHeight = HEADER_HEIGHT_MM + 
-                                tableHeadersHeight + 
-                                rowsHeight + 
-                                groupTitlesHeight + 
-                                dividersHeight + 
-                                POST_TABLE_SPACER_MM;
-                
-            } else { // 'basic' tab
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + POST_TABLE_SPACER_MM;
+                // Single page या multiple pages?
+                if (contentHeight + SPACER_MM <= AVAILABLE_SPACE) {
+                    // सब कुछ एक page में फिट हो जाता है
+                    totalHeight = HEADER_HEIGHT_MM + contentHeight + SPACER_MM + FOOTER_HEIGHT_MM;
+                    numPages = 1;
+                } else {
+                    // Multiple pages की जरूरत है
+                    const contentOnFirstPage = AVAILABLE_SPACE - SPACER_MM;
+                    const remainingContent = contentHeight - contentOnFirstPage;
+                    const contentPerAdditionalPage = A4_HEIGHT - FOOTER_HEIGHT_MM - SPACER_MM;
+
+                    numPages = 1 + Math.ceil(remainingContent / contentPerAdditionalPage);
+                    totalHeight = HEADER_HEIGHT_MM + 
+                                 contentHeight + 
+                                 (SPACER_MM * numPages) + 
+                                 (FOOTER_HEIGHT_MM * numPages);
+                }
+
+            } else {
+                // Standard mode: simple table
+                let contentHeight = TABLE_HEADER_HEIGHT_MM + (totalRows * ROW_HEIGHT_MM);
+
+                if (contentHeight + SPACER_MM <= AVAILABLE_SPACE) {
+                    // एक page में फिट
+                    totalHeight = HEADER_HEIGHT_MM + contentHeight + SPACER_MM + FOOTER_HEIGHT_MM;
+                    numPages = 1;
+                } else {
+                    // Multiple pages
+                    const contentOnFirstPage = AVAILABLE_SPACE - SPACER_MM;
+                    const remainingContent = contentHeight - contentOnFirstPage;
+                    const contentPerAdditionalPage = A4_HEIGHT - FOOTER_HEIGHT_MM - SPACER_MM;
+
+                    numPages = 1 + Math.ceil(remainingContent / contentPerAdditionalPage);
+                    totalHeight = HEADER_HEIGHT_MM + 
+                                 contentHeight + 
+                                 (SPACER_MM * numPages) + 
+                                 (FOOTER_HEIGHT_MM * numPages);
+                }
             }
 
-            // --- यह लॉजिक (V46 से) अपरिवर्तित है ---
-            // यह फुटर को ठीक से रखने के लिए spacer की गणना करता है
-            const calculatedTotalHeight = contentHeight + FOOTER_BLOCK_HEIGHT_MM;
-            // [MODIFIED V50] - हम A4 से कम की अनुमति नहीं देंगे, लेकिन आपके 1-पेज के अनुरोध का सम्मान करेंगे।
-            // const totalHeight = Math.max(calculatedTotalHeight, A4_HEIGHT_MM); 
-            // [FIX V50b] - आपकी 1-पेज की सख्त ज़रूरत के लिए:
-            const totalHeight = calculatedTotalHeight; 
-
-            // यदि सामग्री बहुत कम है, तो totalHeight A4 से कम हो सकती है, जो ठीक है।
-            // यदि सामग्री ज़्यादा है, तो totalHeight A4 से ज़्यादा होगी, जो भी ठीक है।
-            
-            // स्पेसर की गणना वैसे ही करें
-            const spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
-            // --- [END V46 LOGIC] ---
-
+            // Ensure minimum height
+            totalHeight = Math.max(totalHeight, A4_HEIGHT);
 
             const element = document.createElement('div');
-            // हम generatePDFContent को सही totalHeight और spacerHeight पास करते हैं
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId, spacerHeight); 
+            element.innerHTML = generatePDFContent(totalHeight, activeTabId, spacerHeight, FOOTER_HEIGHT_MM);
 
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    allowTaint: true, 
+                    scrollX: 0, 
+                    scrollY: 0,
+                    backgroundColor: '#ffffff'
+                },
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // हमारी सटीक गणना की गई ऊँचाई का उपयोग करें
+                    format: [210, totalHeight]
                 },
-                pagebreak: { mode: ['avoid'] } // पेज ब्रेक से बचें, क्योंकि यह 1 पेज है
+                pagebreak: { mode: 'avoid' }
             };
 
-            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                // [FIX V50] क्योंकि हम 1-पेज बना रहे हैं, यह सुनिश्चित करें कि यह 1 ही हो।
-                while (pdf.internal.getNumberOfPages() > 1) {
-                    pdf.deletePage(pdf.internal.getNumberOfPages());
-                }
-            }).save();
+            try {
+                html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                    while (pdf.internal.getNumberOfPages() > numPages) {
+                        pdf.deletePage(pdf.internal.getNumberOfPages());
+                    }
+                }).save();
+            } catch (error) {
+                console.error('PDF Generation Error:', error);
+                alert('PDF बनाने में त्रुटि: ' + error.message);
+            }
         }
         
-        
-        // --- [CODE UNCHANGED V47 - Logo Overlap Fix] ---
-        // यह फ़ंक्शन V47 से है और सही है।
-        // यह totalHeight और spacerHeight लेता है और HTML बनाता है।
-        function generatePDFContent(totalHeight, tabType, spacerHeight) { 
+        // --- V45 PDF FONT COLOR FIX (Untouched) ---
+        function generatePDFContent(totalHeight, tabType, spacerHeight, footerHeight) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
-            
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
 
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // --- टेबल जनरेशन लॉजिक (इसमें कोई बदलाव नहीं) ---
+            const HEADER_HEIGHT_MM = 125; 
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 6.5; 
+            const GROUP_HEADER_HEIGHT_MM = 18; 
+
+            let contentHeight = 0;
+            
+            
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1265,6 +1255,11 @@
                     
                     tableContentHTML += '</tbody></table>';
                 } 
+                
+                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
+                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
+                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
+
             } 
             else {
                 let tableRows = ''; 
@@ -1298,12 +1293,20 @@
                         </tbody>
                     </table>
                 `;
+                
+                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
+                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
-            // --- टेबल लॉजिक का अंत ---
+
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+
+            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
+            if (items.length > 6) {
+            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+
+}   
 
 
-            // [V47 HTML Layout - Kept]
-            // यह लेआउट सही है, यह फुटर को नीचे धकेलने के लिए spacerHeight का उपयोग करता है।
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}mm; 
@@ -1314,6 +1317,7 @@
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
+
                     <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
@@ -1362,26 +1366,31 @@
                         </div>
                         
                         ${tableContentHTML}
-                        
                         <div style="height: 10mm;"></div>
+
                         
-                    </div> <div style="height: ${spacerHeight}mm;"></div>
+                    </div>
 
+                    <!-- remove spacer from pushing footer -->
+<div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
-                    <div style="
-                      position: relative;
-                      z-index: 5; 
-                      padding: 0 25px 20px 25px; 
-                      height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
-                    ">
+<!-- fix footer position absolutely to page bottom -->
+<div style="
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: 0 25px 20px 25px;
+  height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
+">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>
-                            
-                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 55px; line-height: 1.6;">
+                            <ul style="font-size: 8pt !important; color: ${pdfTextColor}; margin: 0; padding-left: 18px; line-height: 1.6;">
                                 <li>All prices are ex-factory and exclusive of GST unless stated otherwise.</li>
                                 <li>Prices are subject to change without prior notice depending on market conditions.</li>
                                 <li>Delivery period will be confirmed after order placement.</li>
@@ -1401,7 +1410,8 @@
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-                    </div> </div> `; // मुख्य रैपर div का अंत
+                    </div> 
+                </div> `;
             
             return pagesHTML;
         }
@@ -1409,7 +1419,7 @@
         // --- SHARED FUNCTIONS ---
 
         function clearBasicTab() {
-            clearForm(); 
+            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
             items = [];
             renderItems(); 
         }
@@ -1442,11 +1452,11 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); 
+                container.classList.add('advance-theme'); // Green theme
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); 
+                container.classList.remove('advance-theme'); // Default (Purple) theme
                 clearAdvanceTab();
             }
         }

@@ -62,6 +62,43 @@
             border: 1px solid var(--glass-border); 
             transition: all 0.3s ease; 
         }
+
+        /* --- [NEW] Header Styles --- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--glass);
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+        }
+        .app-header .logo-img {
+            height: 30px;
+            object-fit: contain;
+        }
+        .app-header .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        .app-header .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+        .app-header .icon-btn:hover {
+            color: var(--primary);
+            transform: scale(1.1) rotate(5deg);
+        }
+        .app-header .icon-btn:nth-child(2):hover {
+             transform: scale(1.1) rotate(-15deg);
+        }
+        /* --- End Header Styles --- */
+
         .tabs {
             display: flex;
             background: var(--glass); 
@@ -516,10 +553,22 @@
 </head>
 <body>
     <div class="container"> 
+        
+        <div class="app-header">
+            <img id="headerLogo" class="logo-img" alt="Logo">
+            <div class="header-icons">
+                <button class="icon-btn" onclick="clearCurrentTab()" title="Clear Current Tab">
+                    <i class="fas fa-broom"></i>
+                </button>
+                <button class="icon-btn" onclick="location.reload()" title="Refresh Page">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
-            </div>
+        </div>
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
@@ -1377,6 +1426,18 @@
         
         // --- SHARED FUNCTIONS ---
 
+        // [NEW] Clears the inputs and items for the currently active tab
+        function clearCurrentTab() {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+            
+            if (activeTab.id === 'basic') {
+                clearBasicTab();
+            } else if (activeTab.id === 'advance') {
+                clearAdvanceTab();
+            }
+        }
+
         function clearBasicTab() {
             clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
             items = [];
@@ -1436,6 +1497,7 @@
         
         // Initial page load
         renderItems(); 
+        document.getElementById('headerLogo').src = logoGranicer_base64; // [NEW] Set header logo
     </script>
 </body>
 </html>

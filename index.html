@@ -70,19 +70,19 @@
             align-items: center;
             padding: 10px 20px;
             
-            /* --- [NEW V49] Dark Glass Background --- */
-            background: rgba(0, 0, 0, 0.3); /* Dark glass effect */
-            
-            border-bottom: 1px solid var(--glass-border); /* Subtle light border */
+            /* [NEW V49] Changed from var(--glass) to a dark, glassy background */
+            background: rgba(0, 0, 0, 0.25); 
+
+            border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
 
-            /* --- [V48] Glassy effect & Spacing --- */
+            /* [V48] Glassy effect & Spacing */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px); /* For Safari */
             margin-bottom: 5px; /* Space between header and tabs */
         }
         #header-logo {
-            height: 30px; 
+            height: 30px; /* Aap height adjust kar sakte hain */
             width: auto;
             object-fit: contain;
         }
@@ -95,7 +95,7 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.1em; 
+            font-size: 1.1em; /* Icon size */
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 5px;
@@ -105,7 +105,7 @@
             transform: scale(1.1);
         }
         .container.advance-theme .header-icon-btn:hover {
-            color: var(--primary); 
+            color: var(--primary); /* Advance theme (green) hover color */
         }
         /* --- [END MODIFIED V49] --- */
 
@@ -702,7 +702,7 @@
                 </div>
             </div>
 
-            <div classs="items-table">
+            <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
                     <div id="advanceItemsContainer"></div>
@@ -1472,9 +1472,9 @@
             // Set logo
             try {
                 if (typeof logoGranicer1_base64 !== 'undefined') {
-                    document.getElementById('header-logo').src = logoGranicer1_tool_base64;
+                    document.getElementById('header-logo').src = logoGranicer1_base64;
                 } else {
-                    console.error('logoGranicer1_tool_base64 is not defined. Make sure imagedata.js is loaded.');
+                    console.error('logoGranicer1_base64 is not defined. Make sure imagedata.js is loaded.');
                 }
             } catch (e) {
                 console.error('Error loading logo:', e);
@@ -1487,7 +1487,7 @@
                 location.reload();
             });
         });
-        // --- [END NEW VNext] ---
+        // --- [END NEW V47] ---
 
 
         document.addEventListener('click', function (event) {

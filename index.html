@@ -63,19 +63,21 @@
             transition: all 0.3s ease; 
         }
 
-        /* --- [NEW] Header Styles --- */
+        /* --- [MODIFIED] Header Styles --- */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            background: var(--glass);
+            background: var(--bg-primary); /* [CHANGED] Solid background */
             border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
         }
         .app-header .logo-img {
             height: 30px;
             object-fit: contain;
+            filter: invert(1); /* [NEW] Inverts dark logo to white */
+            opacity: 0.9;      /* [NEW] Makes white less harsh */
         }
         .app-header .header-icons {
             display: flex;
@@ -101,7 +103,7 @@
 
         .tabs {
             display: flex;
-            background: var(--glass); 
+            background: var(--glass); /* [MODIFIED] This now contrasts with the solid header */
             border-bottom: 1px solid var(--glass-border); 
             flex-shrink: 0;
         }

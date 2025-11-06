@@ -1050,8 +1050,9 @@
 
         // --- V43 PDF LOGIC (Untouched) ---
         
-        // [FINAL FIX] - This function calculates the *exact* page height from scratch every time,
-        // instead of relying on a "base height" + "extra rows". This is foolproof.
+        // [FINAL REAL FIX] - This function now uses the *correct* mm values
+        // based on the 30px (10.6mm) header and 24px (8.5mm) row heights
+        // from the hardcoded styles, which html2pdf renders.
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1060,14 +1061,21 @@
 
             const activeTabId = document.querySelector('.tab-content.active').id;
 
-            // --- 1. DEFINE ALL CONTENT HEIGHTS (from generatePDFContent) ---
-            // These MUST match the values in generatePDFContent
+            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED) ---
+            // These values are based on px-to-mm conversion for html2pdf
+            
+            // Magic numbers, these are fine
             const HEADER_HEIGHT_MM = 125;
             const FOOTER_BLOCK_HEIGHT_MM = 95;
-            const TABLE_HEADER_HEIGHT_MM = 10;
-            const ROW_HEIGHT_MM = 6.5;
-            const GROUP_HEADER_HEIGHT_MM = 18; // Includes pin-point line + size title
-            const SPACER_MM = 10; // The <div style="height: 10mm;"></div>
+            const SPACER_MM = 10; // <div style="height: 10mm;"></div>
+            
+            // These were the BUG. Corrected values:
+            const PDF_TABLE_HEADER_HEIGHT_MM = 10.6; // 30px height @ 72DPI
+            const PDF_ROW_HEIGHT_MM = 8.5;         // 24px height @ 72DPI
+            
+            // This is for 'advance' tab grouping, seems fine
+            const PDF_GROUP_HEADER_HEIGHT_MM = 18; 
+            
             
             let totalRows = items.length;
             let numGroups = 1; // Default for 'basic' tab
@@ -1079,8 +1087,8 @@
             
             if (activeTabId === 'basic') {
                 // Add one table header + all rows
-                calculatedHeight += TABLE_HEADER_HEIGHT_MM;
-                calculatedHeight += totalRows * ROW_HEIGHT_MM;
+                calculatedHeight += PDF_TABLE_HEADER_HEIGHT_MM;
+                calculatedHeight += totalRows * PDF_ROW_HEIGHT_MM;
                 
             } else if (activeTabId === 'advance') {
                 // Find out how many groups we have
@@ -1094,17 +1102,17 @@
                 numGroups = Object.keys(groups).length;
 
                 // Add one group header *per group*
-                calculatedHeight += numGroups * GROUP_HEADER_HEIGHT_MM;
+                calculatedHeight += numGroups * PDF_GROUP_HEADER_HEIGHT_MM;
                 
                 // Add one table header *per group*
-                calculatedHeight += numGroups * TABLE_HEADER_HEIGHT_MM;
+                calculatedHeight += numGroups * PDF_TABLE_HEADER_HEIGHT_MM;
                 
                 // Add all rows
-                calculatedHeight += totalRows * ROW_HEIGHT_MM;
+                calculatedHeight += totalRows * PDF_ROW_HEIGHT_MM;
             }
 
             // --- 3. SET FINAL HEIGHT ---
-            // We use Math.ceil() to ensure we have enough space for half-pixels (e.g., 6.5mm)
+            // We use Math.ceil() to add a tiny safety buffer
             const totalHeight = Math.ceil(calculatedHeight);
 
             // --- (Rest of the function is unchanged) ---
@@ -1144,10 +1152,12 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
+            // NOTE: These values are for *internal logic* but the *rendered* values
+            // (30px and 24px) are what *really* matter.
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5; 
+            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 10.6
+            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 8.5
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;

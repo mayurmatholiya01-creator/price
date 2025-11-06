@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Granicer Ceramica - Price List Generator</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
     
-    <script src="imagedata.js"></script>
+    <script src="imagedata.js" defer></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai (V44) */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -60,29 +59,25 @@
             height: 100dvh; 
             max-height: 100dvh; 
             border: 1px solid var(--glass-border); 
-            transition: all 0.3s ease; 
+            transition: all 0.3s ease; /* 'all' yahaan theek hai container theme change ke liye */
         }
 
-        /* --- [MODIFIED V49] Header Styles --- */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            
-            /* [NEW V49] Changed from var(--glass) to a dark, glassy background */
             background: rgba(0, 0, 0, 0.25); 
-
             border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
-
-            /* [V48] Glassy effect & Spacing */
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* For Safari */
-            margin-bottom: 5px; /* Space between header and tabs */
+            -webkit-backdrop-filter: blur(10px); 
+            margin-bottom: 5px; 
+            /* [PERF V50] Browser ko hint deta hai ki ye property change hogi */
+            will-change: backdrop-filter;
         }
         #header-logo {
-            height: 30px; /* Aap height adjust kar sakte hain */
+            height: 30px; 
             width: auto;
             object-fit: contain;
         }
@@ -95,19 +90,21 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.1em; /* Icon size */
+            font-size: 1.1em; 
             cursor: pointer;
-            transition: all 0.3s ease;
             padding: 5px;
+            /* [PERF V50] 'all' se specific properties mein change kiya */
+            transition: color 0.3s ease, transform 0.3s ease;
+            /* [PERF V50] Animation hint */
+            will-change: transform;
         }
         .header-icon-btn:hover {
             color: var(--primary);
             transform: scale(1.1);
         }
         .container.advance-theme .header-icon-btn:hover {
-            color: var(--primary); /* Advance theme (green) hover color */
+            color: var(--primary); 
         }
-        /* --- [END MODIFIED V49] --- */
 
         .tabs {
             display: flex;
@@ -124,8 +121,8 @@
             font-size: 1em;
             font-weight: 600;
             color: var(--text-muted); 
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
+            /* [PERF V50] 'all' se specific properties mein change kiya */
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
             font-family: 'Inter', sans-serif; 
         }
         .tab-btn.active {
@@ -169,6 +166,7 @@
             border-radius: var(--border-radius-sm); 
             color: var(--text-primary); 
             font-size: 16px; 
+            /* [PERF V50] Ye pehle se hi optimized tha. Good! */
             transition: border-color 0.3s, box-shadow 0.3s;
             font-family: 'Inter', sans-serif;
             -webkit-appearance: none;
@@ -247,7 +245,8 @@
             font-weight: 600;
             font-size: 0.9em;
             color: var(--text-secondary);
-            transition: all 0.3s ease;
+            /* [PERF V50] 'all' se specific properties mein change kiya */
+            transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
             margin-bottom: 0; 
         }
         .grade-buttons input[type="radio"]:checked + label {
@@ -276,11 +275,14 @@
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            /* [PERF V50] 'all' se specific properties mein change kiya */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            /* [PERF V50] Animation hint */
+            will-change: transform, box-shadow;
         }
         .add-button {
             background: linear-gradient(135deg, var(--success), var(--success-light)); 
@@ -324,7 +326,7 @@
         .suggestion-item {
             padding: 10px 12px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s; /* Pehle se optimized tha */
             border-bottom: 1px solid var(--glass-border);
             font-size: 0.9em;
             color: var(--text-secondary);
@@ -413,12 +415,15 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.9em; 
-            transition: all 0.3s ease;
+            /* [PERF V50] 'all' se specific properties mein change kiya */
+            transition: background 0.3s ease, transform 0.3s ease;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0;
+            /* [PERF V50] Animation hint */
+            will-change: transform;
         }
         .delete-btn:hover {
             background: #ff5252;
@@ -515,7 +520,7 @@
             color: var(--text-muted);
             cursor: pointer;
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.2s ease; /* Pehle se optimized tha */
             pointer-events: none;
             font-size: 0.9em;
             z-index: 5; 
@@ -575,6 +580,7 @@
                 </button>
             </div>
         </div>
+
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
@@ -712,7 +718,7 @@
         </div>
 
     <script>
-        // --- (V49 - Header Dark Glass) ---
+        // --- (V50 - Performance Optimization) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -732,7 +738,7 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; // [V44] Editing lock
+        let isEditing = false; 
 
         // --- 2. Function Definitions ---
 
@@ -769,12 +775,10 @@
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
-            // [V44] Clear button ko show karo
             if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
             if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
 
-        // [MODIFIED V46] DUPLICATE CHECK ADDED
         function addItem() {
             const size = document.getElementById('size').value.trim();
             const surface = document.getElementById('surface').value.trim();
@@ -785,8 +789,6 @@
                 alert('Please fill all fields');
                 return;
             }
-
-            // --- [V46] Duplicate Check ---
             const isDuplicate = items.some(item => 
                 item.size === size && 
                 item.surface === surface && 
@@ -795,10 +797,8 @@
 
             if (isDuplicate) {
                 alert('Error: This item (Size, Surface, Grade) already exists in the list.');
-                return; // फ़ंक्शन को यहीं रोक दें
+                return; 
             }
-            // --- [END V46] ---
-
             const item = {
                 id: itemIdCounter++,
                 size: size,
@@ -817,14 +817,11 @@
             document.getElementById('price').value = '';
             document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
-            
-            // [V44] Clear buttons ko hide karo
             toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
             toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
             toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
         }
         
-        // [V44] Clear 'X' button functions
         function toggleClearButton(input, btnId) {
             const btn = document.getElementById(btnId);
             if (input.value) {
@@ -838,7 +835,6 @@
             document.getElementById(inputId).value = '';
             document.getElementById(btnId).classList.remove('visible');
             document.getElementById(inputId).focus();
-            // Agar suggestion box khula tha, to use band karo
             if (inputId === 'size') filterSuggestions('size');
             if (inputId === 'surface') filterSuggestions('surface');
         }
@@ -851,15 +847,12 @@
                 activeSuggestionIndex = -1;
                 return;
             }
-
             const items = suggestionsDiv.querySelectorAll('.suggestion-item');
             if (items.length === 0) {
                 activeSuggestionIndex = -1;
                 return;
             }
-
             items.forEach(item => item.classList.remove('suggestion-active'));
-
             if (e.key === 'ArrowDown') {
                 e.preventDefault(); 
                 activeSuggestionIndex++;
@@ -911,17 +904,11 @@
             });
         }
 
-        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
-
-            // --- [V45 FIX] ---
-            // 1. Purane price clear karo
             clearAdvancePriceInputs(); 
-            // 2. Grade ko 'PRE' par reset karo
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
-            // --- [FIX END] ---
 
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
@@ -966,7 +953,6 @@
             });
         }
 
-        // [MODIFIED V46] DUPLICATE CHECK ADDED
         function addAdvanceItems() {
             const size = document.getElementById('advanceSizeSelect').value;
             if (!size) {
@@ -977,15 +963,13 @@
             
             const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             let itemsAdded = 0;
-            let duplicatesFound = 0; // [V46] डुप्लिकेट को ट्रैक करने के लिए
+            let duplicatesFound = 0; 
 
             priceInputs.forEach(input => {
                 const price = input.value.trim();
                 const surface = input.getAttribute('data-surface-name');
 
                 if (price && parseFloat(price) > 0) {
-                    
-                    // --- [V46] Duplicate Check ---
                     const isDuplicate = items.some(item => 
                         item.size === size && 
                         item.surface === surface && 
@@ -993,9 +977,8 @@
                     );
 
                     if (isDuplicate) {
-                        duplicatesFound++; // डुप्लिकेट को गिनें
+                        duplicatesFound++; 
                     } else {
-                        // केवल तभी जोड़ें जब डुप्लिकेट न हो
                         const item = {
                             id: itemIdCounter++,
                             size: size,
@@ -1006,21 +989,15 @@
                         items.push(item);
                         itemsAdded++;
                     }
-                    // --- [END V46] ---
                 }
             });
-
-            // --- [V46] बेहतर फ़ीडबैक अलर्ट ---
             if (itemsAdded === 0 && duplicatesFound === 0) {
                 alert('Please enter at least one price.');
                 return;
             }
-
             if (duplicatesFound > 0) {
                 alert(`${itemsAdded} new item(s) added.\n${duplicatesFound} duplicate item(s) were skipped.`);
             }
-            // --- [END V46] ---
-
             renderItems(); 
             clearAdvancePriceInputs(); 
         }
@@ -1031,13 +1008,13 @@
             renderItems();
         }
 
-        // [MODIFIED V44] Click-to-Edit ke liye
+        // [MODIFIED V50] Event Delegation ke liye `onclick` hataye gaye
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
             
             const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
-            const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
+            const pdfBtnId = (activeT`abId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
 
             const container = document.getElementById(containerId);
             const pdfBtn = document.getElementById(pdfBtnId);
@@ -1064,13 +1041,18 @@
                     <tbody>
             `;
             items.forEach((item) => {
+                // [PERF V50] 'onclick' hata kar 'data-attributes' add kiye gaye
                 tableHTML += `
                     <tr>
                         <td>${item.size}</td>
                         <td>${item.surface}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'grade')">${item.grade}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'price')">₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
+                        <td class="editable-cell" data-action="edit-grade" data-item-id="${item.id}">${item.grade}</td>
+                        <td class="editable-cell" data-action="edit-price" data-item-id="${item.id}">₹ ${item.price.toFixed(2)}</td>
+                        <td>
+                            <button class="delete-btn" data-action="delete" data-item-id="${item.id}">
+                                <i class="fas fa-trash-alt" style="pointer-events: none;"></i>
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1078,16 +1060,20 @@
             container.innerHTML = tableHTML;
         }
         
-        // [NEW V44] Click-to-Edit Functions
+        // [MODIFIED V50] Ab ye function 'handleTableClick' se call hoga
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return; // Ek time par ek hi edit
+            if (isEditing) return; 
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
+            if (!item) {
+                isEditing = false;
+                return;
+            }
             const originalValue = item[field];
             
-            tdElement.innerHTML = ''; // Cell ko khali karo
-            tdElement.onclick = null; // Dobara click na ho
+            tdElement.innerHTML = ''; 
+            // tdElement.onclick = null; // [PERF V50] Ab zaroori nahi, kyunki delegation hai
 
             if (field === 'price') {
                 const input = document.createElement('input');
@@ -1099,7 +1085,7 @@
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
                         isEditing = false;
-                        renderItems(); // Cancel
+                        renderItems(); 
                     }
                 };
                 tdElement.appendChild(input);
@@ -1115,12 +1101,12 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
-                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
+                select.onblur = () => saveEdit(itemId, field, select.value); 
+                select.onchange = () => saveEdit(itemId, field, select.value); 
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
                         isEditing = false;
-                        renderItems(); // Cancel
+                        renderItems(); 
                     }
                 };
                 tdElement.appendChild(select);
@@ -1129,6 +1115,7 @@
         }
 
         function saveEdit(itemId, field, newValue) {
+            if (!isEditing) return; // double-save se bachaav
             const item = items.find(i => i.id === itemId);
             if (item) {
                 if (field === 'price') {
@@ -1137,24 +1124,20 @@
                     item.grade = newValue;
                 }
             }
-            isEditing = false; // Lock release karo
-            renderItems(); // Table ko redraw karo
+            isEditing = false; 
+            renderItems(); 
         }
-        // [NEW V44] End
 
-
-        // --- V43 PDF LOGIC (Untouched) ---
+        // --- PDF LOGIC (Unchanged) ---
         async function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
-            
             const activeTabId = document.querySelector('.tab-content.active').id;
             const pdfBtn = document.getElementById(activeTabId === 'basic' ? 'pdfBtn' : 'advancePdfBtn');
             pdfBtn.disabled = true;
             pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-
             const measurementElement = document.createElement('div');
             measurementElement.style.width = '210mm'; 
             measurementElement.style.position = 'absolute';
@@ -1163,18 +1146,13 @@
             measurementElement.style.visibility = 'hidden'; 
             measurementElement.innerHTML = generatePDFContent('auto', activeTabId);
             document.body.appendChild(measurementElement);
-
             await new Promise(resolve => setTimeout(resolve, 0)); 
-            
             const heightInPx = measurementElement.getBoundingClientRect().height;
             const PXL_TO_MM = 0.264583; 
             const totalHeight = Math.ceil(heightInPx * PXL_TO_MM) + 5; 
-
             document.body.removeChild(measurementElement);
-            
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent(`${totalHeight}mm`, activeTabId); 
-
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
@@ -1187,7 +1165,6 @@
                 },
                 pagebreak: { mode: ['avoid'] }
             };
-
             html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
                 while (pdf.internal.getNumberOfPages() > 1) {
                     pdf.deletePage(pdf.internal.getNumberOfPages());
@@ -1198,26 +1175,21 @@
             });
         }
         
-        // --- V45 PDF FONT COLOR FIX (Untouched) ---
         function generatePDFContent(totalHeight, tabType) { 
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
-
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
-            
             const pinPointLineFooter = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 0) 10%, rgba(237, 50, 55, 1) 20%, rgba(237, 50, 55, 1) 80%, rgba(237, 50, 55, 0) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0) 100%);"></div>
             `;
             
-            const FOOTER_BLOCK_HEIGHT_MM = 95; 
-
-            // --- Table Generation Logic (Unchanged) ---
+            // --- Table Generation Logic ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1226,29 +1198,14 @@
                     }
                     groups[item.size].push(item);
                 });
-
                 let numGroups = 0;
                 let groupKeys = Object.keys(groups); 
-
                 for (const size of groupKeys) {
                     numGroups++;
-                    
                     if (numGroups > 1) {
-                        tableContentHTML += `
-                            <div style="margin-top: 10px; margin-bottom: 8px;">
-                                ${pinPointLine}
-                            </div>
-                        `;
+                        tableContentHTML += `<div style="margin-top: 10px; margin-bottom: 8px;">${pinPointLine}</div>`;
                     }
-                    
-                    tableContentHTML += `
-                        <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; 
-                                    margin-top: 0;
-                                    margin-bottom: 10px;">
-                            SIZE: ${size}
-                        </div>
-                    `;
-                    
+                    tableContentHTML += `<div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; margin-top: 0; margin-bottom: 10px;">SIZE: ${size}</div>`;
                     tableContentHTML += `
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
                             <thead>
@@ -1262,7 +1219,6 @@
                             </thead>
                             <tbody style="background: white;">
                     `;
-
                     let groupSrNo = 1;
                     groups[size].forEach((item, idx) => {
                         const rowStyle = (idx % 2 === 0) ? 'background: white;' : 'background: #f8f9fa;';
@@ -1277,7 +1233,6 @@
                         `;
                         groupSrNo++;
                     });
-                    
                     tableContentHTML += '</tbody></table>';
                 } 
             } 
@@ -1296,7 +1251,6 @@
                         </tr>
                     `;
                 });
-
                 tableContentHTML = `
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                         <thead>
@@ -1315,8 +1269,7 @@
                 `;
             }
 
-            // --- HTML Page Structure ---
-            // (PDF ka baaki content wahi hai... yahaan short kar raha hoon)
+            // --- HTML Page Structure (Unchanged) ---
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}; 
@@ -1409,37 +1362,30 @@
             return pagesHTML;
         }
         
-        // --- [NEW V47] Clear Active Tab Function ---
         function clearActiveTabContent() {
             const activeTab = document.querySelector('.tab-content.active');
             if (!activeTab) return;
-
             if (activeTab.id === 'basic') {
                 clearBasicTab();
             } else if (activeTab.id === 'advance') {
                 clearAdvanceTab();
             }
         }
-        // --- [END NEW V47] ---
 
         function clearBasicTab() {
-            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
+            clearForm(); 
             items = [];
             renderItems(); 
         }
 
         function clearAdvanceTab() {
             items = [];
-            
             const sizeSelect = document.getElementById('advanceSizeSelect');
             if (sizeSelect) sizeSelect.value = ""; 
-            
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
-            
             const optionsContainer = document.getElementById('advance-options-container');
             if(optionsContainer) optionsContainer.style.display = 'none';
-
             clearAdvancePriceInputs();
             renderItems(); 
         }
@@ -1448,29 +1394,48 @@
             const tabs = document.querySelectorAll('.tab-content');
             const buttons = document.querySelectorAll('.tab-btn');
             const container = document.querySelector('.container');
-
             tabs.forEach((tab) => tab.classList.remove('active'));
             buttons.forEach((btn) => btn.classList.remove('active'));
-
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active'); 
-
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); // Green theme
+                container.classList.add('advance-theme'); 
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); // Default (Purple) theme
+                container.classList.remove('advance-theme'); 
                 clearAdvanceTab();
             }
         }
         
         // --- 3. Event Listeners & Initial Calls ---
 
-        // --- [NEW V47] Header Listeners ---
+        // [PERF V50] Ye naya function table clicks ko handle karega
+        function handleTableClick(event) {
+            const target = event.target.closest('[data-action]');
+            
+            // Agar editing chalu hai to naye click ko ignore karo
+            if (isEditing) return;
+            
+            // Agar 'data-action' ke alawa kahin aur click hua to ignore karo
+            if (!target) return;
+
+            const action = target.dataset.action;
+            const id = parseInt(target.dataset.itemId, 10);
+
+            if (action === 'delete') {
+                deleteItem(id);
+            } else if (action === 'edit-grade') {
+                editCell(target, id, 'grade');
+            } else if (action === 'edit-price') {
+                editCell(target, id, 'price');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Set logo
             try {
+                // 'imagedata.js' ke 'defer' hone ke baad ye safely run hoga
                 if (typeof logoGranicer1_base64 !== 'undefined') {
                     document.getElementById('header-logo').src = logoGranicer1_base64;
                 } else {
@@ -1480,14 +1445,17 @@
                 console.error('Error loading logo:', e);
             }
             
-            // Add event listeners for new buttons
+            // Header buttons
             document.getElementById('clear-all-btn').addEventListener('click', clearActiveTabContent);
-            
             document.getElementById('refresh-btn').addEventListener('click', function() {
                 location.reload();
             });
+
+            // [PERF V50] Event Delegation Listeners
+            // Sirf 2 listener, chaahe 1000 item ho
+            document.getElementById('itemsContainer').addEventListener('click', handleTableClick);
+            document.getElementById('advanceItemsContainer').addEventListener('click', handleTableClick);
         });
-        // --- [END NEW V47] ---
 
 
         document.addEventListener('click', function (event) {

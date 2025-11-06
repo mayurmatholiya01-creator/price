@@ -63,7 +63,7 @@
             transition: all 0.3s ease; 
         }
 
-        /* --- [NEW V47] Header Styles --- */
+        /* --- [MODIFIED V48] Header Styles --- */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -72,6 +72,12 @@
             background: var(--glass);
             border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
+
+            /* --- [NEW V48] Glassy effect & Spacing --- */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px); /* For Safari */
+            margin-bottom: 5px; /* Space between header and tabs */
+            /* --- [END NEW V48] --- */
         }
         #header-logo {
             height: 30px; /* Aap height adjust kar sakte hain */
@@ -99,7 +105,7 @@
         .container.advance-theme .header-icon-btn:hover {
             color: var(--primary); /* Advance theme (green) hover color */
         }
-        /* --- [END NEW V47] --- */
+        /* --- [END MODIFIED V48] --- */
 
         .tabs {
             display: flex;
@@ -669,13 +675,13 @@
                     <div class="form-group">
                         <div class="grade-buttons">
                             <input type="radio" id="adv_grade_pre" name="adv_grade" value="PRE" checked>
-                            <label for="adv_grade_pre">PRE</label>
+                            <label for="adv_grade_pre">PRE</LAbel>
                             <input type="radio" id="adv_grade_std" name="adv_grade" value="STD">
-                            <label for="adv_grade_std">STD</label>
+                            <label for="adv_grade_std">STD</LAbel>
                             <input type="radio" id="adv_grade_gold" name="adv_grade" value="GOLD">
-                            <label for="adv_grade_gold">GOLD</label>
+                            <label for="adv_grade_gold">GOLD</LAbel>
                             <input type="radio" id="adv_grade_eco" name="adv_grade" value="ECO">
-                            <label for="adv_grade_eco">ECO</label>
+                            <label for="adv_grade_eco">ECO</LAbel>
                         </div>
                     </div>
                     <div class="form-group">
@@ -704,7 +710,7 @@
         </div>
 
     <script>
-        // --- (V47 - App Header & ClearAll) ---
+        // --- (V48 - Header Glassy Effect) ---
 
         // --- 1. Global Variables ---
         const sizes = [

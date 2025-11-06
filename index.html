@@ -1051,24 +1051,12 @@
         // --- V43 PDF LOGIC (Untouched) ---
         function generatePDF() {
             if (items.length === 0) {
-                alert('कृपया कम से कम एक item जोड़ें');
+                alert('Please add items first');
                 return;
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-
-            // ✅ FIXED MEASUREMENTS
-            const HEADER_HEIGHT_MM = 125;
-            const FOOTER_HEIGHT_MM = 95;
-            const TABLE_HEADER_MM = 10;
-            const ROW_HEIGHT_MM = 6.5;
-            const SPACER_MM = 10;
-            const GROUP_HEADER_MM = 18;
-            const GROUP_SEPARATOR_MM = 5;
-            const A4_HEIGHT = 297;
-
-            let contentHeight = 0;
-            let totalHeight = 0;
+            let numGroups = 1; 
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1078,57 +1066,46 @@
                     }
                     groups[item.size].push(item);
                 });
-
-                const numGroups = Object.keys(groups).length;
-                const totalItems = items.length;
-
-                contentHeight = TABLE_HEADER_MM 
-                              + (totalItems * ROW_HEIGHT_MM) 
-                              + (numGroups * GROUP_HEADER_MM)
-                              + ((numGroups - 1) * GROUP_SEPARATOR_MM)
-                              + SPACER_MM;
-            } else {
-                contentHeight = TABLE_HEADER_MM 
-                              + (items.length * ROW_HEIGHT_MM) 
-                              + SPACER_MM;
+                numGroups = Object.keys(groups).length;
             }
 
-            // ✅ CORRECT FORMULA: Total = Header + Content + Footer
-            totalHeight = HEADER_HEIGHT_MM + contentHeight + FOOTER_HEIGHT_MM;
+            const basePageHeight = 296.5; 
+            const baseRows = 6;           
+            const rowHeight = 7;
+            const groupHeaderHeight = 18; 
 
-            // ⚠️ Single page constraint check
-            if (totalHeight > A4_HEIGHT) {
-                const availableSpace = A4_HEIGHT - HEADER_HEIGHT_MM - FOOTER_HEIGHT_MM;
-                const maxRows = Math.floor(availableSpace / ROW_HEIGHT_MM);
-                alert('⚠️ Content बहुत लंबा है!\n\nCurrent items: ' + items.length + '\nMax for 1 page: ' + maxRows + '\n\nकृपया items कम करें।');
-                return;
-            }
+            let totalRows = items.length;
+            
+            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
+            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+
+// 👇 [NEW LOGIC] Shift all footer-area content with page height
+if (items.length > baseRows) {
+    totalHeight += (items.length - baseRows) * 0; // keep 0 now (footer handled separately)
+}
+
 
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId);
+            element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
 
             const opt = {
                 margin: 0,
                 filename: 'Granicer_PriceList_' + new Date().toISOString().slice(0, 10) + '.pdf',
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0, backgroundColor: '#ffffff' },
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, allowTaint: true, scrollX: 0, scrollY: 0 },
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight]  // ✅ Dynamic height based on content
+                    format: [210, totalHeight] 
                 },
-                pagebreak: { mode: 'avoid' }
+                pagebreak: { mode: ['avoid'] } 
             };
 
-            try {
-                console.log('📊 PDF: Items=' + items.length + ', Height=' + totalHeight.toFixed(2) + 'mm');
-                html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
-                    console.log('✅ PDF generated!');
-                }).save();
-            } catch (error) {
-                console.error('❌ Error:', error);
-                alert('PDF error: ' + error.message);
-            }
+            html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+                while (pdf.internal.getNumberOfPages() > 1) {
+                    pdf.deletePage(pdf.internal.getNumberOfPages());
+                }
+            }).save();
         }
         
         // --- V45 PDF FONT COLOR FIX (Untouched) ---

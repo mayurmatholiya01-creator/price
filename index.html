@@ -1050,9 +1050,10 @@
 
         // --- V43 PDF LOGIC (Untouched) ---
         
-        // [FINAL REAL FIX] - This function now uses the *correct* mm values
-        // based on the 30px (10.6mm) header and 24px (8.5mm) row heights
-        // from the hardcoded styles, which html2pdf renders.
+        // [FINAL PROPER FIX] - This function uses the *correct* px-to-mm
+        // conversion rate (based on 96 DPI, which html2pdf uses).
+        // Header (30px) = ~8.0mm
+        // Row (24px) = ~6.35mm
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1061,19 +1062,18 @@
 
             const activeTabId = document.querySelector('.tab-content.active').id;
 
-            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED) ---
-            // These values are based on px-to-mm conversion for html2pdf
+            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED @ 96 DPI) ---
             
-            // Magic numbers, these are fine
+            // These are the fixed layout heights
             const HEADER_HEIGHT_MM = 125;
             const FOOTER_BLOCK_HEIGHT_MM = 95;
-            const SPACER_MM = 10; // <div style="height: 10mm;"></div>
+            const SPACER_MM = 10; // The <div style="height: 10mm;"></div>
             
-            // These were the BUG. Corrected values:
-            const PDF_TABLE_HEADER_HEIGHT_MM = 10.6; // 30px height @ 72DPI
-            const PDF_ROW_HEIGHT_MM = 8.5;         // 24px height @ 72DPI
+            // These are the DYNAMIC heights, now correctly calculated
+            const PDF_TABLE_HEADER_HEIGHT_MM = 8.0;  // Based on 30px style
+            const PDF_ROW_HEIGHT_MM = 6.35;      // Based on 24px style
             
-            // This is for 'advance' tab grouping, seems fine
+            // This is for 'advance' tab grouping
             const PDF_GROUP_HEADER_HEIGHT_MM = 18; 
             
             
@@ -1112,8 +1112,8 @@
             }
 
             // --- 3. SET FINAL HEIGHT ---
-            // We use Math.ceil() to add a tiny safety buffer
-            const totalHeight = Math.ceil(calculatedHeight);
+            // We use Math.ceil() to add a tiny 1mm safety buffer for any rendering variance
+            const totalHeight = Math.ceil(calculatedHeight) + 1;
 
             // --- (Rest of the function is unchanged) ---
 
@@ -1128,7 +1128,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // Use the new, perfect height
+                    format: [210, totalHeight] // Use the new, proper height
                 },
                 pagebreak: { mode: ['avoid'] }
             };
@@ -1156,8 +1156,8 @@
             // (30px and 24px) are what *really* matter.
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 10.6
-            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 8.5
+            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 8.0
+            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 6.35
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;

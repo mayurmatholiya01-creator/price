@@ -1050,76 +1050,56 @@
 
         // --- V43 PDF LOGIC (Untouched) ---
         
-        // [FINAL BOX-MODEL FIX] - This function uses the *correct* px-to-mm
-        // conversion based on the CSS box model (height + padding + border).
-        // Header (42px) = 11.11mm
-        // Row (26px) = 6.88mm
-        function generatePDF() {
+        // [THE ROBUST FIX] - This function *measures* the content height
+        // instead of *guessing* it. This is the only way to be 100% accurate.
+        async function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
-
+            
             const activeTabId = document.querySelector('.tab-content.active').id;
+            const pdfBtn = document.getElementById(activeTabId === 'basic' ? 'pdfBtn' : 'advancePdfBtn');
+            pdfBtn.disabled = true;
+            pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED FOR BOX MODEL) ---
-            
-            // These are the fixed layout heights
-            const HEADER_HEIGHT_MM = 125;
-            const FOOTER_BLOCK_HEIGHT_MM = 95;
-            const SPACER_MM = 10; // The <div style="height: 10mm;"></div>
-            
-            // These are the DYNAMIC heights, now correctly calculated
-            // (height + padding + border) * 0.2645 (px-to-mm)
-            const PDF_TABLE_HEADER_HEIGHT_MM = 11.15; // (30h + 10p + 2b)px = 42px
-            const PDF_ROW_HEIGHT_MM = 6.9;          // (20h + 4p + 2b)px = 26px
-            
-            // This is for 'advance' tab grouping
-            const PDF_GROUP_HEADER_HEIGHT_MM = 18; 
-            
-            
-            let totalRows = items.length;
-            let numGroups = 1; // Default for 'basic' tab
-            
-            // --- 2. CALCULATE TOTAL CONTENT HEIGHT FROM SCRATCH ---
-            
-            // Start with the fixed parts
-            let calculatedHeight = HEADER_HEIGHT_MM + FOOTER_BLOCK_HEIGHT_MM + SPACER_MM;
-            
-            if (activeTabId === 'basic') {
-                // Add one table header + all rows
-                calculatedHeight += PDF_TABLE_HEADER_HEIGHT_MM;
-                calculatedHeight += totalRows * PDF_ROW_HEIGHT_MM;
-                
-            } else if (activeTabId === 'advance') {
-                // Find out how many groups we have
-                const groups = {};
-                items.forEach(item => {
-                    if (!groups[item.size]) {
-                        groups[item.size] = [];
-                    }
-                    groups[item.size].push(item);
-                });
-                numGroups = Object.keys(groups).length;
+            // --- 1. Create a temporary, off-screen element to measure ---
+            const measurementElement = document.createElement('div');
+            // We must set the *exact* width of the PDF page (210mm)
+            // 210mm - (25mm left padding + 25mm right padding) = 160mm content width
+            measurementElement.style.width = '210mm'; 
+            measurementElement.style.position = 'absolute';
+            measurementElement.style.left = '-9999px'; // Move it off-screen
+            measurementElement.style.top = '-9999px';
+            measurementElement.style.visibility = 'hidden'; // Hide it
 
-                // Add one group header *per group*
-                calculatedHeight += numGroups * PDF_GROUP_HEADER_HEIGHT_MM;
-                
-                // Add one table header *per group*
-                calculatedHeight += numGroups * PDF_TABLE_HEADER_HEIGHT_MM;
-                
-                // Add all rows
-                calculatedHeight += totalRows * PDF_ROW_HEIGHT_MM;
-            }
+            // Set its content. We pass 'auto' as height, since we don't know it yet.
+            measurementElement.innerHTML = generatePDFContent('auto', activeTabId);
+            
+            // Add it to the page to be measured
+            document.body.appendChild(measurementElement);
 
-            // --- 3. SET FINAL HEIGHT ---
-            // We use Math.ceil() to provide a minimal buffer for fractional pixels
-            const totalHeight = Math.ceil(calculatedHeight);
+            // --- 2. Measure the element's rendered height ---
+            // We must wait a tiny moment for the browser to render it
+            await new Promise(resolve => setTimeout(resolve, 0)); 
+            
+            // Get the height in PIXELS
+            const heightInPx = measurementElement.getBoundingClientRect().height;
+            
+            // Convert pixels to millimeters (1 inch = 96px = 25.4mm)
+            // (heightInPx / 96) * 25.4
+            const PXL_TO_MM = 0.264583; 
+            
+            // Add a 2mm safety buffer to prevent any rounding errors
+            const totalHeight = Math.ceil(heightInPx * PXL_TO_MM) + 2; 
 
-            // --- (Rest of the function is unchanged) ---
-
+            // --- 3. Clean up the measurement element ---
+            document.body.removeChild(measurementElement);
+            
+            // --- 4. Create the *real* element for the PDF ---
             const element = document.createElement('div');
-            element.innerHTML = generatePDFContent(totalHeight, activeTabId);
+            // Now we pass the *correct, measured height*
+            element.innerHTML = generatePDFContent(`${totalHeight}mm`, activeTabId); 
 
             const opt = {
                 margin: 0,
@@ -1129,7 +1109,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // Use the new, proper height
+                    format: [210, totalHeight] // Use the new, 100% accurate height
                 },
                 pagebreak: { mode: ['avoid'] }
             };
@@ -1138,11 +1118,16 @@
                 while (pdf.internal.getNumberOfPages() > 1) {
                     pdf.deletePage(pdf.internal.getNumberOfPages());
                 }
-            }).save();
+            }).save().then(function() {
+                 // Reset button after saving
+                pdfBtn.disabled = false;
+                pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
+            });
         }
         
         // --- V45 PDF FONT COLOR FIX (Untouched) ---
         function generatePDFContent(totalHeight, tabType) { 
+            // `totalHeight` is now a string, e.g., "350mm" or "auto"
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
@@ -1153,16 +1138,13 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // NOTE: These values are for *internal logic* but the *rendered* values
-            // (30px and 24px) are what *really* matter.
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 11.15
-            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 6.9
+            const TABLE_HEADER_HEIGHT_MM = 10; 
+            const ROW_HEIGHT_MM = 6.5;         
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;
-            // Option A: No dynamic spacer needed - using adaptive formula
             
             if (tabType === 'advance') {
                 const groups = {};
@@ -1227,10 +1209,6 @@
                     tableContentHTML += '</tbody></table>';
                 } 
                 
-                let tableHeight = (numGroups * TABLE_HEADER_HEIGHT_MM) + (items.length * ROW_HEIGHT_MM);
-                let groupHeadingHeight = (numGroups > 1) ? (numGroups - 1) * GROUP_HEADER_HEIGHT_MM : 0;
-                contentHeight = HEADER_HEIGHT_MM + tableHeight + groupHeadingHeight;
-
             } 
             else {
                 let tableRows = ''; 
@@ -1264,23 +1242,11 @@
                         </tbody>
                     </table>
                 `;
-                
-                let tableHeight = TABLE_HEADER_HEIGHT_MM + (items.length * ROW_HEIGHT_MM);
-                contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
-
-            
-
-            // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
-            if (items.length > 6) {
-            
-
-}   
-
 
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
-                            height: ${totalHeight}mm; 
+                            height: ${totalHeight}; 
                             margin: 0; background: white; 
                             position: relative; 
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
@@ -1342,7 +1308,7 @@
                         
                     </div>
 
-                    <div style="
+<div style="
   position: absolute;
   bottom: 0;
   left: 0;

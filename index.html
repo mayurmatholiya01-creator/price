@@ -1066,7 +1066,6 @@
             // --- 1. Create a temporary, off-screen element to measure ---
             const measurementElement = document.createElement('div');
             // We must set the *exact* width of the PDF page (210mm)
-            // 210mm - (25mm left padding + 25mm right padding) = 160mm content width
             measurementElement.style.width = '210mm'; 
             measurementElement.style.position = 'absolute';
             measurementElement.style.left = '-9999px'; // Move it off-screen
@@ -1074,6 +1073,7 @@
             measurementElement.style.visibility = 'hidden'; // Hide it
 
             // Set its content. We pass 'auto' as height, since we don't know it yet.
+            // ** CRITICAL: We use the *new* generatePDFContent with the static footer **
             measurementElement.innerHTML = generatePDFContent('auto', activeTabId);
             
             // Add it to the page to be measured
@@ -1126,6 +1126,7 @@
         }
         
         // --- V45 PDF FONT COLOR FIX (Untouched) ---
+        // *** CRITICAL FIX: The footer is no longer position: absolute ***
         function generatePDFContent(totalHeight, tabType) { 
             // `totalHeight` is now a string, e.g., "350mm" or "auto"
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -1138,14 +1139,10 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            const HEADER_HEIGHT_MM = 125; 
+            // These constants are just for reference, the measurement logic is king.
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5;         
-            const GROUP_HEADER_HEIGHT_MM = 18; 
 
-            let contentHeight = 0;
-            
+            // --- Table Generation Logic (Unchanged) ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1208,7 +1205,6 @@
                     
                     tableContentHTML += '</tbody></table>';
                 } 
-                
             } 
             else {
                 let tableRows = ''; 
@@ -1244,6 +1240,7 @@
                 `;
             }
 
+            // --- HTML Page Structure ---
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}; 
@@ -1254,12 +1251,11 @@
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
-
                     <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
                         <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
-                    <div style="padding: 20px 25px 0 25px; 
+                    <div style="padding: 20px 25px 20px 25px; 
                                 position: relative; z-index: 10;
                     ">
                         
@@ -1303,21 +1299,9 @@
                         </div>
                         
                         ${tableContentHTML}
+
                         <div style="height: 10mm;"></div>
 
-                        
-                    </div>
-
-<div style="
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-  padding: 0 25px 20px 25px;
-  height: ${FOOTER_BLOCK_HEIGHT_MM}mm;
-">
-                        
                         <div style="padding-top: 12px; margin-top: 0px;">
                             <div style="margin-bottom: 12px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
@@ -1343,8 +1327,8 @@
                                 <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-                    </div> 
-                </div> `;
+                        
+                    </div> </div> `;
             
             return pagesHTML;
         }

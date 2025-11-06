@@ -1127,7 +1127,7 @@ if (items.length > baseRows) {
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;
-            let spacerHeight = 0;
+            // ✅ No dynamic spacer - always 10mm fixed
             
             if (tabType === 'advance') {
                 const groups = {};
@@ -1234,11 +1234,11 @@ if (items.length > baseRows) {
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            // Removed: spacer is fixed
 
             // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
             if (items.length > 6) {
-            spacerHeight = totalHeight - contentHeight - FOOTER_BLOCK_HEIGHT_MM;
+            // Removed: spacer is fixed
 
 }   
 
@@ -1307,7 +1307,7 @@ if (items.length > baseRows) {
                         
                     </div>
 
-                    <!-- ✅ FIXED: Removed dynamic spacer div - using fixed 10mm spacer only -->
+                    <!-- ✅ Fixed: Using 10mm fixed spacer only -->
 
 <!-- fix footer position absolutely to page bottom -->
 <div style="

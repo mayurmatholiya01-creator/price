@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* [V49 CSS - No visual changes] */
+        /* Pura CSS wahi hai (V44) */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -63,20 +63,26 @@
             transition: all 0.3s ease; 
         }
 
+        /* --- [MODIFIED V49] Header Styles --- */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
+            
+            /* [NEW V49] Changed from var(--glass) to a dark, glassy background */
             background: rgba(0, 0, 0, 0.25); 
+
             border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
+
+            /* [V48] Glassy effect & Spacing */
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); 
-            margin-bottom: 5px; 
+            -webkit-backdrop-filter: blur(10px); /* For Safari */
+            margin-bottom: 5px; /* Space between header and tabs */
         }
         #header-logo {
-            height: 30px; 
+            height: 30px; /* Aap height adjust kar sakte hain */
             width: auto;
             object-fit: contain;
         }
@@ -89,7 +95,7 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.1em; 
+            font-size: 1.1em; /* Icon size */
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 5px;
@@ -99,8 +105,9 @@
             transform: scale(1.1);
         }
         .container.advance-theme .header-icon-btn:hover {
-            color: var(--primary);
+            color: var(--primary); /* Advance theme (green) hover color */
         }
+        /* --- [END MODIFIED V49] --- */
 
         .tabs {
             display: flex;
@@ -369,10 +376,6 @@
             border: none; 
             height: 30px;
         }
-        /* [V50] tbody tr styling ko toggleRowStyle() function handle karega */
-        tbody tr {
-             transition: background-color 0.2s ease;
-        }
         td {
             padding: 8px 4px !important; 
             border: none;
@@ -393,6 +396,9 @@
         }
         tbody tr:hover td {
             color: var(--text-primary);
+        }
+        tbody tr:nth-child(even) {
+            background: var(--glass);
         }
         tbody tr:last-child td {
              border-bottom: none;
@@ -556,7 +562,7 @@
     </style>
 </head>
 <body>
-    <div class="container" id="app-container"> 
+    <div class="container"> 
 
         <div class="app-header">
             <img id="header-logo" alt="Granicer Logo" />
@@ -569,10 +575,9 @@
                 </button>
             </div>
         </div>
-
         <div class="tabs">
-            <button class="tab-btn active" data-tab="basic">Basic</button>
-            <button class="tab-btn" data-tab="advance">Advance</button>
+            <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
+            <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
         </div>
 
         <div id="basic" class="tab-content active">
@@ -585,9 +590,10 @@
                             type="text"
                             id="size"
                             placeholder="Select or type size"
+                            oninput="filterSuggestions('size'); toggleClearButton(this, 'clearSizeBtn');" 
                             inputmode="numeric" 
                         />
-                        <span class="clear-btn" id="clearSizeBtn">
+                        <span class="clear-btn" id="clearSizeBtn" onclick="clearInput('size', 'clearSizeBtn')">
                             <i class="fas fa-times-circle"></i>
                         </span>
                         <div class="suggestions" id="sizeSuggestions"></div>
@@ -601,9 +607,10 @@
                             type="text"
                             id="surface"
                             placeholder="Select or type surface"
+                            oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, ''); filterSuggestions('surface'); toggleClearButton(this, 'clearSurfaceBtn');"
                             title="Please enter only letters and spaces."
                         />
-                        <span class="clear-btn" id="clearSurfaceBtn">
+                        <span class="clear-btn" id="clearSurfaceBtn" onclick="clearInput('surface', 'clearSurfaceBtn')">
                             <i class="fas fa-times-circle"></i>
                         </span>
                         <div class="suggestions" id="surfaceSuggestions"></div>
@@ -620,8 +627,9 @@
                             placeholder="Enter price"
                             min="0"
                             step="0.01"
+                            oninput="this.value = this.value.replace(/[eE+\-]/g, ''); toggleClearButton(this, 'clearPriceBtn');"
                         />
-                        <span class="clear-btn" id="clearPriceBtn">
+                        <span class="clear-btn" id="clearPriceBtn" onclick="clearInput('price', 'clearPriceBtn')">
                             <i class="fas fa-times-circle"></i>
                         </span>
                     </div>
@@ -641,10 +649,10 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <button class="add-button" id="basic-add-btn">
+                    <button class="add-button" onclick="addItem()">
                         <i class="fas fa-plus"></i> Add
                     </button>
-                    <button class="pdf-button" id="pdfBtn" disabled>
+                    <button class="pdf-button" onclick="generatePDF()" id="pdfBtn" disabled>
                         <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
@@ -652,19 +660,7 @@
             <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
-                    <table id="basic-table">
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Surface</th>
-                                <th>Grade</th>
-                                <th>Price</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="itemsContainer"></tbody>
-                    </table>
-                    <div id="basic-empty-state" class="empty-state">No items added yet</div>
+                    <div id="itemsContainer"></div>
                 </div>
             </div>
         </div>
@@ -673,7 +669,7 @@
             <div id="advance-form-container">
                 <div class="form-group">
                     <label for="advanceSizeSelect">1. Select Size</label>
-                    <select id="advanceSizeSelect">
+                    <select id="advanceSizeSelect" onchange="handleAdvanceSizeChange(this)">
                     </select>
                 </div>
 
@@ -697,10 +693,10 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="add-button" id="advance-add-btn">
+                    <button class="add-button" onclick="addAdvanceItems()">
                         <i class="fas fa-plus"></i> Add Items
                     </button>
-                    <button class="pdf-button" id="advancePdfBtn" disabled>
+                    <button class="pdf-button" onclick="generatePDF()" id="advancePdfBtn" disabled>
                         <i class="fas fa-file-pdf"></i> Generate PDF
                     </button>
                 </div>
@@ -709,26 +705,14 @@
             <div class="items-table">
                 <h3>Added Items</h3>
                 <div class="table-wrapper">
-                    <table id="advance-table">
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Surface</th>
-                                <th>Grade</th>
-                                <th>Price</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="advanceItemsContainer"></tbody>
-                    </table>
-                    <div id="advance-empty-state" class="empty-state">No items added yet</div>
+                    <div id="advanceItemsContainer"></div>
                 </div>
             </div>
         </div>
         </div>
 
     <script>
-        // --- (V50 - Performance Refactor) ---
+        // --- (V49 - Header Dark Glass) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -748,69 +732,18 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; 
+        let isEditing = false; // [V44] Editing lock
 
-        // [NEW V50] Debounce function for performance
-        function debounce(func, delay) {
-            let timeout;
-            return function(...args) {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), delay);
-            };
-        }
-
-        // --- 2. DOM Element Cache ---
-        // [NEW V50] Cache all frequently used DOM elements
-        const dom = {};
-        
-        function cacheDOMElements() {
-            dom.container = document.getElementById('app-container');
-            dom.tabs = document.querySelectorAll('.tab-btn');
-            dom.tabContents = document.querySelectorAll('.tab-content');
-            
-            // Basic Tab
-            dom.basicTab = document.getElementById('basic');
-            dom.sizeInput = document.getElementById('size');
-            dom.surfaceInput = document.getElementById('surface');
-            dom.priceInput = document.getElementById('price');
-            dom.sizeSuggestions = document.getElementById('sizeSuggestions');
-            dom.surfaceSuggestions = document.getElementById('surfaceSuggestions');
-            dom.clearSizeBtn = document.getElementById('clearSizeBtn');
-            dom.clearSurfaceBtn = document.getElementById('clearSurfaceBtn');
-            dom.clearPriceBtn = document.getElementById('clearPriceBtn');
-            dom.basicAddBtn = document.getElementById('basic-add-btn');
-            dom.pdfBtn = document.getElementById('pdfBtn');
-            dom.itemsContainer = document.getElementById('itemsContainer');
-            dom.basicEmptyState = document.getElementById('basic-empty-state');
-            dom.basicTable = document.getElementById('basic-table');
-
-            // Advance Tab
-            dom.advanceTab = document.getElementById('advance');
-            dom.advanceSizeSelect = document.getElementById('advanceSizeSelect');
-            dom.advanceOptionsContainer = document.getElementById('advance-options-container');
-            dom.surfacePriceList = document.getElementById('surfacePriceList');
-            dom.advanceAddBtn = document.getElementById('advance-add-btn');
-            dom.advancePdfBtn = document.getElementById('advancePdfBtn');
-            dom.advanceItemsContainer = document.getElementById('advanceItemsContainer');
-            dom.advanceEmptyState = document.getElementById('advance-empty-state');
-            dom.advanceTable = document.getElementById('advance-table');
-
-            // Header
-            dom.headerLogo = document.getElementById('header-logo');
-            dom.clearAllBtn = document.getElementById('clear-all-btn');
-            dom.refreshBtn = document.getElementById('refresh-btn');
-        }
-
-        // --- 3. Core App Logic ---
+        // --- 2. Function Definitions ---
 
         // --- BASIC TAB FUNCTIONS ---
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
-            const inputEl = (type === 'size') ? dom.sizeInput : dom.surfaceInput;
-            const suggestionsDiv = (type === 'size') ? dom.sizeSuggestions : dom.surfaceSuggestions;
-            const data = (type === 'size') ? sizes : surfaces;
-            
-            const input = inputEl.value.toUpperCase();
+            const inputId = type === 'size' ? 'size' : 'surface';
+            const suggestionsId = type === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions';
+            const data = type === 'size' ? sizes : surfaces;
+            const input = document.getElementById(inputId).value.toUpperCase();
+            const suggestionsDiv = document.getElementById(suggestionsId);
 
             if (!input) {
                 suggestionsDiv.classList.remove('show');
@@ -821,12 +754,10 @@
                 suggestionsDiv.classList.remove('show');
                 return;
             }
-            
-            // [V50] Use data-attributes for event delegation
             suggestionsDiv.innerHTML = filtered
                 .map(
                     (item) =>
-                        `<div class="suggestion-item" data-value="${item}" data-input-id="${inputEl.id}">${item}</div>`
+                        `<div class="suggestion-item" onclick="selectSuggestion('${inputId}', '${item}')">${item}</div>`
                 )
                 .join('');
             suggestionsDiv.classList.add('show');
@@ -834,20 +765,20 @@
 
         function selectSuggestion(inputId, value) {
             activeSuggestionIndex = -1; 
-            const inputEl = document.getElementById(inputId);
-            inputEl.value = value;
-            
-            const suggestionsDiv = (inputId === 'size') ? dom.sizeSuggestions : dom.surfaceSuggestions;
-            suggestionsDiv.classList.remove('show');
-            
-            if (inputId === 'size') toggleClearButton(inputEl, 'clearSizeBtn');
-            if (inputId === 'surface') toggleClearButton(inputEl, 'clearSurfaceBtn');
+            document.getElementById(inputId).value = value;
+            document
+                .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
+                .classList.remove('show');
+            // [V44] Clear button ko show karo
+            if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
+            if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
 
+        // [MODIFIED V46] DUPLICATE CHECK ADDED
         function addItem() {
-            const size = dom.sizeInput.value.trim();
-            const surface = dom.surfaceInput.value.trim();
-            const price = dom.priceInput.value.trim();
+            const size = document.getElementById('size').value.trim();
+            const surface = document.getElementById('surface').value.trim();
+            const price = document.getElementById('price').value.trim();
             const grade = document.querySelector('input[name="grade"]:checked').value;
 
             if (!size || !surface || !price || !grade) { 
@@ -855,7 +786,7 @@
                 return;
             }
 
-            // [V46] Duplicate Check
+            // --- [V46] Duplicate Check ---
             const isDuplicate = items.some(item => 
                 item.size === size && 
                 item.surface === surface && 
@@ -864,9 +795,10 @@
 
             if (isDuplicate) {
                 alert('Error: This item (Size, Surface, Grade) already exists in the list.');
-                return;
+                return; // फ़ंक्शन को यहीं रोक दें
             }
-            
+            // --- [END V46] ---
+
             const item = {
                 id: itemIdCounter++,
                 size: size,
@@ -875,25 +807,24 @@
                 price: parseFloat(price),
             };
             items.push(item);
-            
-            // [NEW V50] Surgical DOM addition
-            appendRowToTable(item, dom.itemsContainer);
-            updateEmptyState();
+            renderItems();
             clearForm();
         }
 
         function clearForm() {
-            dom.sizeInput.value = '';
-            dom.surfaceInput.value = '';
-            dom.priceInput.value = '';
+            document.getElementById('size').value = '';
+            document.getElementById('surface').value = '';
+            document.getElementById('price').value = '';
             document.getElementById('grade_pre').checked = true; 
-            dom.sizeInput.focus();
+            document.getElementById('size').focus();
             
-            toggleClearButton(dom.sizeInput, 'clearSizeBtn');
-            toggleClearButton(dom.surfaceInput, 'clearSurfaceBtn');
-            toggleClearButton(dom.priceInput, 'clearPriceBtn');
+            // [V44] Clear buttons ko hide karo
+            toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
+            toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
+            toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
         }
         
+        // [V44] Clear 'X' button functions
         function toggleClearButton(input, btnId) {
             const btn = document.getElementById(btnId);
             if (input.value) {
@@ -904,17 +835,17 @@
         }
 
         function clearInput(inputId, btnId) {
-            const inputEl = document.getElementById(inputId);
-            inputEl.value = '';
+            document.getElementById(inputId).value = '';
             document.getElementById(btnId).classList.remove('visible');
-            inputEl.focus();
-            
+            document.getElementById(inputId).focus();
+            // Agar suggestion box khula tha, to use band karo
             if (inputId === 'size') filterSuggestions('size');
             if (inputId === 'surface') filterSuggestions('surface');
         }
-
+        
         function handleSuggestionKeydown(e, type) {
-            const suggestionsDiv = (type ==='size') ? dom.sizeSuggestions : dom.surfaceSuggestions;
+            const suggestionsId = type ==='size' ? 'sizeSuggestions' : 'surfaceSuggestions';
+            const suggestionsDiv = document.getElementById(suggestionsId);
             
             if (!suggestionsDiv || !suggestionsDiv.classList.contains('show')) {
                 activeSuggestionIndex = -1;
@@ -932,11 +863,15 @@
             if (e.key === 'ArrowDown') {
                 e.preventDefault(); 
                 activeSuggestionIndex++;
-                if (activeSuggestionIndex >= items.length) activeSuggestionIndex = 0; 
+                if (activeSuggestionIndex >= items.length) {
+                    activeSuggestionIndex = 0; 
+                }
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault(); 
                 activeSuggestionIndex--;
-                if (activeSuggestionIndex < 0) activeSuggestionIndex = items.length - 1; 
+                if (activeSuggestionIndex < 0) {
+                    activeSuggestionIndex = items.length - 1; 
+                }
             } else if (e.key === 'Enter') {
                 e.preventDefault(); 
                 if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
@@ -959,36 +894,46 @@
 
         // --- ADVANCE TAB FUNCTIONS ---
         function populateSizeDropdown() {
-            if (dom.advanceSizeSelect.options.length > 0) return; 
+            const select = document.getElementById('advanceSizeSelect');
+            if (select.options.length > 0) return; 
             
             const defaultOption = document.createElement('option');
             defaultOption.value = "";
             defaultOption.textContent = "Select a Size...";
             defaultOption.selected = true;
-            dom.advanceSizeSelect.appendChild(defaultOption);
+            select.appendChild(defaultOption);
 
             sizes.forEach(size => {
                 const option = document.createElement('option');
                 option.value = size;
                 option.textContent = size;
-                dom.advanceSizeSelect.appendChild(option);
+                select.appendChild(option);
             });
         }
 
-        function handleAdvanceSizeChange() {
-            clearAdvancePriceInputs(); 
-            document.getElementById('adv_grade_pre').checked = true;
+        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
+        function handleAdvanceSizeChange(selectElement) {
+            const optionsContainer = document.getElementById('advance-options-container');
 
-            if (dom.advanceSizeSelect.value) {
-                dom.advanceOptionsContainer.style.display = 'block';
+            // --- [V45 FIX] ---
+            // 1. Purane price clear karo
+            clearAdvancePriceInputs(); 
+            // 2. Grade ko 'PRE' par reset karo
+            const gradePre = document.getElementById('adv_grade_pre');
+            if (gradePre) gradePre.checked = true;
+            // --- [FIX END] ---
+
+            if (selectElement.value) {
+                optionsContainer.style.display = 'block';
                 populateSurfaceList(); 
             } else {
-                dom.advanceOptionsContainer.style.display = 'none';
+                optionsContainer.style.display = 'none';
             }
         }
 
         function populateSurfaceList() {
-            if (dom.surfacePriceList.children.length > 0) return; 
+            const listDiv = document.getElementById('surfacePriceList');
+            if (listDiv.children.length > 0) return; 
 
             let html = '';
             surfaces.forEach(surface => {
@@ -1011,32 +956,36 @@
                     </div>
                 `;
             });
-            dom.surfacePriceList.innerHTML = html;
+            listDiv.innerHTML = html;
         }
 
         function clearAdvancePriceInputs() {
-            const inputs = dom.surfacePriceList.querySelectorAll('input[type="number"]');
-            inputs.forEach(input => input.value = '');
+            const inputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
+            inputs.forEach(input => {
+                input.value = '';
+            });
         }
 
+        // [MODIFIED V46] DUPLICATE CHECK ADDED
         function addAdvanceItems() {
-            const size = dom.advanceSizeSelect.value;
+            const size = document.getElementById('advanceSizeSelect').value;
             if (!size) {
                 alert('Please select a size first.');
                 return;
             }
             const grade = document.querySelector('input[name="adv_grade"]:checked').value;
             
-            const priceInputs = dom.surfacePriceList.querySelectorAll('input[type="number"]');
+            const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             let itemsAdded = 0;
-            let duplicatesFound = 0; 
+            let duplicatesFound = 0; // [V46] डुप्लिकेट को ट्रैक करने के लिए
 
             priceInputs.forEach(input => {
                 const price = input.value.trim();
                 const surface = input.getAttribute('data-surface-name');
 
                 if (price && parseFloat(price) > 0) {
-                    // [V46] Duplicate Check
+                    
+                    // --- [V46] Duplicate Check ---
                     const isDuplicate = items.some(item => 
                         item.size === size && 
                         item.surface === surface && 
@@ -1044,8 +993,9 @@
                     );
 
                     if (isDuplicate) {
-                        duplicatesFound++;
+                        duplicatesFound++; // डुप्लिकेट को गिनें
                     } else {
+                        // केवल तभी जोड़ें जब डुप्लिकेट न हो
                         const item = {
                             id: itemIdCounter++,
                             size: size,
@@ -1054,13 +1004,13 @@
                             price: parseFloat(price),
                         };
                         items.push(item);
-                        // [NEW V50] Surgical DOM addition
-                        appendRowToTable(item, dom.advanceItemsContainer);
                         itemsAdded++;
                     }
+                    // --- [END V46] ---
                 }
             });
 
+            // --- [V46] बेहतर फ़ीडबैक अलर्ट ---
             if (itemsAdded === 0 && duplicatesFound === 0) {
                 alert('Please enter at least one price.');
                 return;
@@ -1069,94 +1019,87 @@
             if (duplicatesFound > 0) {
                 alert(`${itemsAdded} new item(s) added.\n${duplicatesFound} duplicate item(s) were skipped.`);
             }
-            
-            updateEmptyState();
+            // --- [END V46] ---
+
+            renderItems(); 
             clearAdvancePriceInputs(); 
         }
 
         // --- SHARED FUNCTIONS ---
-        
-        // [NEW V50] Creates and appends a single row
-        function appendRowToTable(item, tbody) {
-            const tr = document.createElement('tr');
-            tr.dataset.itemId = item.id;
-            tr.innerHTML = `
-                <td>${item.size}</td>
-                <td>${item.surface}</td>
-                <td class="editable-cell" data-field="grade">${item.grade}</td>
-                <td class="editable-cell" data-field="price">₹ ${item.price.toFixed(2)}</td>
-                <td><button class="delete-btn" data-item-id="${item.id}"><i class="fas fa-trash-alt"></i></button></td>
-            `;
-            tbody.appendChild(tr);
-            toggleRowStyle(tbody);
-        }
-
-        // [NEW V50] Deletes a single row
         function deleteItem(id) {
             items = items.filter((item) => item.id !== id);
-            
-            const row = document.querySelector(`tr[data-item-id="${id}"]`);
-            if (row) {
-                const tbody = row.parentElement;
-                row.remove();
-                toggleRowStyle(tbody); // Re-apply styles
-            }
-            updateEmptyState();
+            renderItems();
         }
 
-        // [NEW V50] Manages empty state visibility
-        function updateEmptyState() {
-            const activeTabId = getActiveTabId();
-            const (container, emptyState, table, pdfBtn) = (activeTabId === 'basic')
-                ? { container: dom.itemsContainer, emptyState: dom.basicEmptyState, table: dom.basicTable, pdfBtn: dom.pdfBtn }
-                : { container: dom.advanceItemsContainer, emptyState: dom.advanceEmptyState, table: dom.advanceTable, pdfBtn: dom.advancePdfBtn };
+        // [MODIFIED V44] Click-to-Edit ke liye
+        function renderItems() {
+            const activeTab = document.querySelector('.tab-content.active');
+            const activeTabId = activeTab ? activeTab.id : 'basic';
+            
+            const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
+            const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
+
+            const container = document.getElementById(containerId);
+            const pdfBtn = document.getElementById(pdfBtnId);
+
+            if (!container || !pdfBtn) return; 
 
             if (items.length === 0) {
-                emptyState.style.display = 'block';
-                table.style.display = 'none';
+                container.innerHTML = '<div class="empty-state">No items added yet</div>';
                 pdfBtn.disabled = true;
-            } else {
-                emptyState.style.display = 'none';
-                table.style.display = 'table';
-                pdfBtn.disabled = false;
+                return;
             }
-        }
-
-        // [NEW V50] Manages zebra striping surgically
-        function toggleRowStyle(tbody) {
-            if (!tbody) return;
-            const rows = tbody.querySelectorAll('tr');
-            rows.forEach((row, index) => {
-                if (index % 2 === 0) {
-                    row.style.background = 'transparent';
-                } else {
-                    row.style.background = 'var(--glass)';
-                }
+            pdfBtn.disabled = false;
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Size</th>
+                            <th>Surface</th>
+                            <th>Grade</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            items.forEach((item) => {
+                tableHTML += `
+                    <tr>
+                        <td>${item.size}</td>
+                        <td>${item.surface}</td>
+                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'grade')">${item.grade}</td>
+                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'price')">₹ ${item.price.toFixed(2)}</td>
+                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
+                    </tr>
+                `;
             });
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
         }
-
-        // [MODIFIED V50] Surgical DOM edit
+        
+        // [NEW V44] Click-to-Edit Functions
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return;
+            if (isEditing) return; // Ek time par ek hi edit
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
-            if (!item) { isEditing = false; return; }
-            
             const originalValue = item[field];
-            tdElement.innerHTML = ''; // Clear cell
+            
+            tdElement.innerHTML = ''; // Cell ko khali karo
+            tdElement.onclick = null; // Dobara click na ho
 
             if (field === 'price') {
                 const input = document.createElement('input');
                 input.type = 'number';
                 input.className = 'edit-input';
                 input.value = originalValue;
-                input.onblur = () => saveEdit(tdElement, item, field, input.value); // Pass element and item
+                input.onblur = () => saveEdit(itemId, field, input.value);
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
-                        tdElement.innerHTML = `₹ ${originalValue.toFixed(2)}`; // Restore original
                         isEditing = false;
+                        renderItems(); // Cancel
                     }
                 };
                 tdElement.appendChild(input);
@@ -1172,12 +1115,12 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(tdElement, item, field, select.value); // Pass element and item
-                select.onchange = () => select.blur(); // Save on change
+                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
+                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
-                        tdElement.innerHTML = originalValue; // Restore original
                         isEditing = false;
+                        renderItems(); // Cancel
                     }
                 };
                 tdElement.appendChild(select);
@@ -1185,49 +1128,40 @@
             }
         }
 
-        // [MODIFIED V50] Updates DOM directly, no renderItems()
-        function saveEdit(tdElement, item, field, newValue) {
-            if (field === 'price') {
-                item.price = parseFloat(newValue) || 0;
-                tdElement.innerHTML = `₹ ${item.price.toFixed(2)}`;
-            } else if (field === 'grade') {
-                item.grade = newValue;
-                tdElement.innerHTML = item.grade;
+        function saveEdit(itemId, field, newValue) {
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                if (field === 'price') {
+                    item.price = parseFloat(newValue) || 0;
+                } else if (field === 'grade') {
+                    item.grade = newValue;
+                }
             }
-            isEditing = false; // Release lock
-            // No need to call renderItems()!
+            isEditing = false; // Lock release karo
+            renderItems(); // Table ko redraw karo
         }
-        
-        function getActiveTabId() {
-             const activeTab = document.querySelector('.tab-content.active');
-             return activeTab ? activeTab.id : 'basic';
-        }
+        // [NEW V44] End
 
-        // --- PDF Generation ---
-        
-        // [MODIFIED V50] Optimized PDF generation
+
+        // --- V43 PDF LOGIC (Untouched) ---
         async function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
                 return;
             }
             
-            const activeTabId = getActiveTabId();
-            const pdfBtn = (activeTabId === 'basic') ? dom.pdfBtn : dom.advancePdfBtn;
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            const pdfBtn = document.getElementById(activeTabId === 'basic' ? 'pdfBtn' : 'advancePdfBtn');
             pdfBtn.disabled = true;
             pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-            // [V50 OPTIMIZATION] Generate content *once*
-            const tableContentHTML = generatePDFTableContent(activeTabId);
-
-            // --- 1. Measure ---
             const measurementElement = document.createElement('div');
             measurementElement.style.width = '210mm'; 
             measurementElement.style.position = 'absolute';
-            measurementElement.style.left = '-9999px';
+            measurementElement.style.left = '-9999px'; 
             measurementElement.style.top = '-9999px';
-            measurementElement.style.visibility = 'hidden';
-            measurementElement.innerHTML = generatePDFWrapper('auto', tableContentHTML);
+            measurementElement.style.visibility = 'hidden'; 
+            measurementElement.innerHTML = generatePDFContent('auto', activeTabId);
             document.body.appendChild(measurementElement);
 
             await new Promise(resolve => setTimeout(resolve, 0)); 
@@ -1238,10 +1172,8 @@
 
             document.body.removeChild(measurementElement);
             
-            // --- 4. Create real element ---
             const element = document.createElement('div');
-            // [V50 OPTIMIZATION] Use the same content, just pass the new height
-            element.innerHTML = generatePDFWrapper(`${totalHeight}mm`, tableContentHTML); 
+            element.innerHTML = generatePDFContent(`${totalHeight}mm`, activeTabId); 
 
             const opt = {
                 margin: 0,
@@ -1266,19 +1198,32 @@
             });
         }
         
-        // [NEW V50] Split PDF generation into wrapper and content
-        function generatePDFTableContent(tabType) {
+        // --- V45 PDF FONT COLOR FIX (Untouched) ---
+        function generatePDFContent(totalHeight, tabType) { 
+            const currentDate = new Date().toLocaleDateString('en-GB');
+            let pagesHTML = '';
             let tableContentHTML = ''; 
             const pdfTextColor = '#333';
+
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-             if (tabType === 'advance') {
+            const pinPointLineFooter = `
+                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 0) 10%, rgba(237, 50, 55, 1) 20%, rgba(237, 50, 55, 1) 80%, rgba(237, 50, 55, 0) 90%, rgba(237, 50, 55, 0) 100%);"></div>
+                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0) 100%);"></div>
+            `;
+            
+            const FOOTER_BLOCK_HEIGHT_MM = 95; 
+
+            // --- Table Generation Logic (Unchanged) ---
+            if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
-                    if (!groups[item.size]) groups[item.size] = [];
+                    if (!groups[item.size]) {
+                        groups[item.size] = [];
+                    }
                     groups[item.size].push(item);
                 });
 
@@ -1287,10 +1232,23 @@
 
                 for (const size of groupKeys) {
                     numGroups++;
+                    
                     if (numGroups > 1) {
-                        tableContentHTML += `<div style="margin-top: 10px; margin-bottom: 8px;">${pinPointLine}</div>`;
+                        tableContentHTML += `
+                            <div style="margin-top: 10px; margin-bottom: 8px;">
+                                ${pinPointLine}
+                            </div>
+                        `;
                     }
-                    tableContentHTML += `<div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; margin-top: 0; margin-bottom: 10px;">SIZE: ${size}</div>`;
+                    
+                    tableContentHTML += `
+                        <div style="font-size: 14pt; font-weight: bold; color: #1a1a1a; 
+                                    margin-top: 0;
+                                    margin-bottom: 10px;">
+                            SIZE: ${size}
+                        </div>
+                    `;
+                    
                     tableContentHTML += `
                         <table style="width: 100%; border-collapse: collapse; margin-bottom: 0;">
                             <thead>
@@ -1302,7 +1260,8 @@
                                     <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 20%;">Price <span style="font-size: 6pt !important; display: block;">(/sq feet)</span></th>
                                 </tr>
                             </thead>
-                            <tbody style="background: white;">`;
+                            <tbody style="background: white;">
+                    `;
 
                     let groupSrNo = 1;
                     groups[size].forEach((item, idx) => {
@@ -1314,9 +1273,11 @@
                                 <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
                                 <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
                                 <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
-                            </tr>`;
+                            </tr>
+                        `;
                         groupSrNo++;
                     });
+                    
                     tableContentHTML += '</tbody></table>';
                 } 
             } 
@@ -1332,7 +1293,8 @@
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.surface}</td>
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">${item.grade}</td>
                             <td style="padding: 2px 4px; border: 1px solid #ddd; text-align: center; height: 20px; font-size: 9pt !important; line-height: 1; vertical-align: middle; color: ${pdfTextColor};">₹ ${item.price.toFixed(2)}</td>
-                        </tr>`;
+                        </tr>
+                    `;
                 });
 
                 tableContentHTML = `
@@ -1349,29 +1311,13 @@
                         <tbody style="background: white;">
                             ${tableRows}
                         </tbody>
-                    </table>`;
+                    </table>
+                `;
             }
-            return tableContentHTML;
-        }
 
-        // [NEW V50] The static wrapper for the PDF
-        function generatePDFWrapper(totalHeight, tableContentHTML) { 
-            const currentDate = new Date().toLocaleDateString('en-GB');
-            const pdfTextColor = '#333';
-            const pinPointLine = `
-                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
-                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
-            `;
-            const pinPointLineFooter = `
-                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 0) 10%, rgba(237, 50, 55, 1) 20%, rgba(237, 50, 55, 1) 80%, rgba(237, 50, 55, 0) 90%, rgba(237, 50, 55, 0) 100%);"></div>
-                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0) 100%);"></div>
-            `;
-            
-            // Base64 images (assuming they are loaded from imagedata.js)
-            const logoA = (typeof logoA_base64 !== 'undefined') ? logoA_base64 : '';
-            const logoGranicer = (typeof logoGranicer_base64 !== 'undefined') ? logoGranicer_base64 : '';
-
-            return `
+            // --- HTML Page Structure ---
+            // (PDF ka baaki content wahi hai... yahaan short kar raha hoon)
+            pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}; 
                             margin: 0; background: white; 
@@ -1379,10 +1325,10 @@
                             overflow: hidden; -webkit-text-size-adjust: none; text-size-adjust: none;">
                     
                     <div style="position: absolute; top: 0; right: 0; width: 75px; height: 90px; overflow: hidden; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); z-index: 1;">
-                        <img src="${logoA}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: contain; transform: rotate(180deg); display: block;" />
                     </div>
                     <div style="position: absolute; left: 0mm; bottom: 0mm; width: 75px; height: 90px; overflow: hidden; z-index: 1;">
-                        <img src="${logoA}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+                        <img src="${logoA_base64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
                     </div>
 
                     <div style="padding: 20px 25px 20px 25px; 
@@ -1391,7 +1337,7 @@
                         
                         <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
                             <img
-                                src="${logoGranicer}"
+                                src="${logoGranicer_base64}"
                                 style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
                             />
                             ${pinPointLine}
@@ -1457,168 +1403,108 @@
                                 <p style="margin: 2px 0; color: #ef4444; font-weight: 600;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
-                    </div> 
-                </div>`;
+                        
+                    </div> </div> `;
+            
+            return pagesHTML;
         }
         
-        // --- Tab & Clear Functions ---
-        
+        // --- [NEW V47] Clear Active Tab Function ---
         function clearActiveTabContent() {
-            if (getActiveTabId() === 'basic') {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+
+            if (activeTab.id === 'basic') {
                 clearBasicTab();
-            } else {
+            } else if (activeTab.id === 'advance') {
                 clearAdvanceTab();
             }
         }
+        // --- [END NEW V47] ---
 
         function clearBasicTab() {
-            clearForm();
+            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
             items = [];
-            dom.itemsContainer.innerHTML = ''; // Clear table body
-            updateEmptyState();
+            renderItems(); 
         }
 
         function clearAdvanceTab() {
             items = [];
-            dom.advanceSizeSelect.value = ""; 
-            document.getElementById('adv_grade_pre').checked = true;
-            dom.advanceOptionsContainer.style.display = 'none';
+            
+            const sizeSelect = document.getElementById('advanceSizeSelect');
+            if (sizeSelect) sizeSelect.value = ""; 
+            
+            const gradePre = document.getElementById('adv_grade_pre');
+            if (gradePre) gradePre.checked = true;
+            
+            const optionsContainer = document.getElementById('advance-options-container');
+            if(optionsContainer) optionsContainer.style.display = 'none';
+
             clearAdvancePriceInputs();
-            dom.advanceItemsContainer.innerHTML = ''; // Clear table body
-            updateEmptyState();
+            renderItems(); 
         }
 
-        function switchTab(tabName) {
-            dom.tabContents.forEach((tab) => tab.classList.remove('active'));
-            dom.tabs.forEach((btn) => btn.classList.remove('active'));
+        function switchTab(event, tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+            const container = document.querySelector('.container');
+
+            tabs.forEach((tab) => tab.classList.remove('active'));
+            buttons.forEach((btn) => btn.classList.remove('active'));
 
             document.getElementById(tabName).classList.add('active');
-            document.querySelector(`.tab-btn[data-tab="${tabName}"]`).classList.add('active'); 
+            event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                dom.container.classList.add('advance-theme');
+                container.classList.add('advance-theme'); // Green theme
                 clearBasicTab();
                 populateSizeDropdown();
-            } else {
-                dom.container.classList.remove('advance-theme');
+            } else if (tabName === 'basic') {
+                container.classList.remove('advance-theme'); // Default (Purple) theme
                 clearAdvanceTab();
             }
-            updateEmptyState(); // Ensure empty state is correct on tab switch
         }
         
-        // --- 4. Event Listeners ---
-        
-        // [NEW V50] Centralized event listener initialization
-        function initApp() {
-            cacheDOMElements();
+        // --- 3. Event Listeners & Initial Calls ---
 
-            // --- Header ---
+        // --- [NEW V47] Header Listeners ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set logo
             try {
                 if (typeof logoGranicer1_base64 !== 'undefined') {
-                    dom.headerLogo.src = logoGranicer1_base64;
+                    document.getElementById('header-logo').src = logoGranicer1_base64;
                 } else {
-                    console.error('logoGranicer1_base64 is not defined.');
+                    console.error('logoGranicer1_base64 is not defined. Make sure imagedata.js is loaded.');
                 }
             } catch (e) {
                 console.error('Error loading logo:', e);
             }
-            dom.clearAllBtn.addEventListener('click', clearActiveTabContent);
-            dom.refreshBtn.addEventListener('click', () => location.reload());
-
-            // --- Tabs ---
-            dom.tabs.forEach(tab => {
-                tab.addEventListener('click', (e) => switchTab(e.target.dataset.tab));
-            });
-
-            // --- Basic Tab Inputs ---
-            const debouncedFilterSize = debounce(() => filterSuggestions('size'), 250);
-            const debouncedFilterSurface = debounce(() => filterSuggestions('surface'), 250);
-
-            dom.sizeInput.addEventListener('input', e => {
-                debouncedFilterSize();
-                toggleClearButton(e.target, 'clearSizeBtn');
-            });
-            dom.sizeInput.addEventListener('keydown', e => handleSuggestionKeydown(e, 'size'));
-
-            dom.surfaceInput.addEventListener('input', e => {
-                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
-                debouncedFilterSurface();
-                toggleClearButton(e.target, 'clearSurfaceBtn');
-            });
-            dom.surfaceInput.addEventListener('keydown', e => handleSuggestionKeydown(e, 'surface'));
             
-            dom.priceInput.addEventListener('input', e => {
-                 e.target.value = e.target.value.replace(/[eE+\-]/g, '');
-                 toggleClearButton(e.target, 'clearPriceBtn');
-            });
-
-            dom.clearSizeBtn.addEventListener('click', () => clearInput('size', 'clearSizeBtn'));
-            dom.clearSurfaceBtn.addEventListener('click', () => clearInput('surface', 'clearSurfaceBtn'));
-            dom.clearPriceBtn.addEventListener('click', () => clearInput('price', 'clearPriceBtn'));
-
-            // --- Suggestion Box Delegation ---
-            dom.sizeSuggestions.addEventListener('click', handleSuggestionClick);
-            dom.surfaceSuggestions.addEventListener('click', handleSuggestionClick);
-
-            // --- Table Action Delegation ---
-            dom.itemsContainer.addEventListener('click', handleTableClick);
-            dom.advanceItemsContainer.addEventListener('click', handleTableClick);
-
-            // --- Buttons ---
-            dom.basicAddBtn.addEventListener('click', addItem);
-            dom.pdfBtn.addEventListener('click', generatePDF);
-            dom.advanceAddBtn.addEventListener('click', addAdvanceItems);
-            dom.advancePdfBtn.addEventListener('click', generatePDF);
-            dom.advanceSizeSelect.addEventListener('change', handleAdvanceSizeChange);
-
-            // --- Global Click ---
-            document.addEventListener('click', function (event) {
-                if (!event.target.closest('.input-wrapper')) {
-                    dom.sizeSuggestions.classList.remove('show');
-                    dom.surfaceSuggestions.classList.remove('show');
-                    activeSuggestionIndex = -1; 
-                }
-            });
+            // Add event listeners for new buttons
+            document.getElementById('clear-all-btn').addEventListener('click', clearActiveTabContent);
             
-            // --- Initial State ---
-            updateEmptyState();
-            switchTab('basic'); // Set initial tab state
-        }
-        
-        // [NEW V50] Delegated click handler for suggestion items
-        function handleSuggestionClick(e) {
-            const item = e.target.closest('.suggestion-item');
-            if (item) {
-                selectSuggestion(item.dataset.inputId, item.dataset.value);
-            }
-        }
-        
-        // [NEW V50] Delegated click handler for table actions
-        function handleTableClick(e) {
-            const target = e.target;
-            
-            // Handle Delete
-            const deleteBtn = target.closest('.delete-btn');
-            if (deleteBtn) {
-                const id = deleteBtn.dataset.itemId;
-                if (confirm('Are you sure you want to delete this item?')) {
-                     deleteItem(parseInt(id));
-                }
-                return;
-            }
+            document.getElementById('refresh-btn').addEventListener('click', function() {
+                location.reload();
+            });
+        });
+        // --- [END NEW V47] ---
 
-            // Handle Edit
-            const editableCell = target.closest('.editable-cell');
-            if (editableCell && !isEditing) {
-                const id = editableCell.closest('tr').dataset.itemId;
-                const field = editableCell.dataset.field;
-                editCell(editableCell, parseInt(id), field);
-                return;
+
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.input-wrapper')) {
+                const sizeSuggestions = document.getElementById('sizeSuggestions');
+                const surfaceSuggestions = document.getElementById('surfaceSuggestions');
+                if (sizeSuggestions) sizeSuggestions.classList.remove('show');
+                if (surfaceSuggestions) surfaceSuggestions.classList.remove('show');
+                activeSuggestionIndex = -1; 
             }
-        }
+        });
+
+        document.getElementById('size').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'size'));
+        document.getElementById('surface').addEventListener('keydown', (e) => handleSuggestionKeydown(e, 'surface'));
         
-        // --- 5. Initial Call ---
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Initial page load
+        renderItems(); 
     </script>
 </body>
 </html>

@@ -100,7 +100,7 @@
             flex-direction: column;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 0px;
             flex-shrink: 0;
         }
         label {
@@ -1123,11 +1123,11 @@ if (items.length > baseRows) {
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
             const TABLE_HEADER_HEIGHT_MM = 10; 
-            const ROW_HEIGHT_MM = 6.5; 
+            const ROW_HEIGHT_MM = 9.15; 
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;
-            // Option A: No dynamic spacer needed - using adaptive formula
+            let spacerHeight = 0;
             
             if (tabType === 'advance') {
                 const groups = {};
@@ -1214,7 +1214,7 @@ if (items.length > baseRows) {
                 });
 
                 tableContentHTML = `
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 0px;">
                         <thead>
                             <tr style="background: linear-gradient(135deg, #ed3237 0%, #b82329 100%); color: white; height: 30px;">
                                 <th style="padding: 5px; border: 1px solid #ed3237; text-align: center; font-size: 9pt !important; font-weight: 600; height: 30px; width: 10%;">Sr. No.</th>
@@ -1234,11 +1234,11 @@ if (items.length > baseRows) {
                 contentHeight = HEADER_HEIGHT_MM + tableHeight;
             }
 
-            
+            spacerHeight = 10; // fixed
 
             // 👇 [NEW LOGIC] Footer shift for extra rows beyond 6
             if (items.length > 6) {
-            
+            spacerHeight = 10; // fixed
 
 }   
 
@@ -1262,10 +1262,10 @@ if (items.length > baseRows) {
                                 position: relative; z-index: 10;
                     ">
                         
-                        <div style="padding-bottom: 10px; margin-bottom: 15px; text-align: center;">
+                        <div style="padding-bottom: 10px; margin-bottom: 0px; text-align: center;">
                             <img
                                 src="${logoGranicer_base64}"
-                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 15px;"
+                                style="height: 80px; width: auto; object-fit: contain; margin-bottom: 0px;"
                             />
                             ${pinPointLine}
                         </div>
@@ -1296,9 +1296,9 @@ if (items.length > baseRows) {
                             </div>
                         </div>
                         <div style="padding: 12px 0; margin-bottom: 20px; text-align: center;">
-                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="margin-bottom: 0px;">${pinPointLine}</div>
                             <div style="font-size: 16pt !important; font-weight: bold; color: #1a1a1a;">PRICE LIST</div>
-                            <div style="margin-top: 12px; margin-bottom: 5px;">${pinPointLine}</div>
+                            <div style="margin-top: 0px; margin-bottom: 5px;">${pinPointLine}</div>
                         </div>
                         
                         ${tableContentHTML}
@@ -1307,7 +1307,8 @@ if (items.length > baseRows) {
                         
                     </div>
 
-                    <!-- Option A: Adaptive formula handles all calculations -->
+                    <!-- remove spacer from pushing footer -->
+<div style="height: ${spacerHeight}mm; flex-shrink: 0;"></div>
 
 <!-- fix footer position absolutely to page bottom -->
 <div style="
@@ -1321,7 +1322,7 @@ if (items.length > baseRows) {
 ">
                         
                         <div style="padding-top: 12px; margin-top: 0px;">
-                            <div style="margin-bottom: 12px;">${pinPointLine}</div>
+                            <div style="margin-bottom: 0px;">${pinPointLine}</div>
                             <div style="font-size: 9pt !important; font-weight: bold; color: #ed3237; margin-bottom: 8px;">
                                 Terms & Conditions:
                             </div>

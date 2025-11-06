@@ -62,6 +62,45 @@
             border: 1px solid var(--glass-border); 
             transition: all 0.3s ease; 
         }
+
+        /* --- [NEW V47] Header Styles --- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--glass);
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+        }
+        #header-logo {
+            height: 30px; /* Aap height adjust kar sakte hain */
+            width: auto;
+            object-fit: contain;
+        }
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .header-icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1em; /* Icon size */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+        .header-icon-btn:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        .container.advance-theme .header-icon-btn:hover {
+            color: var(--primary); /* Advance theme (green) hover color */
+        }
+        /* --- [END NEW V47] --- */
+
         .tabs {
             display: flex;
             background: var(--glass); 
@@ -516,10 +555,22 @@
 </head>
 <body>
     <div class="container"> 
+
+        <div class="app-header">
+            <img id="header-logo" alt="Granicer Logo" />
+            <div class="header-icons">
+                <button id="clear-all-btn" class="header-icon-btn" title="Clear All">
+                    <i class="fas fa-eraser"></i>
+                </button>
+                <button id="refresh-btn" class="header-icon-btn" title="Refresh Page">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(event, 'basic')">Basic</button>
             <button class="tab-btn" onclick="switchTab(event, 'advance')">Advance</button>
-            </div>
+        </div>
 
         <div id="basic" class="tab-content active">
             <div style="flex: 0 0 auto;">
@@ -653,7 +704,7 @@
         </div>
 
     <script>
-        // --- (V46 - DUPLICATE CHECK) ---
+        // --- (V47 - App Header & ClearAll) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -727,7 +778,7 @@
                 return;
             }
 
-            // --- [NEW V46] Duplicate Check ---
+            // --- [V46] Duplicate Check ---
             const isDuplicate = items.some(item => 
                 item.size === size && 
                 item.surface === surface && 
@@ -738,7 +789,7 @@
                 alert('Error: This item (Size, Surface, Grade) already exists in the list.');
                 return; // फ़ंक्शन को यहीं रोक दें
             }
-            // --- [END NEW V46] ---
+            // --- [END V46] ---
 
             const item = {
                 id: itemIdCounter++,
@@ -918,7 +969,7 @@
             
             const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             let itemsAdded = 0;
-            let duplicatesFound = 0; // [NEW V46] डुप्लिकेट को ट्रैक करने के लिए
+            let duplicatesFound = 0; // [V46] डुप्लिकेट को ट्रैक करने के लिए
 
             priceInputs.forEach(input => {
                 const price = input.value.trim();
@@ -926,7 +977,7 @@
 
                 if (price && parseFloat(price) > 0) {
                     
-                    // --- [NEW V46] Duplicate Check ---
+                    // --- [V46] Duplicate Check ---
                     const isDuplicate = items.some(item => 
                         item.size === size && 
                         item.surface === surface && 
@@ -947,11 +998,11 @@
                         items.push(item);
                         itemsAdded++;
                     }
-                    // --- [END NEW V46] ---
+                    // --- [END V46] ---
                 }
             });
 
-            // --- [NEW V46] बेहतर फ़ीडबैक अलर्ट ---
+            // --- [V46] बेहतर फ़ीडबैक अलर्ट ---
             if (itemsAdded === 0 && duplicatesFound === 0) {
                 alert('Please enter at least one price.');
                 return;
@@ -960,7 +1011,7 @@
             if (duplicatesFound > 0) {
                 alert(`${itemsAdded} new item(s) added.\n${duplicatesFound} duplicate item(s) were skipped.`);
             }
-            // --- [END NEW V46] ---
+            // --- [END V46] ---
 
             renderItems(); 
             clearAdvancePriceInputs(); 
@@ -1085,9 +1136,6 @@
 
 
         // --- V43 PDF LOGIC (Untouched) ---
-        
-        // [THE ROBUST FIX] - This function *measures* the content height
-        // and uses a *static* footer layout to ensure it's measured correctly.
         async function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1099,42 +1147,24 @@
             pdfBtn.disabled = true;
             pdfBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-            // --- 1. Create a temporary, off-screen element to measure ---
             const measurementElement = document.createElement('div');
-            // We must set the *exact* width of the PDF page (210mm)
             measurementElement.style.width = '210mm'; 
             measurementElement.style.position = 'absolute';
-            measurementElement.style.left = '-9999px'; // Move it off-screen
+            measurementElement.style.left = '-9999px'; 
             measurementElement.style.top = '-9999px';
-            measurementElement.style.visibility = 'hidden'; // Hide it
-
-            // Set its content. We pass 'auto' as height, since we don't know it yet.
-            // ** CRITICAL: We use the *new* generatePDFContent with the static footer **
+            measurementElement.style.visibility = 'hidden'; 
             measurementElement.innerHTML = generatePDFContent('auto', activeTabId);
-            
-            // Add it to the page to be measured
             document.body.appendChild(measurementElement);
 
-            // --- 2. Measure the element's rendered height ---
-            // We must wait a tiny moment for the browser to render it
             await new Promise(resolve => setTimeout(resolve, 0)); 
             
-            // Get the height in PIXELS
             const heightInPx = measurementElement.getBoundingClientRect().height;
-            
-            // Convert pixels to millimeters (1 inch = 96px = 25.4mm)
-            // (heightInPx / 96) * 25.4
             const PXL_TO_MM = 0.264583; 
-            
-            // Add a 5mm safety buffer to prevent any rounding errors
             const totalHeight = Math.ceil(heightInPx * PXL_TO_MM) + 5; 
 
-            // --- 3. Clean up the measurement element ---
             document.body.removeChild(measurementElement);
             
-            // --- 4. Create the *real* element for the PDF ---
             const element = document.createElement('div');
-            // Now we pass the *correct, measured height*
             element.innerHTML = generatePDFContent(`${totalHeight}mm`, activeTabId); 
 
             const opt = {
@@ -1145,7 +1175,7 @@
                 jsPDF: {
                     orientation: 'portrait',
                     unit: 'mm',
-                    format: [210, totalHeight] // Use the new, 100% accurate height
+                    format: [210, totalHeight]
                 },
                 pagebreak: { mode: ['avoid'] }
             };
@@ -1155,17 +1185,13 @@
                     pdf.deletePage(pdf.internal.getNumberOfPages());
                 }
             }).save().then(function() {
-                 // Reset button after saving
                 pdfBtn.disabled = false;
                 pdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Generate PDF';
             });
         }
         
         // --- V45 PDF FONT COLOR FIX (Untouched) ---
-        // *** CRITICAL FIX: The footer is no longer position: absolute ***
-        // *** NEW FEATURE: Shorter line and Red text ***
         function generatePDFContent(totalHeight, tabType) { 
-            // `totalHeight` is now a string, e.g., "350mm" or "auto"
             const currentDate = new Date().toLocaleDateString('en-GB');
             let pagesHTML = '';
             let tableContentHTML = ''; 
@@ -1176,13 +1202,11 @@
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
             `;
             
-            // [NEW] Shorter line for the very bottom
             const pinPointLineFooter = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 0) 10%, rgba(237, 50, 55, 1) 20%, rgba(237, 50, 55, 1) 80%, rgba(237, 50, 55, 0) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0) 100%);"></div>
             `;
             
-            // These constants are just for reference, the measurement logic is king.
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
 
             // --- Table Generation Logic (Unchanged) ---
@@ -1284,6 +1308,7 @@
             }
 
             // --- HTML Page Structure ---
+            // (PDF ka baaki content wahi hai... yahaan short kar raha hoon)
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}; 
@@ -1376,7 +1401,18 @@
             return pagesHTML;
         }
         
-        // --- SHARED FUNCTIONS ---
+        // --- [NEW V47] Clear Active Tab Function ---
+        function clearActiveTabContent() {
+            const activeTab = document.querySelector('.tab-content.active');
+            if (!activeTab) return;
+
+            if (activeTab.id === 'basic') {
+                clearBasicTab();
+            } else if (activeTab.id === 'advance') {
+                clearAdvanceTab();
+            }
+        }
+        // --- [END NEW V47] ---
 
         function clearBasicTab() {
             clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
@@ -1422,6 +1458,30 @@
         }
         
         // --- 3. Event Listeners & Initial Calls ---
+
+        // --- [NEW V47] Header Listeners ---
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set logo
+            try {
+                if (typeof logoGranicer1_base64 !== 'undefined') {
+                    document.getElementById('header-logo').src = logoGranicer1_base64;
+                } else {
+                    console.error('logoGranicer1_base64 is not defined. Make sure imagedata.js is loaded.');
+                }
+            } catch (e) {
+                console.error('Error loading logo:', e);
+            }
+            
+            // Add event listeners for new buttons
+            document.getElementById('clear-all-btn').addEventListener('click', clearActiveTabContent);
+            
+            document.getElementById('refresh-btn').addEventListener('click', function() {
+                location.reload();
+            });
+        });
+        // --- [END NEW V47] ---
+
+
         document.addEventListener('click', function (event) {
             if (!event.target.closest('.input-wrapper')) {
                 const sizeSuggestions = document.getElementById('sizeSuggestions');

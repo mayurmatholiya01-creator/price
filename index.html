@@ -1051,7 +1051,7 @@
         // --- V43 PDF LOGIC (Untouched) ---
         
         // [THE ROBUST FIX] - This function *measures* the content height
-        // instead of *guessing* it. This is the only way to be 100% accurate.
+        // and uses a *static* footer layout to ensure it's measured correctly.
         async function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1090,8 +1090,8 @@
             // (heightInPx / 96) * 25.4
             const PXL_TO_MM = 0.264583; 
             
-            // Add a 2mm safety buffer to prevent any rounding errors
-            const totalHeight = Math.ceil(heightInPx * PXL_TO_MM) + 2; 
+            // Add a 5mm safety buffer to prevent any rounding errors
+            const totalHeight = Math.ceil(heightInPx * PXL_TO_MM) + 5; 
 
             // --- 3. Clean up the measurement element ---
             document.body.removeChild(measurementElement);
@@ -1127,6 +1127,7 @@
         
         // --- V45 PDF FONT COLOR FIX (Untouched) ---
         // *** CRITICAL FIX: The footer is no longer position: absolute ***
+        // *** NEW FEATURE: Shorter line and Red text ***
         function generatePDFContent(totalHeight, tabType) { 
             // `totalHeight` is now a string, e.g., "350mm" or "auto"
             const currentDate = new Date().toLocaleDateString('en-GB');
@@ -1137,6 +1138,12 @@
             const pinPointLine = `
                 <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 1) 10%, rgba(237, 50, 55, 1) 90%, rgba(237, 50, 55, 0) 100%);"></div>
                 <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0.2) 15%, rgba(0, 0, 0, 0.2) 85%, rgba(0, 0, 0, 0) 95%);"></div>
+            `;
+            
+            // [NEW] Shorter line for the very bottom
+            const pinPointLineFooter = `
+                <div style="height: 2px; margin-bottom: 0px; background: linear-gradient(to right, rgba(237, 50, 55, 0) 0%, rgba(237, 50, 55, 0) 10%, rgba(237, 50, 55, 1) 20%, rgba(237, 50, 55, 1) 80%, rgba(237, 50, 55, 0) 90%, rgba(237, 50, 55, 0) 100%);"></div>
+                <div style="height: 1px; background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 0.2) 25%, rgba(0, 0, 0, 0.2) 75%, rgba(0, 0, 0, 0) 85%, rgba(0, 0, 0, 0) 100%);"></div>
             `;
             
             // These constants are just for reference, the measurement logic is king.
@@ -1320,11 +1327,11 @@
                         </div>
 
                         <div style="margin-top: 20px; padding-top: 10px; text-align: center;">
-                            ${pinPointLine}
+                            ${pinPointLineFooter} 
                             <div style="font-size: 7pt !important; color: #999; line-height: 1.4; margin-top: 10px;">
                                 <p style="margin: 2px 0;">This is an electronically generated price list. For further information, please contact our sales team.</p>
                                 <p style="margin: 2px 0;">Generated on: ${currentDate}</p>
-                                <p style="margin: 2px 0;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
+                                <p style="margin: 2px 0; color: #ef4444; font-weight: 600;">GRANICER CERAMICA INDIA - Asia's Largest Porcelain Slabs & Tiles Manufacturer</p>
                             </div>
                         </div>
                         

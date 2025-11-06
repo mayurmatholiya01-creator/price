@@ -1049,6 +1049,8 @@
 
 
         // --- V43 PDF LOGIC (Untouched) ---
+        
+        // [FIXED V45+] - This function is modified to fix the height calculation bug.
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1056,7 +1058,17 @@
             }
 
             const activeTabId = document.querySelector('.tab-content.active').id;
-            let numGroups = 1; 
+
+            // --- 1. DEFINE CONSTANTS (from generatePDFContent) ---
+            // We use the *exact* same values as the content renderer.
+            const PDF_ROW_HEIGHT_MM = 6.5;
+            const PDF_GROUP_HEADER_HEIGHT_MM = 18; 
+            const PDF_BASE_ROWS = 6;
+            const PDF_BASE_PAGE_HEIGHT_MM = 296.5; // This is your original base height
+
+            // --- 2. CALCULATE ROWS & GROUPS ---
+            let totalRows = items.length;
+            let numGroups = 1; // Default for 'basic' tab
 
             if (activeTabId === 'advance') {
                 const groups = {};
@@ -1069,21 +1081,29 @@
                 numGroups = Object.keys(groups).length;
             }
 
-            const basePageHeight = 296.5; 
-            const baseRows = 6;           
-            const rowHeight = 7;
-            const groupHeaderHeight = 18; 
-
-            let totalRows = items.length;
+            // --- 3. CALCULATE EXTRA HEIGHT ---
             
-            let extraRows = totalRows > baseRows ? totalRows - baseRows : 0;
-            let totalHeight = Math.ceil(basePageHeight + (extraRows * rowHeight));
+            // [FIX 1] Calculate height from rows *beyond* the base 6 rows.
+            // We use PDF_ROW_HEIGHT_MM (6.5), NOT 7.
+            let extraRows = totalRows > PDF_BASE_ROWS ? totalRows - PDF_BASE_ROWS : 0;
+            let extraRowHeight = extraRows * PDF_ROW_HEIGHT_MM;
 
-// 👇 [NEW LOGIC] Shift all footer-area content with page height
-if (items.length > baseRows) {
-    totalHeight += (items.length - baseRows) * 0; // keep 0 now (footer handled separately)
-}
+            // [FIX 2] Calculate height from *extra* group headers (for 'advance' tab)
+            // The base height assumes 1 group. So we add height for (numGroups - 1).
+            let extraGroupHeight = 0;
+            if (activeTabId === 'advance') {
+                 let extraGroups = numGroups > 1 ? numGroups - 1 : 0;
+                 extraGroupHeight = extraGroups * PDF_GROUP_HEADER_HEIGHT_MM;
+            }
 
+            // --- 4. CALCULATE FINAL HEIGHT ---
+            // Start with the base height and add ALL calculated extra heights.
+            let totalHeight = PDF_BASE_PAGE_HEIGHT_MM + extraRowHeight + extraGroupHeight;
+            
+            // We still use Math.ceil as you originally had it.
+            totalHeight = Math.ceil(totalHeight);
+
+            // --- (Rest of the function is unchanged) ---
 
             const element = document.createElement('div');
             element.innerHTML = generatePDFContent(totalHeight, activeTabId); 
@@ -1307,10 +1327,7 @@ if (items.length > baseRows) {
                         
                     </div>
 
-                    <!-- Option A: Adaptive formula handles all calculations -->
-
-<!-- fix footer position absolutely to page bottom -->
-<div style="
+                    <div style="
   position: absolute;
   bottom: 0;
   left: 0;

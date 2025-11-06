@@ -1050,10 +1050,10 @@
 
         // --- V43 PDF LOGIC (Untouched) ---
         
-        // [FINAL PROPER FIX] - This function uses the *correct* px-to-mm
-        // conversion rate (based on 96 DPI, which html2pdf uses).
-        // Header (30px) = ~8.0mm
-        // Row (24px) = ~6.35mm
+        // [FINAL BOX-MODEL FIX] - This function uses the *correct* px-to-mm
+        // conversion based on the CSS box model (height + padding + border).
+        // Header (42px) = 11.11mm
+        // Row (26px) = 6.88mm
         function generatePDF() {
             if (items.length === 0) {
                 alert('Please add items first');
@@ -1062,7 +1062,7 @@
 
             const activeTabId = document.querySelector('.tab-content.active').id;
 
-            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED @ 96 DPI) ---
+            // --- 1. DEFINE ALL CONTENT HEIGHTS (CORRECTED FOR BOX MODEL) ---
             
             // These are the fixed layout heights
             const HEADER_HEIGHT_MM = 125;
@@ -1070,8 +1070,9 @@
             const SPACER_MM = 10; // The <div style="height: 10mm;"></div>
             
             // These are the DYNAMIC heights, now correctly calculated
-            const PDF_TABLE_HEADER_HEIGHT_MM = 8.0;  // Based on 30px style
-            const PDF_ROW_HEIGHT_MM = 6.35;      // Based on 24px style
+            // (height + padding + border) * 0.2645 (px-to-mm)
+            const PDF_TABLE_HEADER_HEIGHT_MM = 11.15; // (30h + 10p + 2b)px = 42px
+            const PDF_ROW_HEIGHT_MM = 6.9;          // (20h + 4p + 2b)px = 26px
             
             // This is for 'advance' tab grouping
             const PDF_GROUP_HEADER_HEIGHT_MM = 18; 
@@ -1112,8 +1113,8 @@
             }
 
             // --- 3. SET FINAL HEIGHT ---
-            // We use Math.ceil() to add a tiny 1mm safety buffer for any rendering variance
-            const totalHeight = Math.ceil(calculatedHeight) + 1;
+            // We use Math.ceil() to provide a minimal buffer for fractional pixels
+            const totalHeight = Math.ceil(calculatedHeight);
 
             // --- (Rest of the function is unchanged) ---
 
@@ -1156,8 +1157,8 @@
             // (30px and 24px) are what *really* matter.
             const HEADER_HEIGHT_MM = 125; 
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
-            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 8.0
-            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 6.35
+            const TABLE_HEADER_HEIGHT_MM = 10; // JS logic uses 11.15
+            const ROW_HEIGHT_MM = 6.5;         // JS logic uses 6.9
             const GROUP_HEADER_HEIGHT_MM = 18; 
 
             let contentHeight = 0;

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
-        /* Pura CSS wahi hai (V44) */
+        /* Pura CSS wahi hai */
         :root {
           --primary: #6366f1; 
           --primary-light: #818cf8;
@@ -63,26 +63,21 @@
             transition: all 0.3s ease; 
         }
 
-        /* --- [MODIFIED V49] Header Styles --- */
+        /* --- Header Styles (Unchanged) --- */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            
-            /* [NEW V49] Changed from var(--glass) to a dark, glassy background */
             background: rgba(0, 0, 0, 0.25); 
-
             border-bottom: 1px solid var(--glass-border);
             flex-shrink: 0;
-
-            /* [V48] Glassy effect & Spacing */
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); /* For Safari */
-            margin-bottom: 5px; /* Space between header and tabs */
+            -webkit-backdrop-filter: blur(10px); 
+            margin-bottom: 5px; 
         }
         #header-logo {
-            height: 30px; /* Aap height adjust kar sakte hain */
+            height: 30px; 
             width: auto;
             object-fit: contain;
         }
@@ -95,7 +90,7 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 1.1em; /* Icon size */
+            font-size: 1.1em; 
             cursor: pointer;
             transition: all 0.3s ease;
             padding: 5px;
@@ -105,9 +100,9 @@
             transform: scale(1.1);
         }
         .container.advance-theme .header-icon-btn:hover {
-            color: var(--primary); /* Advance theme (green) hover color */
+            color: var(--primary); 
         }
-        /* --- [END MODIFIED V49] --- */
+        /* --- [END] --- */
 
         .tabs {
             display: flex;
@@ -490,11 +485,18 @@
             border: 1px solid var(--glass-border);
             background: var(--bg-primary); 
         }
+        
+        /* --- [MODIFIED V51] --- */
+        /* Yahaan humne 'box-shadow' ko 'outline' se badal diya hai */
         .surface-item-wrapper .price-input-container:focus-within {
              border-color: var(--primary);
-             box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+             /* box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1); -- Dheema tha */
+             outline: 2px solid var(--primary-light); /* Ye tez hai */
+             outline-offset: 1px;
              background: var(--bg-primary);
         }
+        /* --- [END V51] --- */
+
         .surface-item-wrapper .price-symbol {
              display: none; 
         }
@@ -712,7 +714,7 @@
         </div>
 
     <script>
-        // --- (V49 - Header Dark Glass) ---
+        // --- (V51 - Performance Optimizations) ---
 
         // --- 1. Global Variables ---
         const sizes = [
@@ -732,11 +734,11 @@
         let items = []; 
         let itemIdCounter = 0;
         let activeSuggestionIndex = -1; 
-        let isEditing = false; // [V44] Editing lock
+        let isEditing = false; 
 
         // --- 2. Function Definitions ---
 
-        // --- BASIC TAB FUNCTIONS ---
+        // --- BASIC TAB FUNCTIONS (Unchanged from V49) ---
         function filterSuggestions(type) {
             activeSuggestionIndex = -1; 
             const inputId = type === 'size' ? 'size' : 'surface';
@@ -769,7 +771,6 @@
             document
                 .getElementById(inputId === 'size' ? 'sizeSuggestions' : 'surfaceSuggestions')
                 .classList.remove('show');
-            // [V44] Clear button ko show karo
             if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
             if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
@@ -781,13 +782,11 @@
             document.getElementById('grade_pre').checked = true; 
             document.getElementById('size').focus();
             
-            // [V44] Clear buttons ko hide karo
             toggleClearButton(document.getElementById('size'), 'clearSizeBtn');
             toggleClearButton(document.getElementById('surface'), 'clearSurfaceBtn');
             toggleClearButton(document.getElementById('price'), 'clearPriceBtn');
         }
         
-        // [V44] Clear 'X' button functions
         function toggleClearButton(input, btnId) {
             const btn = document.getElementById(btnId);
             if (input.value) {
@@ -801,7 +800,6 @@
             document.getElementById(inputId).value = '';
             document.getElementById(btnId).classList.remove('visible');
             document.getElementById(inputId).focus();
-            // Agar suggestion box khula tha, to use band karo
             if (inputId === 'size') filterSuggestions('size');
             if (inputId === 'surface') filterSuggestions('surface');
         }
@@ -868,7 +866,7 @@
         // --- [NEW V50] Helper Function: एक नया टेबल रो (Row) बनाने के लिए
         function createItemRow(item) {
             const row = document.createElement('tr');
-            row.id = `item-row-${item.id}`; // रो को एक यूनिक ID दें
+            row.id = `item-row-${item.id}`; 
 
             // 1. Size Cell
             const sizeCell = document.createElement('td');
@@ -884,7 +882,6 @@
             const gradeCell = document.createElement('td');
             gradeCell.textContent = item.grade;
             gradeCell.className = 'editable-cell';
-            // Click करने पर editCell को कॉल करें, इस सेल (td) को पास करते हुए
             gradeCell.onclick = () => editCell(gradeCell, item.id, 'grade');
             row.appendChild(gradeCell);
 
@@ -892,7 +889,6 @@
             const priceCell = document.createElement('td');
             priceCell.textContent = `₹ ${item.price.toFixed(2)}`;
             priceCell.className = 'editable-cell';
-            // Click करने पर editCell को कॉल करें, इस सेल (td) को पास करते हुए
             priceCell.onclick = () => editCell(priceCell, item.id, 'price');
             row.appendChild(priceCell);
 
@@ -901,7 +897,6 @@
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-btn';
             deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-            // Click करने पर deleteItem को कॉल करें
             deleteBtn.onclick = () => deleteItem(item.id);
             actionCell.appendChild(deleteBtn);
             row.appendChild(actionCell);
@@ -944,9 +939,8 @@
             // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
             const container = document.getElementById('itemsContainer');
             
-            // 1. अगर यह पहला आइटम है, तो "Empty state" हटाएं और टेबल बनाएं
             if (items.length === 1) {
-                container.innerHTML = ''; // "No items" मैसेज हटाएं
+                container.innerHTML = ''; 
                 const table = document.createElement('table');
                 table.innerHTML = `
                     <thead>
@@ -964,7 +958,6 @@
                 container.appendChild(table);
             }
 
-            // 2. नया रो बनाएं और टेबल में जोड़ें
             const newRow = createItemRow(item);
             const tbody = container.querySelector('tbody');
             if (tbody) {
@@ -973,7 +966,7 @@
             // --- END NEW ---
 
             clearForm();
-            updatePdfButtonState(); // PDF बटन को इनेबल करें
+            updatePdfButtonState(); 
         }
 
         // --- ADVANCE TAB FUNCTIONS ---
@@ -995,17 +988,12 @@
             });
         }
 
-        // [MODIFIED V45] Jab size change ho to grade reset karo aur price clear karo
+        // (Unchanged V45)
         function handleAdvanceSizeChange(selectElement) {
             const optionsContainer = document.getElementById('advance-options-container');
-
-            // --- [V45 FIX] ---
-            // 1. Purane price clear karo
             clearAdvancePriceInputs(); 
-            // 2. Grade ko 'PRE' par reset karo
             const gradePre = document.getElementById('adv_grade_pre');
             if (gradePre) gradePre.checked = true;
-            // --- [FIX END] ---
 
             if (selectElement.value) {
                 optionsContainer.style.display = 'block';
@@ -1015,6 +1003,8 @@
             }
         }
 
+        // --- [MODIFIED V51] ---
+        // Yahaan 'onkeydown' event ko input mein joda gaya hai
         function populateSurfaceList() {
             const listDiv = document.getElementById('surfacePriceList');
             if (listDiv.children.length > 0) return; 
@@ -1033,7 +1023,11 @@
                                 placeholder="Price" 
                                 min="0"
                                 step="0.01"
+                                
+                                onkeydown="if(['e', 'E', '+', '-'].includes(event.key)) event.preventDefault();"
+                                
                                 oninput="this.value = this.value.replace(/[eE+\-]/g, '');"
+                                
                                 style="text-align: center; border-radius: 6px;" 
                             />
                         </div>
@@ -1042,6 +1036,8 @@
             });
             listDiv.innerHTML = html;
         }
+        // --- [END V51] ---
+
 
         function clearAdvancePriceInputs() {
             const inputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
@@ -1062,7 +1058,7 @@
             const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             let itemsAdded = 0;
             let duplicatesFound = 0;
-            const itemsToAdd = []; // नए आइटम्स को यहाँ इकट्ठा करें
+            const itemsToAdd = []; 
 
             priceInputs.forEach(input => {
                 const price = input.value.trim();
@@ -1085,14 +1081,13 @@
                             grade: grade,
                             price: parseFloat(price),
                         };
-                        items.push(item); // मुख्य ऐरे में जोड़ें
-                        itemsToAdd.push(item); // DOM में जोड़ने के लिए इकट्ठा करें
+                        items.push(item); 
+                        itemsToAdd.push(item); 
                         itemsAdded++;
                     }
                 }
             });
 
-            // (Alerts वाला लॉजिक वही रहेगा)
             if (itemsAdded === 0 && duplicatesFound === 0) {
                 alert('Please enter at least one price.');
                 return;
@@ -1105,9 +1100,8 @@
             if (itemsAdded > 0) {
                 const container = document.getElementById('advanceItemsContainer');
                 
-                // 1. अगर यह पहला आइटम है, तो "Empty state" हटाएं और टेबल बनाएं
-                if (items.length === itemsAdded) { // (मतलब ऐरे पहले खाली था)
-                    container.innerHTML = ''; // "No items" मैसेज हटाएं
+                if (items.length === itemsAdded) { 
+                    container.innerHTML = ''; 
                     const table = document.createElement('table');
                     table.innerHTML = `
                         <thead>
@@ -1125,7 +1119,6 @@
                     container.appendChild(table);
                 }
 
-                // 2. सभी नए रो बनाएं और टेबल में जोड़ें
                 const tbody = container.querySelector('tbody');
                 if (tbody) {
                     itemsToAdd.forEach(item => {
@@ -1137,25 +1130,20 @@
             // --- END NEW ---
             
             clearAdvancePriceInputs(); 
-            updatePdfButtonState(); // PDF बटन को इनेबल करें
+            updatePdfButtonState(); 
         }
 
-        // --- SHARED FUNCTIONS ---
+        // --- SHARED FUNCTIONS (Optimized V50) ---
 
         // --- [REPLACED V50] deleteItem function
         function deleteItem(id) {
-            // 1. ऐरे (Array) से आइटम हटाएं
             items = items.filter((item) => item.id !== id);
             
-            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
-            
-            // 2. DOM से रो (Row) हटाएं
             const row = document.getElementById(`item-row-${id}`);
             if (row) {
                 row.remove();
             }
 
-            // 3. अगर यह आखिरी आइटम था, तो "Empty state" दिखाएं
             if (items.length === 0) {
                 const activeTab = document.querySelector('.tab-content.active');
                 const activeTabId = activeTab ? activeTab.id : 'basic';
@@ -1166,13 +1154,11 @@
                     container.innerHTML = '<div class="empty-state">No items added yet</div>';
                 }
             }
-            // --- END NEW ---
             
-            updatePdfButtonState(); // PDF बटन की स्थिति अपडेट करें
+            updatePdfButtonState(); 
         }
 
         // --- [REPLACED V50] renderItems function
-        // (यह फंक्शन अब सिर्फ टैब बदलने पर या पेज लोड होने पर ही चलेगा)
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
@@ -1181,15 +1167,11 @@
             const container = document.getElementById(containerId);
 
             if (!container) return; 
-
-            // कंटेनर को खाली करें
             container.innerHTML = ''; 
 
             if (items.length === 0) {
-                // "Empty state" दिखाएं
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
             } else {
-                // टेबल स्ट्रक्चर बनाएं
                 const table = document.createElement('table');
                 table.innerHTML = `
                     <thead>
@@ -1204,9 +1186,8 @@
                 `;
                 const tbody = document.createElement('tbody');
                 
-                // सभी आइटम्स के लिए रो (Row) बनाएं
                 items.forEach((item) => {
-                    const row = createItemRow(item); // हमारे नए हेल्पर का उपयोग करें
+                    const row = createItemRow(item); 
                     tbody.appendChild(row);
                 });
                 
@@ -1214,39 +1195,33 @@
                 container.appendChild(table);
             }
             
-            updatePdfButtonState(); // PDF बटन की स्थिति अपडेट करें
+            updatePdfButtonState(); 
         }
         
         // --- [REPLACED V50] editCell function
-        // (अब यह 'Esc' दबाने पर renderItems() को कॉल नहीं करेगा)
         function editCell(tdElement, itemId, field) {
             if (isEditing) return; 
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
             const originalValue = item[field];
-            
-            const originalOnclick = tdElement.onclick; // ओरिजिनल क्लिक को सेव करें
+            const originalOnclick = tdElement.onclick; 
             
             tdElement.innerHTML = ''; 
-            tdElement.onclick = null; // दोबारा क्लिक होने से रोकें
+            tdElement.onclick = null; 
 
             if (field === 'price') {
                 const input = document.createElement('input');
                 input.type = 'number';
                 input.className = 'edit-input';
                 input.value = originalValue;
-                
-                // 'saveEdit' को यह tdElement पास करें
                 input.onblur = () => saveEdit(tdElement, itemId, field, input.value); 
-                
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
                         isEditing = false;
-                        // सेल को मैन्युअल रूप से रीसेट करें (renderItems() के बिना)
                         tdElement.innerHTML = `₹ ${originalValue.toFixed(2)}`;
-                        tdElement.onclick = originalOnclick; // क्लिक वापस लगाएं
+                        tdElement.onclick = originalOnclick; 
                     }
                 };
                 tdElement.appendChild(input);
@@ -1262,17 +1237,13 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                
-                // 'saveEdit' को यह tdElement पास करें
                 select.onblur = () => saveEdit(tdElement, itemId, field, select.value); 
                 select.onchange = () => saveEdit(tdElement, itemId, field, select.value);
-                
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
                         isEditing = false;
-                        // सेल को मैन्युअल रूप से रीसेट करें (renderItems() के बिना)
                         tdElement.innerHTML = originalValue;
-                        tdElement.onclick = originalOnclick; // क्लिक वापस लगाएं
+                        tdElement.onclick = originalOnclick; 
                     }
                 };
                 tdElement.appendChild(select);
@@ -1281,7 +1252,6 @@
         }
 
         // --- [REPLACED V50] saveEdit function
-        // (अब यह renderItems() को कॉल नहीं करेगा)
         function saveEdit(tdElement, itemId, field, newValue) {
             const item = items.find(i => i.id === itemId);
             if (item) {
@@ -1291,26 +1261,19 @@
                     item.grade = newValue;
                 }
             }
+            isEditing = false; 
             
-            isEditing = false; // लॉक रिलीज़ करें
-            
-            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
-            
-            // 1. सेल को खाली करें (इनपुट/सिलेक्ट को हटाएं)
             tdElement.innerHTML = ''; 
             
-            // 2. नया टेक्स्ट सेट करें
             if (field === 'price') {
                 tdElement.textContent = `₹ ${item.price.toFixed(2)}`;
             } else if (field === 'grade') {
                 tdElement.textContent = item.grade;
             }
             
-            // 3. 'onclick' इवेंट को वापस लगाएं ताकि इसे फिर से एडिट किया जा सके
             tdElement.onclick = () => editCell(tdElement, itemId, field);
-            // --- END NEW ---
         }
-        // [V50] End
+        // [V50 End]
 
 
         // --- V43 PDF LOGIC (Untouched) ---
@@ -1387,7 +1350,7 @@
             
             const FOOTER_BLOCK_HEIGHT_MM = 95; 
 
-            // --- Table Generation Logic (Unchanged) ---
+            // --- Table Generation Logic (Unchanged V49) ---
             if (tabType === 'advance') {
                 const groups = {};
                 items.forEach(item => {
@@ -1485,8 +1448,7 @@
                 `;
             }
 
-            // --- HTML Page Structure ---
-            // (PDF ka baaki content wahi hai... yahaan short kar raha hoon)
+            // --- HTML Page Structure (Unchanged) ---
             pagesHTML = `
                 <div style="font-family: 'Arial', sans-serif; width: 210mm; 
                             height: ${totalHeight}; 
@@ -1579,7 +1541,7 @@
             return pagesHTML;
         }
         
-        // --- [NEW V47] Clear Active Tab Function ---
+        // --- [NEW V47] Clear Active Tab Function (Unchanged V49) ---
         function clearActiveTabContent() {
             const activeTab = document.querySelector('.tab-content.active');
             if (!activeTab) return;
@@ -1590,10 +1552,9 @@
                 clearAdvanceTab();
             }
         }
-        // --- [END NEW V47] ---
 
         function clearBasicTab() {
-            clearForm(); // Ab clearForm() clear buttons ko bhi handle karta hai
+            clearForm(); 
             items = [];
             renderItems(); 
         }
@@ -1626,20 +1587,18 @@
             event.target.classList.add('active'); 
 
             if (tabName === 'advance') {
-                container.classList.add('advance-theme'); // Green theme
+                container.classList.add('advance-theme'); 
                 clearBasicTab();
                 populateSizeDropdown();
             } else if (tabName === 'basic') {
-                container.classList.remove('advance-theme'); // Default (Purple) theme
+                container.classList.remove('advance-theme'); 
                 clearAdvanceTab();
             }
         }
         
-        // --- 3. Event Listeners & Initial Calls ---
+        // --- 3. Event Listeners & Initial Calls (Unchanged V49) ---
 
-        // --- [NEW V47] Header Listeners ---
         document.addEventListener('DOMContentLoaded', function() {
-            // Set logo
             try {
                 if (typeof logoGranicer1_base64 !== 'undefined') {
                     document.getElementById('header-logo').src = logoGranicer1_base64;
@@ -1650,14 +1609,12 @@
                 console.error('Error loading logo:', e);
             }
             
-            // Add event listeners for new buttons
             document.getElementById('clear-all-btn').addEventListener('click', clearActiveTabContent);
             
             document.getElementById('refresh-btn').addEventListener('click', function() {
                 location.reload();
             });
         });
-        // --- [END NEW V47] ---
 
 
         document.addEventListener('click', function (event) {

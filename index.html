@@ -773,44 +773,7 @@
             if (inputId === 'size') toggleClearButton(document.getElementById(inputId), 'clearSizeBtn');
             if (inputId === 'surface') toggleClearButton(document.getElementById(inputId), 'clearSurfaceBtn');
         }
-
-        // [MODIFIED V46] DUPLICATE CHECK ADDED
-        function addItem() {
-            const size = document.getElementById('size').value.trim();
-            const surface = document.getElementById('surface').value.trim();
-            const price = document.getElementById('price').value.trim();
-            const grade = document.querySelector('input[name="grade"]:checked').value;
-
-            if (!size || !surface || !price || !grade) { 
-                alert('Please fill all fields');
-                return;
-            }
-
-            // --- [V46] Duplicate Check ---
-            const isDuplicate = items.some(item => 
-                item.size === size && 
-                item.surface === surface && 
-                item.grade === grade
-            );
-
-            if (isDuplicate) {
-                alert('Error: This item (Size, Surface, Grade) already exists in the list.');
-                return; // फ़ंक्शन को यहीं रोक दें
-            }
-            // --- [END V46] ---
-
-            const item = {
-                id: itemIdCounter++,
-                size: size,
-                surface: surface,
-                grade: grade, 
-                price: parseFloat(price),
-            };
-            items.push(item);
-            renderItems();
-            clearForm();
-        }
-
+        
         function clearForm() {
             document.getElementById('size').value = '';
             document.getElementById('surface').value = '';
@@ -891,6 +854,127 @@
                 });
             }
         }
+        
+        // --- [NEW V50] Helper Function: PDF बटन की स्थिति अपडेट करने के लिए
+        function updatePdfButtonState() {
+            const isDisabled = items.length === 0;
+            const pdfBtn = document.getElementById('pdfBtn');
+            const advancePdfBtn = document.getElementById('advancePdfBtn');
+            
+            if (pdfBtn) pdfBtn.disabled = isDisabled;
+            if (advancePdfBtn) advancePdfBtn.disabled = isDisabled;
+        }
+
+        // --- [NEW V50] Helper Function: एक नया टेबल रो (Row) बनाने के लिए
+        function createItemRow(item) {
+            const row = document.createElement('tr');
+            row.id = `item-row-${item.id}`; // रो को एक यूनिक ID दें
+
+            // 1. Size Cell
+            const sizeCell = document.createElement('td');
+            sizeCell.textContent = item.size;
+            row.appendChild(sizeCell);
+
+            // 2. Surface Cell
+            const surfaceCell = document.createElement('td');
+            surfaceCell.textContent = item.surface;
+            row.appendChild(surfaceCell);
+
+            // 3. Grade Cell (Editable)
+            const gradeCell = document.createElement('td');
+            gradeCell.textContent = item.grade;
+            gradeCell.className = 'editable-cell';
+            // Click करने पर editCell को कॉल करें, इस सेल (td) को पास करते हुए
+            gradeCell.onclick = () => editCell(gradeCell, item.id, 'grade');
+            row.appendChild(gradeCell);
+
+            // 4. Price Cell (Editable)
+            const priceCell = document.createElement('td');
+            priceCell.textContent = `₹ ${item.price.toFixed(2)}`;
+            priceCell.className = 'editable-cell';
+            // Click करने पर editCell को कॉल करें, इस सेल (td) को पास करते हुए
+            priceCell.onclick = () => editCell(priceCell, item.id, 'price');
+            row.appendChild(priceCell);
+
+            // 5. Action Cell (Delete Button)
+            const actionCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+            // Click करने पर deleteItem को कॉल करें
+            deleteBtn.onclick = () => deleteItem(item.id);
+            actionCell.appendChild(deleteBtn);
+            row.appendChild(actionCell);
+
+            return row;
+        }
+        
+        // --- [REPLACED V50] addItem function
+        function addItem() {
+            const size = document.getElementById('size').value.trim();
+            const surface = document.getElementById('surface').value.trim();
+            const price = document.getElementById('price').value.trim();
+            const grade = document.querySelector('input[name="grade"]:checked').value;
+
+            if (!size || !surface || !price || !grade) { 
+                alert('Please fill all fields');
+                return;
+            }
+
+            const isDuplicate = items.some(item => 
+                item.size === size && 
+                item.surface === surface && 
+                item.grade === grade
+            );
+
+            if (isDuplicate) {
+                alert('Error: This item (Size, Surface, Grade) already exists in the list.');
+                return; 
+            }
+
+            const item = {
+                id: itemIdCounter++,
+                size: size,
+                surface: surface,
+                grade: grade, 
+                price: parseFloat(price),
+            };
+            items.push(item);
+            
+            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
+            const container = document.getElementById('itemsContainer');
+            
+            // 1. अगर यह पहला आइटम है, तो "Empty state" हटाएं और टेबल बनाएं
+            if (items.length === 1) {
+                container.innerHTML = ''; // "No items" मैसेज हटाएं
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>Size</th>
+                            <th>Surface</th>
+                            <th>Grade</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                `;
+                const tbody = document.createElement('tbody');
+                table.appendChild(tbody);
+                container.appendChild(table);
+            }
+
+            // 2. नया रो बनाएं और टेबल में जोड़ें
+            const newRow = createItemRow(item);
+            const tbody = container.querySelector('tbody');
+            if (tbody) {
+                tbody.appendChild(newRow);
+            }
+            // --- END NEW ---
+
+            clearForm();
+            updatePdfButtonState(); // PDF बटन को इनेबल करें
+        }
 
         // --- ADVANCE TAB FUNCTIONS ---
         function populateSizeDropdown() {
@@ -966,7 +1050,7 @@
             });
         }
 
-        // [MODIFIED V46] DUPLICATE CHECK ADDED
+        // [REPLACED V50] addAdvanceItems function
         function addAdvanceItems() {
             const size = document.getElementById('advanceSizeSelect').value;
             if (!size) {
@@ -977,15 +1061,14 @@
             
             const priceInputs = document.querySelectorAll('#surfacePriceList input[type="number"]');
             let itemsAdded = 0;
-            let duplicatesFound = 0; // [V46] डुप्लिकेट को ट्रैक करने के लिए
+            let duplicatesFound = 0;
+            const itemsToAdd = []; // नए आइटम्स को यहाँ इकट्ठा करें
 
             priceInputs.forEach(input => {
                 const price = input.value.trim();
                 const surface = input.getAttribute('data-surface-name');
 
                 if (price && parseFloat(price) > 0) {
-                    
-                    // --- [V46] Duplicate Check ---
                     const isDuplicate = items.some(item => 
                         item.size === size && 
                         item.surface === surface && 
@@ -993,9 +1076,8 @@
                     );
 
                     if (isDuplicate) {
-                        duplicatesFound++; // डुप्लिकेट को गिनें
+                        duplicatesFound++; 
                     } else {
-                        // केवल तभी जोड़ें जब डुप्लिकेट न हो
                         const item = {
                             id: itemIdCounter++,
                             size: size,
@@ -1003,55 +1085,113 @@
                             grade: grade,
                             price: parseFloat(price),
                         };
-                        items.push(item);
+                        items.push(item); // मुख्य ऐरे में जोड़ें
+                        itemsToAdd.push(item); // DOM में जोड़ने के लिए इकट्ठा करें
                         itemsAdded++;
                     }
-                    // --- [END V46] ---
                 }
             });
 
-            // --- [V46] बेहतर फ़ीडबैक अलर्ट ---
+            // (Alerts वाला लॉजिक वही रहेगा)
             if (itemsAdded === 0 && duplicatesFound === 0) {
                 alert('Please enter at least one price.');
                 return;
             }
-
             if (duplicatesFound > 0) {
                 alert(`${itemsAdded} new item(s) added.\n${duplicatesFound} duplicate item(s) were skipped.`);
             }
-            // --- [END V46] ---
 
-            renderItems(); 
+            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
+            if (itemsAdded > 0) {
+                const container = document.getElementById('advanceItemsContainer');
+                
+                // 1. अगर यह पहला आइटम है, तो "Empty state" हटाएं और टेबल बनाएं
+                if (items.length === itemsAdded) { // (मतलब ऐरे पहले खाली था)
+                    container.innerHTML = ''; // "No items" मैसेज हटाएं
+                    const table = document.createElement('table');
+                    table.innerHTML = `
+                        <thead>
+                            <tr>
+                                <th>Size</th>
+                                <th>Surface</th>
+                                <th>Grade</th>
+                                <th>Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    `;
+                    const tbody = document.createElement('tbody');
+                    table.appendChild(tbody);
+                    container.appendChild(table);
+                }
+
+                // 2. सभी नए रो बनाएं और टेबल में जोड़ें
+                const tbody = container.querySelector('tbody');
+                if (tbody) {
+                    itemsToAdd.forEach(item => {
+                        const newRow = createItemRow(item);
+                        tbody.appendChild(newRow);
+                    });
+                }
+            }
+            // --- END NEW ---
+            
             clearAdvancePriceInputs(); 
+            updatePdfButtonState(); // PDF बटन को इनेबल करें
         }
 
         // --- SHARED FUNCTIONS ---
+
+        // --- [REPLACED V50] deleteItem function
         function deleteItem(id) {
+            // 1. ऐरे (Array) से आइटम हटाएं
             items = items.filter((item) => item.id !== id);
-            renderItems();
+            
+            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
+            
+            // 2. DOM से रो (Row) हटाएं
+            const row = document.getElementById(`item-row-${id}`);
+            if (row) {
+                row.remove();
+            }
+
+            // 3. अगर यह आखिरी आइटम था, तो "Empty state" दिखाएं
+            if (items.length === 0) {
+                const activeTab = document.querySelector('.tab-content.active');
+                const activeTabId = activeTab ? activeTab.id : 'basic';
+                const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
+                const container = document.getElementById(containerId);
+                
+                if (container) {
+                    container.innerHTML = '<div class="empty-state">No items added yet</div>';
+                }
+            }
+            // --- END NEW ---
+            
+            updatePdfButtonState(); // PDF बटन की स्थिति अपडेट करें
         }
 
-        // [MODIFIED V44] Click-to-Edit ke liye
+        // --- [REPLACED V50] renderItems function
+        // (यह फंक्शन अब सिर्फ टैब बदलने पर या पेज लोड होने पर ही चलेगा)
         function renderItems() {
             const activeTab = document.querySelector('.tab-content.active');
             const activeTabId = activeTab ? activeTab.id : 'basic';
             
             const containerId = (activeTabId === 'basic') ? 'itemsContainer' : 'advanceItemsContainer';
-            const pdfBtnId = (activeTabId === 'basic') ? 'pdfBtn' : 'advancePdfBtn';
-
             const container = document.getElementById(containerId);
-            const pdfBtn = document.getElementById(pdfBtnId);
 
-            if (!container || !pdfBtn) return; 
+            if (!container) return; 
+
+            // कंटेनर को खाली करें
+            container.innerHTML = ''; 
 
             if (items.length === 0) {
+                // "Empty state" दिखाएं
                 container.innerHTML = '<div class="empty-state">No items added yet</div>';
-                pdfBtn.disabled = true;
-                return;
-            }
-            pdfBtn.disabled = false;
-            let tableHTML = `
-                <table>
+            } else {
+                // टेबल स्ट्रक्चर बनाएं
+                const table = document.createElement('table');
+                table.innerHTML = `
                     <thead>
                         <tr>
                             <th>Size</th>
@@ -1061,45 +1201,52 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-            `;
-            items.forEach((item) => {
-                tableHTML += `
-                    <tr>
-                        <td>${item.size}</td>
-                        <td>${item.surface}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'grade')">${item.grade}</td>
-                        <td class="editable-cell" onclick="editCell(this, ${item.id}, 'price')">₹ ${item.price.toFixed(2)}</td>
-                        <td><button class="delete-btn" onclick="deleteItem(${item.id})"><i class="fas fa-trash-alt"></i></button></td>
-                    </tr>
                 `;
-            });
-            tableHTML += '</tbody></table>';
-            container.innerHTML = tableHTML;
+                const tbody = document.createElement('tbody');
+                
+                // सभी आइटम्स के लिए रो (Row) बनाएं
+                items.forEach((item) => {
+                    const row = createItemRow(item); // हमारे नए हेल्पर का उपयोग करें
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                container.appendChild(table);
+            }
+            
+            updatePdfButtonState(); // PDF बटन की स्थिति अपडेट करें
         }
         
-        // [NEW V44] Click-to-Edit Functions
+        // --- [REPLACED V50] editCell function
+        // (अब यह 'Esc' दबाने पर renderItems() को कॉल नहीं करेगा)
         function editCell(tdElement, itemId, field) {
-            if (isEditing) return; // Ek time par ek hi edit
+            if (isEditing) return; 
             isEditing = true;
 
             const item = items.find(i => i.id === itemId);
             const originalValue = item[field];
             
-            tdElement.innerHTML = ''; // Cell ko khali karo
-            tdElement.onclick = null; // Dobara click na ho
+            const originalOnclick = tdElement.onclick; // ओरिजिनल क्लिक को सेव करें
+            
+            tdElement.innerHTML = ''; 
+            tdElement.onclick = null; // दोबारा क्लिक होने से रोकें
 
             if (field === 'price') {
                 const input = document.createElement('input');
                 input.type = 'number';
                 input.className = 'edit-input';
                 input.value = originalValue;
-                input.onblur = () => saveEdit(itemId, field, input.value);
+                
+                // 'saveEdit' को यह tdElement पास करें
+                input.onblur = () => saveEdit(tdElement, itemId, field, input.value); 
+                
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') input.blur();
                     if (e.key === 'Escape') {
                         isEditing = false;
-                        renderItems(); // Cancel
+                        // सेल को मैन्युअल रूप से रीसेट करें (renderItems() के बिना)
+                        tdElement.innerHTML = `₹ ${originalValue.toFixed(2)}`;
+                        tdElement.onclick = originalOnclick; // क्लिक वापस लगाएं
                     }
                 };
                 tdElement.appendChild(input);
@@ -1115,12 +1262,17 @@
                     if (grade === originalValue) option.selected = true;
                     select.appendChild(option);
                 });
-                select.onblur = () => saveEdit(itemId, field, select.value); // Blur par save
-                select.onchange = () => saveEdit(itemId, field, select.value); // Change par bhi save
+                
+                // 'saveEdit' को यह tdElement पास करें
+                select.onblur = () => saveEdit(tdElement, itemId, field, select.value); 
+                select.onchange = () => saveEdit(tdElement, itemId, field, select.value);
+                
                 select.onkeydown = (e) => {
                      if (e.key === 'Escape') {
                         isEditing = false;
-                        renderItems(); // Cancel
+                        // सेल को मैन्युअल रूप से रीसेट करें (renderItems() के बिना)
+                        tdElement.innerHTML = originalValue;
+                        tdElement.onclick = originalOnclick; // क्लिक वापस लगाएं
                     }
                 };
                 tdElement.appendChild(select);
@@ -1128,7 +1280,9 @@
             }
         }
 
-        function saveEdit(itemId, field, newValue) {
+        // --- [REPLACED V50] saveEdit function
+        // (अब यह renderItems() को कॉल नहीं करेगा)
+        function saveEdit(tdElement, itemId, field, newValue) {
             const item = items.find(i => i.id === itemId);
             if (item) {
                 if (field === 'price') {
@@ -1137,10 +1291,26 @@
                     item.grade = newValue;
                 }
             }
-            isEditing = false; // Lock release karo
-            renderItems(); // Table ko redraw karo
+            
+            isEditing = false; // लॉक रिलीज़ करें
+            
+            // --- NEW DOM Manipulation (renderItems() को कॉल नहीं करेंगे) ---
+            
+            // 1. सेल को खाली करें (इनपुट/सिलेक्ट को हटाएं)
+            tdElement.innerHTML = ''; 
+            
+            // 2. नया टेक्स्ट सेट करें
+            if (field === 'price') {
+                tdElement.textContent = `₹ ${item.price.toFixed(2)}`;
+            } else if (field === 'grade') {
+                tdElement.textContent = item.grade;
+            }
+            
+            // 3. 'onclick' इवेंट को वापस लगाएं ताकि इसे फिर से एडिट किया जा सके
+            tdElement.onclick = () => editCell(tdElement, itemId, field);
+            // --- END NEW ---
         }
-        // [NEW V44] End
+        // [V50] End
 
 
         // --- V43 PDF LOGIC (Untouched) ---
